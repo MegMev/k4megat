@@ -1,4 +1,4 @@
 file(GLOB _module_sources components/*.cpp)
 gaudi_add_module(MegatTestPlugins
   SOURCES ${_module_sources}
-  LINK Gaudi::GaudiAlgLib EDM4HEP::edm4hep k4FWCore::k4FWCore)
+  LINK Gaudi::GaudiAlgLib EDM4HEP::edm4hep k4FWCore::k4FWCore CLHEP::CLHEP)

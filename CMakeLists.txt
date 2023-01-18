@@ -18,6 +18,10 @@ endif()
 
 find_package(podio)
 find_package(EDM4HEP)
+find_package(k4FWCore)
+find_package(k4SimGeant4)
+find_package(CLHEP)
+
 #---------------------------------------------------------------
 include(GNUInstallDirs)
 include(CTest)

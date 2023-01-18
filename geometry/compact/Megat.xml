@@ -58,7 +58,7 @@
     <include ref="TPC.xml" />
 
     <!-- Passive components -->
-    <include ref="Passives.xml" />
+    <!-- <include ref="Passives.xml" /> -->
     <!-- <include ref="Passives_simple.xml" /> -->
     <!-- <include ref="Passives_test.xml" /> -->
 
