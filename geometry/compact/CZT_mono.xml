@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+    <!-- Region  -->
+    <regions>
+        <region name="Calo_Region" eunit="MeV" lunit="mm" cut="0.001"/>
+    </regions>
+
+    <!-- Dimensions -->
+    <define>
+        <constant name="Czt_X" value="fiducial_x*2+1*mm" />
+        <constant name="Czt_Y" value="fiducial_y*2+1*mm" />
+        <constant name="Czt_Z" value="fiducial_z*2+1*mm" />
+        <constant name="Czt_Thickness" value="30*mm" />
+    </define>
+
+
+    <detectors>
+        <detector id="2" name="Calorimeter" type="Megat_MonoAssembly" sensitive="calorimeter" readout="CztHits" region="Calo_Region">
+            <envelope name="Calorimeter" material="TPC_gas" type="Assembly" />
+
+            <!-- Open Block -->
+            <shape name="Czt_Solid" type="BooleanShape" operation="Subtraction">
+                <shape type="Box" dx="Czt_X/2+Czt_Thickness" dy="Czt_Y/2+Czt_Thickness" dz="(Czt_Z+Czt_Thickness)/2" />
+                <shape type="Box" dx="Czt_X/2" dy="Czt_Y/2" dz="(Czt_Z+Czt_Thickness)/2" />
+                <position x="0" y="0" z="Czt_Thickness" />
+            </shape>
+
+            <volume name="Czt" shape="Czt_Solid" material="CdZnTe" vis="CztCrystalVis" sensitive="true" />
+            <physvol element="Czt" volume="Czt">
+                <position x="0" y="0" z="-Czt_Thickness/2" />
+            </physvol>
+        </detector>
+    </detectors>
+
+    <!-- Readout/Segmentation/HitCollection Configuration-->
+    <readouts>
+        <readout name="CztHits">
+            <segmentation type="NoSegmentation"/>
+            <id>system:6</id>
+        </readout>
+    </readouts>
+</lccdd>

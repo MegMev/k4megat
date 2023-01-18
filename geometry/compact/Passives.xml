@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+    <detectors>
+        <detector id="10" name="Passives" type="Megat_MonoAssembly">
+            <!-- Envelop tag is mandatory -->
+            <envelope name="Passives" material="TPC_gas" type="Assembly" />
+
+            <volume name="Vessel" vis="VesselVis" material="stainless_steel">
+                <shape name="Vessel_Solid" type="CAD_Shape" ref="${MEGAT_ROOT}/geometry/cad_model/vessel.stl" unit="mm"/>
+            </volume>
+            <physvol volume="Vessel">
+                <position x="0" y="0" z="0" />
+            </physvol>
+        </detector>
+    </detectors>
+</lccdd>

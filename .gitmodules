@@ -1,0 +1,6 @@
+[submodule "k4libs/core"]
+	path = k4libs/core
+	url = https://github.com/ufan/k4FWCore.git
+[submodule "k4libs/geant4"]
+	path = k4libs/geant4
+	url = https://github.com/ufan/k4SimGeant4.git

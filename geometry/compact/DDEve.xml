@@ -1,0 +1,51 @@
+<ddeve>
+    <display visLevel="7" loadLevel="5" />
+
+    <view name="CZT" type="View3D" structure="true" sensitive="true">
+        <detelement name="CztCalorimeter" load_geo="5" show="5" alpha="0.5" />
+    </view>
+
+    <view name="3D R-Phi (Global)" type="RhoPhiProjection">
+        <detelement name="CztCalorimeter"    load_geo="4" alpha="0.5"/>
+    </view>
+
+    <view name="MultiView" type="MultiView">
+        <detelement name="CztCalorimeter" />
+    </view>
+
+    <calodata name="Tracker" hits="TpcHits" towerH="50" emax="200"
+	            n_eta="200" eta_min="-5" eta_max="5"
+	            n_phi="200" phi_min="-pi" phi_max="pi"
+              rmin="Tpc_Cage_Z" dz="Tpc_Cage_Z"
+	            alpha="0.5" color="kCyan"/>
+    <calodata name="Calorimeter" hits="CztHits" towerH="80" emax="1000"
+	            n_eta="200" eta_min="-5" eta_max="5"
+	            n_phi="200" phi_min="-pi" phi_max="pi"
+              rmin="Tpc_Cage_Z" dz="Tpc_Cage_Z"
+	            alpha="0.5" color="kRed"/>
+    <collection name="CztHits" hits="PointSet" color="kGreen+3" size="0.3" type="21" towerH="10*keV" emax="100*MeV"/>
+    <collection name="TpcHits" hits="PointSet" color="kMagenta" size="0.3" type="20"/>
+    <collection name="MCParticles" hits="Particles" size="0.6" width="2" type="kCircle"/>
+
+    <view name="3D Calorimeters" type="View3D">
+        <detelement name="Tracker"    load_geo="-1" alpha="0.5"/>
+        <detelement name="Calorimeter" load_geo="5" alpha="0.5"/>
+        <collection name="MCParticles" use="MCParticles"/>
+    </view>
+
+    <view name="Calo 3D" type="Calo3DProjection">
+        <calodata name="Calorimeter"/>
+        <collection name="MCParticles" use="MCParticles"/>
+    </view>
+
+    <view name="Calo Lego" type="CaloLego">
+        <calodata name="Calorimeter"/>
+    </view>
+
+    <view name="Calo 2D" type="Calo2DProjection">
+        <detelement name="Calorimeter" load_geo="5" alpha="0.5"/>
+        <calodata name="Calorimeter"/>
+        <collection name="MCParticles" use="MCParticles"/>
+    </view>
+    <include ref="Megat.xml" />
+</ddeve>

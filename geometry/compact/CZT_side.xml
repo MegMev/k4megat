@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+    <!-- Region  -->
+    <regions>
+        <region name="Calo_Region" eunit="MeV" lunit="mm" cut="0.001"/>
+    </regions>
+
+    <!-- Dimensions -->
+    <define>
+        <!-- pitch size -->
+        <constant name="Czt_Pitch_X" value="5*mm" />
+        <constant name="Czt_Pitch_Y" value="5*mm" />
+
+        <constant name="Czt_X" value="fiducial_x*2+1*mm" />
+        <constant name="Czt_Y" value="fiducial_y*2+1*mm" />
+        <constant name="Czt_Z" value="fiducial_z*2+1*mm" />
+        <constant name="Czt_Thickness" value="30*mm" />
+    </define>
+
+    <detectors>
+        <detector id="2" name="Calorimeter" type="Megat_PlanarAssembly" readout="CztHits" region="Calo_Region">
+            <!-- in TPC gas -->
+            <material name="TPC_gas" comment="Default fill material"/>
+
+            <!-- The smallest detector unit (one crystal) -->
+            <module name="Module" x="Czt_X" y="Czt_Y">
+                <component name="Crystal" thickness="Czt_Thickness" material="CdZnTe" vis="CztCrystalVis" sensitive="true" />
+            </module>
+
+            <!-- Each section matches one side of the detector -->
+            <!-- Bottom (-Z) Side -->
+            <section id="0" name="Bottom">
+                <position x="0" y="0" z="-Czt_Z/2" />
+                <layer module="Module">
+                    <row nmodules="1"/>
+                    <column nmodules="1"/>
+                </layer>
+            </section>
+
+            <!-- +Y Side -->
+            <section id="1" name="Ypos">
+                <position x="0" y="Czt_Z/2" z="0" />
+                <rotation x="pi/2*rad" y="0" z="0" />
+                <layer module="Module">
+                    <row nmodules="1"/>
+                    <column nmodules="1"/>
+                </layer>
+            </section>
+
+            <!-- +X Side -->
+            <section id="2" name="Xpos">
+                <position x="Czt_Z/2" y="0" z="0" />
+                <rotation x="0" y="-pi/2*rad" z="-pi/2*rad" />
+                <layer module="Module">
+                    <row nmodules="1"/>
+                    <column nmodules="1"/>
+                </layer>
+            </section>
+
+            <!-- -Y Side -->
+            <section id="3" name="Yneg">
+                <position x="0" y="-Czt_Z/2" z="0" />
+                <rotation x="-pi/2*rad" y="0" z="-pi*rad" />
+                <layer module="Module">
+                    <row nmodules="1"/>
+                    <column nmodules="1"/>
+                </layer>
+            </section>
+
+            <!-- -X Side -->
+            <section id="4" name="Xneg">
+                <position x="-Czt_Z/2" y="0" z="0" />
+                <rotation x="0" y="pi/2*rad" z="pi/2*rad" />
+                <layer module="Module">
+                    <row nmodules="1"/>
+                    <column nmodules="1"/>
+                </layer>
+            </section>
+        </detector>
+    </detectors>
+
+    <!-- Readout/Segmentation/HitCollection Configuration-->
+    <readouts>
+        <readout name="CztHits">
+            <segmentation type="NoSegmentation"/>
+            <id>system:6,section:6,layer:4,row:8,column:8</id>
+            <!-- <segmentation type="CartesianGridXY" grid_size_x="Czt_Pitch_X" grid_size_y="Czt_Pitch_Y" offset_x="-Czt_X/2-Czt_Pitch_X/2" offset_y="-Czt_X/2-Czt_Pitch_Y/2" />
+                 <id>system:6,section:6,layer:4,row:8,column:8,x:32:16,y:16</id> -->
+        </readout>
+    </readouts>
+</lccdd>

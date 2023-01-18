@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+    <!-- Region  -->
+    <regions>
+        <region name="Calo_Region" eunit="MeV" lunit="mm" cut="0.001"/>
+    </regions>
+
+    <!-- Dimensions -->
+    <define>
+        <!-- Crystal pitch size -->
+        <constant name="Czt_Pitch_X" value="5*mm" />
+        <constant name="Czt_Pitch_Y" value="5*mm" />
+
+        <!-- Crystal width and length -->
+        <constant name="Czt_Crystal_X" value="25*mm" />
+        <constant name="Czt_Crystal_Y" value="25*mm" />
+        <!-- Crystal thickness -->
+        <constant name="Czt_Crystal_Z" value="10*mm" />
+        <!-- Readout PCB thickness -->
+        <constant name="Czt_Pcb_Z" value="2*mm" />
+
+        <!-- Number of cells in each row/slice -->
+        <constant name="Czt_Module_Nx" value="20" />
+        <!-- Number of row/slices in each layer -->
+        <constant name="Czt_Module_Ny" value="20" />
+        <!-- Separation between adjacent cells of the same row/slice -->
+        <constant name="Czt_Module_Gap" value="0.2*mm" />
+
+        <!-- Number of layers on each side/section -->
+        <constant name="Czt_Layer_N" value="3" />
+        <!-- Between layers of the same section/side -->
+        <constant name="Czt_Layer_Gap" value="1*mm" />
+        <!-- Deviation from the perfect position of distance between the first layer plane and the vessel center -->
+        <constant name="Czt_Layer_Offset" value="(Czt_Module_Nx-1)*Czt_Module_Gap/2" />
+        <constant name="Czt_Layer_ExtraOffset" value="0" />
+    </define>
+
+
+    <detectors>
+        <detector id="2" name="Calorimeter" type="Megat_PlanarAssembly" readout="CztHits" region="Calo_Region">
+            <!-- region="Czt_Region" limits="Czt_LimitSet"> -->
+            <!-- in TPC gas -->
+            <material name="TPC_gas" comment="Default fill material"/>
+
+            <!-- The smallest detector unit (one crystal) -->
+            <module name="Module" x="Czt_Crystal_X" y="Czt_Crystal_Y">
+                <component name="Crystal" thickness="Czt_Crystal_Z" material="CdZnTe" vis="CztCrystalVis" sensitive="true" />
+                <component name="Pcb" thickness="Czt_Pcb_Z" material="PCB" vis="CztPcbVis" />
+            </module>
+
+            <!-- Each section matches one side of the detector -->
+            <!-- Bottom (-Z) Side -->
+            <section id="0" name="Bottom">
+                <position x="0" y="0" z="-(fiducial_z+Czt_Layer_Offset+Czt_Layer_ExtraOffset)" />
+                <layer module="Module" repeat="Czt_Layer_N"  gap="Czt_Layer_Gap">
+                    <row nmodules="Czt_Module_Nx" gap="Czt_Module_Gap" />
+                    <column nmodules="Czt_Module_Ny" gap="Czt_Module_Gap" />
+                </layer>
+            </section>
+
+            <!-- +Y Side -->
+            <section id="1" name="Ypos" gap="Czt_Layer_Gap">
+                <position x="0" y="fiducial_z+Czt_Layer_Offset+Czt_Layer_ExtraOffset" z="0" />
+                <rotation x="pi/2*rad" y="0" z="0" />
+                <layer module="Module" repeat="Czt_Layer_N">
+                    <row nmodules="Czt_Module_Nx" gap="Czt_Module_Gap" />
+                    <column nmodules="Czt_Module_Ny" gap="Czt_Module_Gap" />
+                </layer>
+            </section>
+
+            <!-- +X Side -->
+            <section id="2" name="Xpos">
+                <position x="fiducial_z+Czt_Layer_Offset+Czt_Layer_ExtraOffset" y="0" z="0" />
+                <rotation x="0" y="-pi/2*rad" z="-pi/2*rad" />
+                <layer module="Module" repeat="Czt_Layer_N"  gap="Czt_Layer_Gap">
+                    <row nmodules="Czt_Module_Nx" gap="Czt_Module_Gap" />
+                    <column nmodules="Czt_Module_Ny" gap="Czt_Module_Gap" />
+                </layer>
+            </section>
+
+            <!-- -Y Side -->
+            <section id="3" name="Yneg">
+                <position x="0" y="-(fiducial_z+Czt_Layer_Offset+Czt_Layer_ExtraOffset)" z="0" />
+                <rotation x="-pi/2*rad" y="0" z="-pi*rad" />
+                <layer module="Module" repeat="Czt_Layer_N"  gap="Czt_Layer_Gap">
+                    <row nmodules="Czt_Module_Nx" gap="Czt_Module_Gap" />
+                    <column nmodules="Czt_Module_Ny" gap="Czt_Module_Gap" />
+                </layer>
+            </section>
+
+            <!-- -X Side -->
+            <section id="4" name="Xneg">
+                <position x="-(fiducial_z+Czt_Layer_Offset+Czt_Layer_ExtraOffset)" y="0" z="0" />
+                <rotation x="0" y="pi/2*rad" z="pi/2*rad" />
+                <layer module="Module" repeat="Czt_Layer_N"  gap="Czt_Layer_Gap">
+                    <row nmodules="Czt_Module_Nx" gap="Czt_Module_Gap" />
+                    <column nmodules="Czt_Module_Ny" gap="Czt_Module_Gap" />
+                </layer>
+            </section>
+        </detector>
+    </detectors>
+
+    <!-- Readout/Segmentation/HitCollection Configuration-->
+    <readouts>
+        <readout name="CztHits">
+            <segmentation type="CartesianGridXY" grid_size_x="Czt_Pitch_X" grid_size_y="Czt_Pitch_Y" offset_x="-Czt_Crystal_X/2+Czt_Pitch_X/2" offset_y="-Czt_Crystal_Y/2+Czt_Pitch_Y/2" />
+            <id>system:6,section:6,layer:6,row:32:8,column:8,x:8,y:8</id>
+        </readout>
+    </readouts>
+</lccdd>

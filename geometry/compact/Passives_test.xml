@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+    <!-- Dimensions -->
+    <define>
+        <constant name="Vessel_Body_Rmin" value="410*mm" />
+        <constant name="Vessel_Body_Rmax" value="420*mm" />
+        <constant name="Vessel_Body_Z" value="600*mm" />
+
+        <constant name="Vessel_Endcap_Thickness" value="10*mm" />
+        <constant name="Vessel_Endcap_Rmax" value="Vessel_Body_Rmax*2/sqrt(3)" />
+        <constant name="Vessel_Endcap_Rmin" value="Vessel_Endcap_Rmax-Vessel_Endcap_Thickness" />
+    </define>
+
+    <detectors>
+        <detector id="10" name="Passives" type="DD4hep_VolumeAssembly">
+            <!-- Envelop assembly -->
+            <envelope name="Passives" material="TPC_gas" type="Assembly" />
+
+            <!-- Solids -->
+            <shape name="Vessel_Solid" type="BooleanShape" operation="Union">
+                <shape type="BooleanShape" operation="Subtraction">
+                    <shape type="Sphere" rmin="Vessel_Endcap_Rmin" rmax="Vessel_Endcap_Rmax" theta="0*rad" deltatheta="pi*rad" phi="0*rad" deltaphi="2*pi*rad"/>
+                    <shape type="HalfSpace">
+                        <point x="0" y="0" z="Vessel_Endcap_Rmax/2"/>
+                        <normal x="0" y="0" z="1*mm"/>
+                    </shape>
+                    <position x="0" y="0" z="Vessel_Body_Z/2-Vessel_Endcap_Rmax/2" />
+                </shape>
+                <shape type="BooleanShape" operation="Union">
+                    <shape type="Tube" rmin="Vessel_Body_Rmin" rmax="Vessel_Body_Rmax" dz="Vessel_Body_Z/2"/>
+                    <shape type="BooleanShape" operation="Subtraction">
+                        <shape type="Sphere" rmin="Vessel_Endcap_Rmin" rmax="Vessel_Endcap_Rmax" theta="0*rad" deltatheta="pi*rad" phi="0*rad" deltaphi="2*pi*rad"/>
+                        <shape type="HalfSpace">
+                            <point x="0" y="0" z="Vessel_Endcap_Rmax/2"/>
+                            <normal x="0" y="0" z="1*mm"/>
+                        </shape>
+                        <position x="0" y="0" z="-(Vessel_Body_Z/2-Vessel_Endcap_Rmax/2)" />
+                        <rotation x="pi*rad" y="0" z="0"/>
+                    </shape>
+                </shape>
+                <position x="0" y="0" z="0" />
+            </shape>
+
+            <!-- Volume -->
+            <volume name="Vessel" shape="Vessel_Solid" material="stainless_steel" vis="VesselVis"/>
+
+            <!-- placement -->
+            <physvol volume="Vessel">
+                <position x="0" y="0" z="0" />
+            </physvol>
+        </detector>
+    </detectors>
+</lccdd>
