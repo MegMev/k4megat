@@ -37,7 +37,6 @@ endif()
 
 include(cmake/MegatMacro.cmake)
 
-add_subdirectory(k4libs)
 add_subdirectory(mypackage)
 add_subdirectory(detector)
 
