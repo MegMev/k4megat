@@ -15,10 +15,10 @@ geoservice = GeoSvc("GeoSvc", detectors=[path.join(detector_path, 'geometry/comp
                     OutputLevel = WARNING)
 
 # region & limits
-from Configurables import SimG4UserLimitRegion
-regionTpc = SimG4UserLimitRegion("TpcLimits")
-regionTpc.volumeNames = ["Tracker"]
-regionTpc.maxStep = 2*units.mm
+# from Configurables import SimG4UserLimitRegion
+# regionTpc = SimG4UserLimitRegion("TpcLimits")
+# regionTpc.volumeNames = ["Tracker"]
+# regionTpc.maxStep = 2*units.mm
 ### need to append step limiter to the main physics list
 from Configurables import SimG4UserLimitPhysicsList
 physicslist = SimG4UserLimitPhysicsList("Physics")
@@ -36,7 +36,7 @@ from Configurables import SimG4Svc
 geantservice = SimG4Svc("SimG4Svc")
 geantservice.detector='SimG4DD4hepDetector'
 geantservice.physicslist=physicslist
-geantservice.regions=[regionTpc]
+# geantservice.regions=[regionTpc]
 geantservice.actions= actions
 geantservice.g4PostInitCommands += ["/run/setCut 0.1 mm"]
 # geantservice.g4PostInitCommands  += ["/tracking/storeTrajectory 1"]
@@ -60,7 +60,7 @@ saveCalo.CaloHits.Path = 'CztHits'
 
 from Configurables import SimG4SaveTrackerHits
 saveTpc = SimG4SaveTrackerHits('saveTpc',readoutNames = ['TpcHits'])
-saveTpc.SimTrackerHits.Path = 'TpcHits'
+saveTpc.SimTrackHits.Path = 'TpcHits'
 
 ##### save trajectory and history
 # from Configurables import SimG4SaveTrajectory
@@ -79,9 +79,15 @@ geantsim = SimG4Alg('SimG4Alg',
                     eventProvider = pgun,
                     OutputLevel = DEBUG)
 
+# output to root file
+from Configurables import PodioOutput
+out = PodioOutput('out')
+out.filename = 'megat.gaudi.root'
+out.outputCommands = ['keep *']
+
 # ApplicationMgr
 from Configurables import ApplicationMgr
-ApplicationMgr( TopAlg = [geantsim, createcellsBarrel, energy_in_layers],
+ApplicationMgr( TopAlg = [geantsim, out],
                 EvtSel = 'NONE',
                 EvtMax = 10,
                 # order is important, as GeoSvc is needed by G4SimSvc
