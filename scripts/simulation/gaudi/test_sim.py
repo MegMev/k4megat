@@ -11,7 +11,7 @@ from Configurables import GeoSvc
 from os import environ, path
 detector_path = environ.get("MEGAT_ROOT", "")
 geoservice = GeoSvc("GeoSvc", detectors=[path.join(detector_path, 'geometry/compact/Megat.xml')],
-                    # sensitiveTypes={'tracker':'SimpleTpcSD','calorimeter':'SimpleCaloSD'},
+                    sensitiveTypes={'tracker':'SimpleTpcSD','calorimeter':'AggregateCalorimeterSD'},
                     OutputLevel = WARNING)
 
 # region & limits
