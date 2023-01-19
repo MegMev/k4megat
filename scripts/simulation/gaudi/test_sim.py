@@ -1,4 +1,5 @@
 from Gaudi.Configuration import *
+import GaudiKernel.SystemOfUnits as units
 
 # TES
 from Configurables import k4DataSvc
