@@ -75,7 +75,9 @@ savehisttool.GenParticles.Path = "SimParticles"
 from Configurables import SimG4Alg
 geantsim = SimG4Alg('SimG4Alg',
                     outputs= ['SimG4SaveCalHits/saveCalo',
-                              'SimG4SaveTrackerHits/saveTpc'],
+                              'SimG4SaveTrackerHits/saveTpc',
+                              'SimG4SaveParticleHistory/saveHistory'
+                              ],
                     eventProvider = pgun,
                     OutputLevel = DEBUG)
 
