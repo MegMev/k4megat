@@ -58,6 +58,8 @@ add_subdirectory(detector)
 #########################
 configure_file(cmake/thismegat.sh       bin/thismegat.sh       @ONLY)
 install(FILES    ${CMAKE_BINARY_DIR}/bin/thismegat.sh DESTINATION bin )
+configure_file(cmake/thismegat_only.sh       bin/thismegat_only.sh       @ONLY)
+install(FILES    ${CMAKE_BINARY_DIR}/bin/thismegat_only.sh DESTINATION bin )
 
 
 # install(EXPORT ${PROJECT_NAME}Targets
