@@ -1,4 +1,4 @@
-if(not USE_EXTERNAL_CORE)
+if(NOT USE_EXTERNAL_K4CORE)
   SUBDIRLIST(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
   foreach(subdir ${SUBDIRS})
     add_subdirectory(${subdir})
