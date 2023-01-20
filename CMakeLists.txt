@@ -18,9 +18,14 @@ endif()
 
 find_package(podio)
 find_package(EDM4HEP)
-find_package(k4FWCore)
-find_package(k4SimGeant4)
 find_package(CLHEP)
+set(MEGAT_CORE k4FWCore)
+option(USE_EXTERNAL_K4CORE "Use external k4FWCore, make it exists" ON)
+mark_as_advanced(USE_EXTERNAL_K4CORE)
+if(USE_EXTERNAL_K4CORE)
+  find_package(k4FWCore)
+  set(MEGAT_CORE k4FWCore::k4FWCore)
+endif()
 
 #---------------------------------------------------------------
 include(GNUInstallDirs)
@@ -41,6 +46,7 @@ endif()
 
 include(cmake/MegatMacro.cmake)
 
+add_subdirectory(k4libs)
 add_subdirectory(mypackage)
 add_subdirectory(detector)
 
@@ -92,7 +98,9 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/geometry/
 # message(STATUS "dd4hep lib dir: ${DD4hep_LIBRARIES}")
 
 
-message(STATUS "podio_dir: ${podio_DIR}")
-message(STATUS "podio_include_dir: ${podio_INCLUDE_DIR}")
-message(STATUS "podio lib dir: ${podio_LIBRARY_DIR}")
-message(STATUS "podio py dir: ${podio_PYTHON_DIR}")
+# message(STATUS "podio_dir: ${podio_DIR}")
+# message(STATUS "podio_include_dir: ${podio_INCLUDE_DIR}")
+# message(STATUS "podio lib dir: ${podio_LIBRARY_DIR}")
+# message(STATUS "podio py dir: ${podio_PYTHON_DIR}")
+
+# message(STATUS "MEGAT_CORE: ${MEGAT_CORE}")
