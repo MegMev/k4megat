@@ -19,11 +19,13 @@ endif()
 find_package(podio)
 find_package(EDM4HEP)
 find_package(CLHEP)
+
 set(MEGAT_CORE k4FWCore)
 option(USE_EXTERNAL_K4CORE "Use external k4FWCore, make it exists" ON)
 mark_as_advanced(USE_EXTERNAL_K4CORE)
 if(USE_EXTERNAL_K4CORE)
   find_package(k4FWCore)
+  find_package(k4SimGeant4)
   set(MEGAT_CORE k4FWCore::k4FWCore)
 endif()
 
@@ -75,12 +77,6 @@ install(FILES    ${CMAKE_BINARY_DIR}/bin/thismegat_only.sh DESTINATION bin )
 #   )
 
 # gaudi_install(CMAKE cmake/${PROJECT_NAME}Config.cmake)
-
-######## geometry files #############
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/geometry/
-  DESTINATION geometry
-  COMPONENT install
-)
 
 #########################################################
 # message(STATUS ${ROOT_DIR})
