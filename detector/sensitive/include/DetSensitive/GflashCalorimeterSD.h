@@ -10,7 +10,7 @@
 #include "G4VGFlashSensitiveDetector.hh"
 #include "G4VSensitiveDetector.hh"
 
-namespace k4 {
+namespace megat {
 class Geant4CaloHit;
 }
 
@@ -64,7 +64,7 @@ public:
 
 private:
   /// Collection of calorimeter hits that get registered in G4Event and deleted in ~G4Event
-  G4THitsCollection<k4::Geant4CaloHit>* m_calorimeterCollection;
+  G4THitsCollection<megat::Geant4CaloHit>* m_calorimeterCollection;
   /// Segmentation of the detector used to retrieve the cell Ids
   dd4hep::Segmentation m_seg;
 };

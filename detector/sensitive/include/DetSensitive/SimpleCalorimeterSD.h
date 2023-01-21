@@ -8,10 +8,7 @@
 #include "G4THitsCollection.hh"
 #include "G4VSensitiveDetector.hh"
 
-namespace k4 {
-class Geant4CaloHit;
-
-}
+#include "DetCommon/Geant4CaloHit.h"
 
 /** SimpleCalorimeterSD DetectorDescription/DetSensitive/src/SimpleCalorimeterSD.h SimpleCalorimeterSD.h
  *
@@ -53,7 +50,7 @@ public:
 
 private:
   /// Collection of calorimeter hits
-  G4THitsCollection<k4::Geant4CaloHit>* m_calorimeterCollection;
+  G4THitsCollection<Geant4CaloHit>* m_calorimeterCollection;
   /// Segmentation of the detector used to retrieve the cell Ids
   dd4hep::Segmentation m_seg;
 };

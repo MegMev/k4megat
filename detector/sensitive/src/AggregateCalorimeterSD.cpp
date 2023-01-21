@@ -3,7 +3,7 @@
 
 // FCCSW
 #include "DetCommon/DetUtils.h"
-#include "SimG4Common/Geant4CaloHit.h"
+#include "DetCommon/Geant4CaloHit.h"
 
 
 // DD4hep
@@ -31,7 +31,7 @@ void AggregateCalorimeterSD::Initialize(G4HCofThisEvent* aHitsCollections) {
   // create a collection of hits and add it to G4HCofThisEvent
   // deleted in ~G4Event
   m_calorimeterCollection =
-      new G4THitsCollection<k4::Geant4CaloHit>(SensitiveDetectorName, collectionName[0]);
+      new G4THitsCollection<megat::Geant4CaloHit>(SensitiveDetectorName, collectionName[0]);
   aHitsCollections->AddHitsCollection(G4SDManager::GetSDMpointer()->GetCollectionID(m_calorimeterCollection),
                                       m_calorimeterCollection);
 }
@@ -47,11 +47,11 @@ bool AggregateCalorimeterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   CLHEP::Hep3Vector midPos = 0.5 * (postPos + prePos);
   // check the cell ID
   uint64_t id = utils::cellID(m_seg, *aStep);
-  k4::Geant4CaloHit* hit = nullptr;
-  k4::Geant4CaloHit* hitMatch = nullptr;
+  megat::Geant4CaloHit* hit = nullptr;
+  megat::Geant4CaloHit* hitMatch = nullptr;
   // Check if there is already some energy deposit in that cell
   for (size_t i = 0; i < m_calorimeterCollection->entries(); i++) {
-    hit = dynamic_cast<k4::Geant4CaloHit*>(m_calorimeterCollection->GetHit(i));
+    hit = dynamic_cast<megat::Geant4CaloHit*>(m_calorimeterCollection->GetHit(i));
     if (hit->cellID == id) {
       hitMatch = hit;
       hitMatch->energyDeposit += edep;
@@ -60,7 +60,7 @@ bool AggregateCalorimeterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   }
   // if not, create a new hit
   // deleted in ~G4Event
-  hitMatch = new k4::Geant4CaloHit(0, // track->GetTrackID()
+  hitMatch = new megat::Geant4CaloHit(0, // track->GetTrackID()
                                     0, // track->GetDefinition()->GetPDGEncoding()
                                     edep,
                                     0 // track ->GetGlobalTime()

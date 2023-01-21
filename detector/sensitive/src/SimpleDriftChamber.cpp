@@ -13,7 +13,7 @@
 // Geant4
 #include "G4SDManager.hh"
 
-#include "SimG4Common/Geant4PreDigiTrackHit.h"
+#include "DetCommon/Geant4PreDigiTrackHit.h"
 
 namespace megat {
 SimpleDriftChamber::SimpleDriftChamber(const std::string& aDetectorName,
@@ -30,7 +30,7 @@ void SimpleDriftChamber::Initialize(G4HCofThisEvent* aHitsCollections) {
   // create a collection of hits and add it to G4HCofThisEvent
   // deleted in ~G4Event
   m_driftChamberCollection =
-      new G4THitsCollection<k4::Geant4PreDigiTrackHit>(SensitiveDetectorName, collectionName[0]);
+      new G4THitsCollection<megat::Geant4PreDigiTrackHit>(SensitiveDetectorName, collectionName[0]);
   aHitsCollections->AddHitsCollection(G4SDManager::GetSDMpointer()->GetCollectionID(m_driftChamberCollection),
                                       m_driftChamberCollection);
 }
@@ -51,7 +51,7 @@ bool SimpleDriftChamber::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   CLHEP::Hep3Vector prePos = aStep->GetPreStepPoint()->GetPosition();
   CLHEP::Hep3Vector postPos = aStep->GetPostStepPoint()->GetPosition();
 
-  auto hit = new k4::Geant4PreDigiTrackHit(
+  auto hit = new megat::Geant4PreDigiTrackHit(
       track->GetTrackID(), track->GetDefinition()->GetPDGEncoding(), edep, track->GetGlobalTime());
 
   hit->cellID = utils::cellID(m_seg, *aStep);

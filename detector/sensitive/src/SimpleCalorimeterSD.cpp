@@ -2,7 +2,7 @@
 
 // FCCSW
 #include "DetCommon/DetUtils.h"
-#include "SimG4Common/Geant4CaloHit.h"
+#include "DetCommon/Geant4CaloHit.h"
 
 // DD4hep
 #include "DDG4/Defs.h"
@@ -29,7 +29,7 @@ SimpleCalorimeterSD::~SimpleCalorimeterSD() {}
 void SimpleCalorimeterSD::Initialize(G4HCofThisEvent* aHitsCollections) {
   // create a collection of hits and add it to G4HCofThisEvent
   // deleted in ~G4Event
-  m_calorimeterCollection = new G4THitsCollection<k4::Geant4CaloHit>(SensitiveDetectorName, collectionName[0]);
+  m_calorimeterCollection = new G4THitsCollection<Geant4CaloHit>(SensitiveDetectorName, collectionName[0]);
   aHitsCollections->AddHitsCollection(G4SDManager::GetSDMpointer()->GetCollectionID(m_calorimeterCollection),
                                       m_calorimeterCollection);
 }
@@ -41,7 +41,7 @@ bool SimpleCalorimeterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
 
   // as in dd4hep::sim::Geant4GenericSD<Calorimeter>
   const G4Track* track = aStep->GetTrack();
-  auto hit = new k4::Geant4CaloHit(
+  auto hit = new Geant4CaloHit(
       track->GetTrackID(), track->GetDefinition()->GetPDGEncoding(), edep, track->GetGlobalTime());
   hit->cellID = utils::cellID(m_seg, *aStep);
   hit->energyDeposit = edep;

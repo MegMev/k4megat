@@ -2,7 +2,7 @@
 
 // FCCSW
 #include "DetCommon/DetUtils.h"
-#include "SimG4Common/Geant4CaloHit.h"
+#include "DetCommon/Geant4CaloHit.h"
 
 // DD4hep
 #include "DDG4/Geant4Converter.h"
@@ -42,7 +42,7 @@ void GflashCalorimeterSD::Initialize(G4HCofThisEvent* aHitsCollections) {
   // create a collection of hits and add it to G4HCofThisEvent
   // deleted in ~G4Event
   m_calorimeterCollection =
-      new G4THitsCollection<k4::Geant4CaloHit>(SensitiveDetectorName, collectionName[0]);
+      new G4THitsCollection<megat::Geant4CaloHit>(SensitiveDetectorName, collectionName[0]);
   aHitsCollections->AddHitsCollection(G4SDManager::GetSDMpointer()->GetCollectionID(m_calorimeterCollection),
                                       m_calorimeterCollection);
 }
@@ -55,7 +55,7 @@ bool GflashCalorimeterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
 
   // create a new hit
   // deleted in ~G4Event
-  k4::Geant4CaloHit* hit = new k4::Geant4CaloHit();
+  megat::Geant4CaloHit* hit = new megat::Geant4CaloHit();
   CLHEP::Hep3Vector prePos = aStep->GetPreStepPoint()->GetPosition();
   hit->position = prePos;
   hit->cellID = utils::cellID(m_seg, *aStep);
@@ -71,7 +71,7 @@ bool GflashCalorimeterSD::ProcessHits(G4GFlashSpot* aSpot, G4TouchableHistory*) 
   if (edep == 0.) return false;
   // create a new hit
   // deleted in ~G4Event
-  k4::Geant4CaloHit* hit = new k4::Geant4CaloHit();
+  megat::Geant4CaloHit* hit = new megat::Geant4CaloHit();
   CLHEP::Hep3Vector geantPos = aSpot->GetEnergySpot()->GetPosition();
   hit->position = geantPos;
   hit->cellID = cellID(*aSpot);

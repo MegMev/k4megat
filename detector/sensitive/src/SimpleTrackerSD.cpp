@@ -2,7 +2,7 @@
 
 // FCCSW
 #include "DetCommon/DetUtils.h"
-#include "SimG4Common/Geant4PreDigiTrackHit.h"
+#include "DetCommon/Geant4PreDigiTrackHit.h"
 
 // DD4hep
 #include "DDG4/Geant4Mapping.h"
@@ -29,7 +29,7 @@ SimpleTrackerSD::~SimpleTrackerSD() {}
 void SimpleTrackerSD::Initialize(G4HCofThisEvent* aHitsCollections) {
   // create a collection of hits and add it to G4HCofThisEvent
   // deleted in ~G4Event
-  m_trackerCollection = new G4THitsCollection<k4::Geant4PreDigiTrackHit>(SensitiveDetectorName, collectionName[0]);
+  m_trackerCollection = new G4THitsCollection<megat::Geant4PreDigiTrackHit>(SensitiveDetectorName, collectionName[0]);
   aHitsCollections->AddHitsCollection(G4SDManager::GetSDMpointer()->GetCollectionID(m_trackerCollection),
                                       m_trackerCollection);
 }
@@ -44,7 +44,7 @@ bool SimpleTrackerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   CLHEP::Hep3Vector postPos = aStep->GetPostStepPoint()->GetPosition();
   // create a hit and add it to collection
   // deleted in ~G4Event
-  auto hit = new k4::Geant4PreDigiTrackHit(
+  auto hit = new megat::Geant4PreDigiTrackHit(
       track->GetTrackID(), track->GetDefinition()->GetPDGEncoding(), edep, track->GetGlobalTime());
   hit->cellID = utils::cellID(m_seg, *aStep);
   hit->prePos = prePos;

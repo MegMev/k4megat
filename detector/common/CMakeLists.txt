@@ -14,7 +14,6 @@ target_include_directories(DetCommon
 file(GLOB headers include/DetCommon/*.h)
 set_target_properties(DetCommon PROPERTIES PUBLIC_HEADER "${headers}")
 
-dd4hep_generate_rootmap(DetCommon)
 
 
 install(TARGETS DetCommon
@@ -24,6 +23,7 @@ install(TARGETS DetCommon
   PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/DetCommon"
   COMPONENT dev)
 
+dd4hep_generate_rootmap(DetCommon)
 
 #include(CTest)
 #gaudi_add_test(DumpSimpleBox

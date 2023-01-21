@@ -6,7 +6,7 @@
 file(GLOB sources src/*.cpp)
 add_library(DetSensitive SHARED ${sources})
 target_link_libraries(DetSensitive DD4hep::DDCore DD4hep::DDG4
-                      k4SimGeant4::SimG4Common DetCommon)
+                      DetCommon)
 target_include_directories(DetSensitive
     PUBLIC
         $<INSTALL_INTERFACE:include>

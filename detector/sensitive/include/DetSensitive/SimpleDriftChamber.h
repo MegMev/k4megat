@@ -9,7 +9,7 @@
 #include "G4THitsCollection.hh"
 #include "G4VSensitiveDetector.hh"
 
-namespace k4 {
+namespace megat {
 
 class Geant4PreDigiTrackHit;
 }
@@ -42,7 +42,7 @@ public:
 
 private:
   /// Collection of tracker hits
-  G4THitsCollection<k4::Geant4PreDigiTrackHit>* m_driftChamberCollection;
+  G4THitsCollection<megat::Geant4PreDigiTrackHit>* m_driftChamberCollection;
   /// Segmentation of the detector used to retrieve the cell Ids
   dd4hep::Segmentation m_seg;
 
