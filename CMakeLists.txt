@@ -40,26 +40,19 @@ endif()
 
 # Set up C++ Standard
 # ``-DCMAKE_CXX_STANDARD=<standard>`` when invoking CMake
-set(CMAKE_CXX_STANDARD ${GAUDI_CXX_STANDARD} CACHE STRING "")
+set(CMAKE_CXX_STANDARD "17" CACHE STRING "")
 
 if(NOT CMAKE_CXX_STANDARD MATCHES "14|17")
   message(FATAL_ERROR "Unsupported C++ standard: ${CMAKE_CXX_STANDARD}")
 endif()
 
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 include(cmake/MegatMacro.cmake)
 
 add_subdirectory(k4libs)
-add_subdirectory(mypackage)
 add_subdirectory(detector)
-
-# if(BUILD_TESTING)
-#   add_subdirectory(test)
-# endif()
-
-# option(ENABLE_CPACK "Whether or not to use cpack config" OFF)
-# if(ENABLE_CPACK)
-#   include(cmake/${PROJECT_NAME}CPack.cmake)
-# endif()
+add_subdirectory(mypackage)
 
 #########################
 # Configure and install #
@@ -78,25 +71,17 @@ install(FILES    ${CMAKE_BINARY_DIR}/bin/thismegat_only.sh DESTINATION bin )
 
 # gaudi_install(CMAKE cmake/${PROJECT_NAME}Config.cmake)
 
-#########################################################
-# message(STATUS ${ROOT_DIR})
-# message(STATUS "gaudi_dir: ${Gaudi_DIR}")
-# message(STATUS "gaudi_root: ${Gaudi_ROOT}")
-# message(STATUS "gaudi bin dir: ${Gaudi_BINARY_DIR}")
-# message(STATUS "gaudi inc dir: ${Gaudi_INCLUDE_DIR}")
-# message(STATUS "gaudi lib dir: ${Gaudi_LIBRARY_DIR}")
-# message(STATUS "gaudi plg dir: ${Gaudi_PLUGINS_DIR}")
-# message(STATUS "gaudi pyt dir: ${Gaudi_PYTHON_DIR}")
+#########################
+# Test #
+#########################
+# if(BUILD_TESTING)
+#   add_subdirectory(test)
+# endif()
 
-
-# message(STATUS "dd4hep_dir: ${DD4hep_DIR}")
-# message(STATUS "dd4hep_include_dir: ${DD4hep_INCLUDE_DIRS}")
-# message(STATUS "dd4hep lib dir: ${DD4hep_LIBRARIES}")
-
-
-# message(STATUS "podio_dir: ${podio_DIR}")
-# message(STATUS "podio_include_dir: ${podio_INCLUDE_DIR}")
-# message(STATUS "podio lib dir: ${podio_LIBRARY_DIR}")
-# message(STATUS "podio py dir: ${podio_PYTHON_DIR}")
-
-# message(STATUS "MEGAT_CORE: ${MEGAT_CORE}")
+#########################
+# Packing #
+#########################
+# option(ENABLE_CPACK "Whether or not to use cpack config" OFF)
+# if(ENABLE_CPACK)
+#   include(cmake/${PROJECT_NAME}CPack.cmake)
+# endif()

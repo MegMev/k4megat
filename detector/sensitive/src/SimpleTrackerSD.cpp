@@ -29,7 +29,7 @@ SimpleTrackerSD::~SimpleTrackerSD() {}
 void SimpleTrackerSD::Initialize(G4HCofThisEvent* aHitsCollections) {
   // create a collection of hits and add it to G4HCofThisEvent
   // deleted in ~G4Event
-  m_trackerCollection = new G4THitsCollection<megat::Geant4PreDigiTrackHit>(SensitiveDetectorName, collectionName[0]);
+  m_trackerCollection = new G4THitsCollection<Geant4PreDigiTrackHit>(SensitiveDetectorName, collectionName[0]);
   aHitsCollections->AddHitsCollection(G4SDManager::GetSDMpointer()->GetCollectionID(m_trackerCollection),
                                       m_trackerCollection);
 }
@@ -44,9 +44,9 @@ bool SimpleTrackerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   CLHEP::Hep3Vector postPos = aStep->GetPostStepPoint()->GetPosition();
   // create a hit and add it to collection
   // deleted in ~G4Event
-  auto hit = new megat::Geant4PreDigiTrackHit(
+  auto hit = new Geant4PreDigiTrackHit(
       track->GetTrackID(), track->GetDefinition()->GetPDGEncoding(), edep, track->GetGlobalTime());
-  hit->cellID = utils::cellID(m_seg, *aStep);
+  hit->cellID = utils::cellID(m_seg, *aStep, true);
   hit->prePos = prePos;
   hit->postPos = postPos;
   m_trackerCollection->insert(hit);

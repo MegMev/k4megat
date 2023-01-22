@@ -9,10 +9,6 @@
 #include "G4THitsCollection.hh"
 #include "G4VSensitiveDetector.hh"
 
-namespace megat {
-class Geant4CaloHit;
-}
-
 /** AggregateCalorimeterSD DetectorDescription/DetSensitive/src/AggregateCalorimeterSD.h AggregateCalorimeterSD.h
  *
  *  Sensitive detector for calorimeter (aggregates energy deposits within each cell).
@@ -24,6 +20,8 @@ class Geant4CaloHit;
  */
 
 namespace megat {
+class Geant4CaloHit;
+
 class AggregateCalorimeterSD : public G4VSensitiveDetector {
 public:
   /** Constructor.
@@ -53,7 +51,7 @@ public:
 
 private:
   /// Collection of calorimeter hits
-  G4THitsCollection<megat::Geant4CaloHit>* m_calorimeterCollection;
+  G4THitsCollection<Geant4CaloHit>* m_calorimeterCollection;
   /// Segmentation of the detector used to retrieve the cell Ids
   dd4hep::Segmentation m_seg;
 };

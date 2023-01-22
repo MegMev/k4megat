@@ -8,10 +8,6 @@
 #include "G4THitsCollection.hh"
 #include "G4VSensitiveDetector.hh"
 
-namespace megat {
-class Geant4CaloHit;
-}
-
 /** BirksLawCalorimeterSD DetectorDescription/DetSensitive/src/BirksLawCalorimeterSD.h BirksLawCalorimeterSD.h
  *
  *  Sensitive detector for calorimeters, using Polystyrene.
@@ -24,6 +20,8 @@ class Geant4CaloHit;
  */
 
 namespace megat {
+class Geant4CaloHit;
+
 class BirksLawCalorimeterSD : public G4VSensitiveDetector {
 public:
   /** Constructor.
@@ -56,7 +54,7 @@ public:
 
 private:
   /// Collection of calorimeter hits
-  G4THitsCollection<megat::Geant4CaloHit>* m_calorimeterCollection;
+  G4THitsCollection<Geant4CaloHit>* m_calorimeterCollection;
   /// Segmentation of the detector used to retrieve the cell Ids
   dd4hep::Segmentation m_seg;
   // Variables needed for the calculation of birks law

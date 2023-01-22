@@ -16,49 +16,49 @@ namespace sim {
 // Factory method to create an instance of SimpleTrackerSD
 static G4VSensitiveDetector* create_simple_tracker_sd(const std::string& aDetectorName, dd4hep::Detector& aLcdd) {
   std::string readoutName = aLcdd.sensitiveDetector(aDetectorName).readout().name();
-  return new megat::SimpleTrackerSD(
+  return new SimpleTrackerSD(
       aDetectorName, readoutName, aLcdd.sensitiveDetector(aDetectorName).readout().segmentation());
 }
 // Factory method to create an instance of SimpleCalorimeterSD
 static G4VSensitiveDetector* create_simple_calorimeter_sd(const std::string& aDetectorName,
                                                           dd4hep::Detector& aLcdd) {
   std::string readoutName = aLcdd.sensitiveDetector(aDetectorName).readout().name();
-  return new megat::SimpleCalorimeterSD(
+  return new SimpleCalorimeterSD(
       aDetectorName, readoutName, aLcdd.sensitiveDetector(aDetectorName).readout().segmentation());
 }
 // Factory method to create an instance of SimpleCalorimeterSD with Birks law
 static G4VSensitiveDetector* create_birks_law_calorimeter_sd(const std::string& aDetectorName,
                                                              dd4hep::Detector& aLcdd) {
   std::string readoutName = aLcdd.sensitiveDetector(aDetectorName).readout().name();
-  return new megat::BirksLawCalorimeterSD(
+  return new BirksLawCalorimeterSD(
       aDetectorName, readoutName, aLcdd.sensitiveDetector(aDetectorName).readout().segmentation());
 }
 // Factory method to create an instance of AggregateCalorimeterSD
 static G4VSensitiveDetector* create_aggregate_calorimeter_sd(const std::string& aDetectorName,
                                                              dd4hep::Detector& aLcdd) {
   std::string readoutName = aLcdd.sensitiveDetector(aDetectorName).readout().name();
-  return new megat::AggregateCalorimeterSD(
+  return new AggregateCalorimeterSD(
       aDetectorName, readoutName, aLcdd.sensitiveDetector(aDetectorName).readout().segmentation());
 }
 // Factory method to create an instance of GflashCalorimeterSD
 static G4VSensitiveDetector* create_gflash_calorimeter_sd(const std::string& aDetectorName,
                                                           dd4hep::Detector& aLcdd) {
   std::string readoutName = aLcdd.sensitiveDetector(aDetectorName).readout().name();
-  return new megat::GflashCalorimeterSD(
+  return new GflashCalorimeterSD(
       aDetectorName, readoutName, aLcdd.sensitiveDetector(aDetectorName).readout().segmentation());
 }
 // Factory method to create an instance of FullParticleAbsorptionSD
 static G4VSensitiveDetector* create_full_particle_absorbtion_sd(const std::string& aDetectorName,
                                                                 dd4hep::Detector& aLcdd) {
   std::string readoutName = aLcdd.sensitiveDetector(aDetectorName).readout().name();
-  return new megat::FullParticleAbsorptionSD(
+  return new FullParticleAbsorptionSD(
       aDetectorName, readoutName, aLcdd.sensitiveDetector(aDetectorName).readout().segmentation());
 }
 // Factory method to create an instance of SimpleDriftChamber
 static G4VSensitiveDetector* create_simple_driftchamber(const std::string& aDetectorName, 
 							dd4hep::Detector& aLcdd) {
   std::string readoutName = aLcdd.sensitiveDetector(aDetectorName).readout().name();
-  return new megat::SimpleDriftChamber(
+  return new SimpleDriftChamber(
       aDetectorName, readoutName, aLcdd.sensitiveDetector(aDetectorName).readout().segmentation());
 }
 }

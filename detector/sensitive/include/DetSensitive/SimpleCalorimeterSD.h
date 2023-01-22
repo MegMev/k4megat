@@ -8,8 +8,6 @@
 #include "G4THitsCollection.hh"
 #include "G4VSensitiveDetector.hh"
 
-#include "DetCommon/Geant4CaloHit.h"
-
 /** SimpleCalorimeterSD DetectorDescription/DetSensitive/src/SimpleCalorimeterSD.h SimpleCalorimeterSD.h
  *
  *  Simple sensitive detector for calorimeter.
@@ -22,6 +20,8 @@
  */
 
 namespace megat {
+class Geant4CaloHit;
+
 class SimpleCalorimeterSD : public G4VSensitiveDetector {
 public:
   /** Constructor.

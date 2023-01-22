@@ -43,7 +43,7 @@ bool SimpleCalorimeterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   const G4Track* track = aStep->GetTrack();
   auto hit = new Geant4CaloHit(
       track->GetTrackID(), track->GetDefinition()->GetPDGEncoding(), edep, track->GetGlobalTime());
-  hit->cellID = utils::cellID(m_seg, *aStep);
+  hit->cellID = utils::cellID(m_seg, *aStep, true);
   hit->energyDeposit = edep;
   CLHEP::Hep3Vector prePos = aStep->GetPreStepPoint()->GetPosition();
   hit->position = prePos;
