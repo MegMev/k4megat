@@ -1,4 +1,4 @@
-#include "SimG4Common/GdmlDetectorConstruction.h"
+#include "SimKernel/GdmlDetectorConstruction.h"
 #include "G4SDManager.hh"
 
 namespace sim {

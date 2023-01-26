@@ -2,7 +2,7 @@
 
 // FCCSW
 #include "SimSensitive/Utils.h"
-#include "SimG4Common/Geant4PreDigiTrackHit.h"
+#include "SimKernel/Geant4PreDigiTrackHit.h"
 
 // DD4hep
 #include "DDG4/Geant4Mapping.h"

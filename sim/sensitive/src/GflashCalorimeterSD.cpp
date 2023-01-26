@@ -2,7 +2,7 @@
 
 // FCCSW
 #include "SimSensitive/Utils.h"
-#include "SimG4Common/Geant4CaloHit.h"
+#include "SimKernel/Geant4CaloHit.h"
 
 // DD4hep
 #include "DDG4/Geant4Converter.h"

@@ -36,8 +36,8 @@ hepmc_converter.GenParticles.Path = "GenParticles"
 ApplicationMgr().TopAlg += [hepmc_converter]
 
 
-from Configurables import SimG4CrossingAngleBoost
-xAngleBoost = SimG4CrossingAngleBoost('xAngleBoost')
+from Configurables import SimCrossingAngleBoost
+xAngleBoost = SimCrossingAngleBoost('xAngleBoost')
 xAngleBoost.InParticles = 'GenParticles'
 xAngleBoost.OutParticles = 'BoostedParticles'
 xAngleBoost.CrossingAngle = 0.015  # rad

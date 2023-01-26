@@ -28,19 +28,19 @@ geoservice = GeoSvc("GeoSvc", detectors=[ 'file:Detector/DetFCChhBaseline1/compa
 
 # Geant4 service
 # Configures the Geant simulation: geometry, physics list and user actions
-from Configurables import SimG4Svc
-geantservice = SimG4Svc("SimG4Svc", detector='SimG4DD4hepDetector', physicslist="SimG4TestPhysicsList", actions="SimG4FullSimActions")
+from Configurables import SimSvc
+geantservice = SimSvc("SimSvc", detector='SimDD4hepDetector', physicslist="SimTestPhysicsList", actions="SimFullSimActions")
 
 # Geant4 algorithm
 # Translates EDM to G4Event, passes the event to G4, writes out outputs via tools
 # and a tool that saves the calorimeter hits
-from Configurables import SimG4Alg, SimG4SaveCalHits
-savetool = SimG4SaveCalHits("saveHits",readoutNames = ["ECalBarrelEta"])
+from Configurables import SimAlg, SimSaveCalHits
+savetool = SimSaveCalHits("saveHits",readoutNames = ["ECalBarrelEta"])
 savetool.positionedCaloHits.Path = "PositionedHits"
 savetool.caloHits.Path = "Hits"
 
-geantsim = SimG4Alg("SimG4Alg",
-                       outputs= ["SimG4SaveCalHits/saveHits"],
+geantsim = SimAlg("SimAlg",
+                       outputs= ["SimSaveCalHits/saveHits"],
                        OutputLevel=DEBUG)
 
 from Configurables import CreateVolumeCaloPositions

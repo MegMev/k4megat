@@ -1,5 +1,5 @@
 // local
-#include "SimG4Common/ConstantField.h"
+#include "SimKernel/ConstantField.h"
 // Geant 4
 #include "G4SystemOfUnits.hh"
 

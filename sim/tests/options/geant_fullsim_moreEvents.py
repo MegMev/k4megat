@@ -37,18 +37,18 @@ geoservice = GeoSvc("GeoSvc", detectors=['file:../../../Detector/DetFCChhBaselin
   'file:../../../Detector/DetFCChhTrackerTkLayout/compact/Tracker.xml'],
                     OutputLevel = DEBUG)
 
-from Configurables import SimG4Svc
-geantservice = SimG4Svc("SimG4Svc", detector='SimG4DD4hepDetector', physicslist="SimG4FtfpBert", actions="SimG4FullSimActions", )
+from Configurables import SimSvc
+geantservice = SimSvc("SimSvc", detector='SimDD4hepDetector', physicslist="SimFtfpBert", actions="SimFullSimActions", )
 
-from Configurables import SimG4Alg, SimG4SaveTrackerHits, SimG4PrimariesFromEdmTool
-savetrackertool = SimG4SaveTrackerHits("SimG4SaveTrackerHits", readoutNames=["TrackerBarrelReadout", "TrackerEndcapReadout"])
+from Configurables import SimAlg, SimSaveTrackerHits, SimPrimariesFromEdmTool
+savetrackertool = SimSaveTrackerHits("SimSaveTrackerHits", readoutNames=["TrackerBarrelReadout", "TrackerEndcapReadout"])
 savetrackertool.positionedTrackHits.Path = "positionedHits"
 savetrackertool.trackHits.Path = "hits"
 
-particle_converter = SimG4PrimariesFromEdmTool("EdmConverter")
+particle_converter = SimPrimariesFromEdmTool("EdmConverter")
 particle_converter.genParticles.Path = "allGenParticles"
-geantsim = SimG4Alg("SimG4Alg",
-                    outputs = ["SimG4SaveTrackerHits/SimG4SaveTrackerHits"],
+geantsim = SimAlg("SimAlg",
+                    outputs = ["SimSaveTrackerHits/SimSaveTrackerHits"],
                     eventProvider=particle_converter)
 
 from Configurables import PodioOutput

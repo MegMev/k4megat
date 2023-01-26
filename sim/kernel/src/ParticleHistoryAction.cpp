@@ -1,6 +1,6 @@
-#include "SimG4Common/ParticleHistoryAction.h"
+#include "SimKernel/ParticleHistoryAction.h"
 
-#include "SimG4Common/EventInformation.h"
+#include "SimKernel/EventInformation.h"
 
 #include "G4EventManager.hh"
 #include "G4LorentzVector.hh"

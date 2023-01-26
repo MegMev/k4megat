@@ -16,19 +16,19 @@ podioevent = FCCDataSvc("EventDataSvc")
 # Get lists of algorithms and services that provide input to the simulation
 from common_config import mc_particle_algs, mc_particle_svcs
 
-from Configurables import SimG4Svc, SimG4GdmlDetector
+from Configurables import SimSvc, SimGdmlDetector
 ## Geant4 service
 # Configures the Geant simulation: geometry, physics list and user actions
 # first create tool that builds geometry from GDML
-det = SimG4GdmlDetector("SimG4GdmlDetector", gdml = "Sim/SimG4Common/gdml/example.xml")
-geantservice = SimG4Svc("SimG4Svc", detector=det, physicslist="SimG4FtfpBert", actions="SimG4FullSimActions")
+det = SimGdmlDetector("SimGdmlDetector", gdml = "Sim/SimKernel/gdml/example.xml")
+geantservice = SimSvc("SimSvc", detector=det, physicslist="SimFtfpBert", actions="SimFullSimActions")
 
-from Configurables import SimG4Alg, SimG4PrimariesFromEdmTool
+from Configurables import SimAlg, SimPrimariesFromEdmTool
 ## Geant4 algorithm
 # Translates EDM to G4Event, passes the event to G4
-particle_converter = SimG4PrimariesFromEdmTool("EdmConverter")
+particle_converter = SimPrimariesFromEdmTool("EdmConverter")
 particle_converter.genParticles.Path = "allGenParticles"
-geantsim = SimG4Alg("SimG4Alg",
+geantsim = SimAlg("SimAlg",
                     eventProvider=particle_converter)
 
 from Configurables import PodioOutput
@@ -40,6 +40,6 @@ from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg=mc_particle_algs + [geantsim, out],
                 EvtSel='NONE',
                 EvtMax=1,
-                ## order is important, as GeoSvc is needed by SimG4Svc
+                ## order is important, as GeoSvc is needed by SimSvc
                 ExtSvc=mc_particle_svcs + [podioevent, geantservice],
                 OutputLevel=DEBUG)

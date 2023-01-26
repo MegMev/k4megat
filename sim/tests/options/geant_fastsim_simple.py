@@ -31,31 +31,31 @@ geoservice = GeoSvc("GeoSvc", detectors=['file:../../../Detector/DetFCChhBaselin
 
 # Geant4 service
 # Configures the Geant simulation: geometry, physics list and user actions
-from Configurables import SimG4Svc, SimG4FastSimPhysicsList, SimG4FastSimTrackerRegion
+from Configurables import SimSvc, SimFastSimPhysicsList, SimFastSimTrackerRegion
 ## create region and a parametrisation model with a default smearing (sigma=const=0.01)
-regiontool = SimG4FastSimTrackerRegion("model", volumeNames=["TrackerEnvelopeBarrel"])
+regiontool = SimFastSimTrackerRegion("model", volumeNames=["TrackerEnvelopeBarrel"])
 # create overlay on top of FTFP_BERT physics list, attaching fast sim/parametrization process
-physicslisttool = SimG4FastSimPhysicsList("Physics", fullphysics="SimG4FtfpBert")
+physicslisttool = SimFastSimPhysicsList("Physics", fullphysics="SimFtfpBert")
 # attach those tools to the G4 service
-geantservice = SimG4Svc("SimG4Svc", physicslist=physicslisttool, regions=["SimG4FastSimTrackerRegion/model"])
+geantservice = SimSvc("SimSvc", physicslist=physicslisttool, regions=["SimFastSimTrackerRegion/model"])
 
 # Geant4 algorithm
 # Translates EDM to G4Event, passes the event to G4, writes out outputs via tools
-from Configurables import SimG4Alg, SimG4SaveSmearedParticles, SimG4PrimariesFromEdmTool
+from Configurables import SimAlg, SimSaveSmearedParticles, SimPrimariesFromEdmTool
 # first, create a tool that saves the smeared particles
-# Name of that tool in GAUDI is "XX/YY" where XX is the tool class name ("SimG4SaveSmearedParticles")
+# Name of that tool in GAUDI is "XX/YY" where XX is the tool class name ("SimSaveSmearedParticles")
 # and YY is the given name ("saveSmearedParticles")
-saveparticlestool = SimG4SaveSmearedParticles("saveSmearedParticles")
+saveparticlestool = SimSaveSmearedParticles("saveSmearedParticles")
 saveparticlestool.particlesMCparticles.Path = "particleMCparticleAssociation"
 # next, create the G4 algorithm, giving the list of names of tools ("XX/YY")
-particle_converter = SimG4PrimariesFromEdmTool("EdmConverter")
+particle_converter = SimPrimariesFromEdmTool("EdmConverter")
 particle_converter.genParticles.Path = "allGenParticles"
-geantsim = SimG4Alg("SimG4Alg",
-                    outputs = ["SimG4SaveSmearedParticles/saveSmearedParticles"],
+geantsim = SimAlg("SimAlg",
+                    outputs = ["SimSaveSmearedParticles/saveSmearedParticles"],
                     eventProvider=particle_converter)
 
-from Configurables import SimG4FastSimHistograms
-hist = SimG4FastSimHistograms("fastHist")
+from Configurables import SimFastSimHistograms
+hist = SimFastSimHistograms("fastHist")
 hist.particlesMCparticles.Path = "particleMCparticleAssociation"
 THistSvc().Output = ["rec DATAFILE='histSimple.root' TYP='ROOT' OPT='RECREATE'"]
 THistSvc().PrintAll=True
@@ -73,7 +73,7 @@ from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg = [gen, hepmc_converter, geantsim, hist, out],
                 EvtSel = 'NONE',
                 EvtMax   = 1000,
-                # order is important, as GeoSvc is needed by SimG4Svc
+                # order is important, as GeoSvc is needed by SimSvc
                 ExtSvc = [podioevent, geoservice, geantservice],
                 OutputLevel=INFO
  )

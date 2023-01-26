@@ -1,8 +1,8 @@
-#include "SimG4Common/EventInformation.h"
+#include "SimKernel/EventInformation.h"
 
 #include "G4Track.hh"
 
-#include "SimG4Common/Units.h"
+#include "SimKernel/Units.h"
 
 #include "edm4hep/MCParticleCollection.h"
 

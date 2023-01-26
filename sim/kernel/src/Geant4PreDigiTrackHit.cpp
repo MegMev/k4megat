@@ -1,5 +1,5 @@
 
-#include "SimG4Common/Geant4PreDigiTrackHit.h"
+#include "SimKernel/Geant4PreDigiTrackHit.h"
 
 namespace megat {
 namespace sim {

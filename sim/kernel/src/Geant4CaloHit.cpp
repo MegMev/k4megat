@@ -1,5 +1,5 @@
 
-#include "SimG4Common/Geant4CaloHit.h"
+#include "SimKernel/Geant4CaloHit.h"
 
 namespace megat {
 namespace sim {

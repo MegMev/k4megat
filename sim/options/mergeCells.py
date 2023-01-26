@@ -36,15 +36,15 @@ dumper.hepmc.Path="hepmc"
 from Configurables import GeoSvc
 geoservice = GeoSvc("GeoSvc", detectors=['file:Test/TestGeometry/data/TestBoxCaloSD_3readouts.xml'], OutputLevel = DEBUG)
 
-from Configurables import SimG4Svc
-geantservice = SimG4Svc("SimG4Svc", physicslist='SimG4TestPhysicsList')
+from Configurables import SimSvc
+geantservice = SimSvc("SimSvc", physicslist='SimTestPhysicsList')
 
-from Configurables import SimG4Alg, SimG4SaveCalHits, InspectHitsCollectionsTool
+from Configurables import SimAlg, SimSaveCalHits, InspectHitsCollectionsTool
 inspecttool = InspectHitsCollectionsTool("inspect", readoutNames=["ECalHits"], OutputLevel = DEBUG)
-savecaltool = SimG4SaveCalHits("saveECalHits", readoutNames = ["ECalHits"], OutputLevel = DEBUG)
+savecaltool = SimSaveCalHits("saveECalHits", readoutNames = ["ECalHits"], OutputLevel = DEBUG)
 savecaltool.positionedCaloHits.Path = "CaloHitsPositions"
 savecaltool.caloHits.Path = "CaloHits"
-geantsim = SimG4Alg("SimG4Alg", outputs= ["SimG4SaveCalHits/saveECalHits","InspectHitsCollectionsTool/inspect"])
+geantsim = SimAlg("SimAlg", outputs= ["SimSaveCalHits/saveECalHits","InspectHitsCollectionsTool/inspect"])
 
 from Configurables import MergeCells
 merge = MergeCells("mergeCells",

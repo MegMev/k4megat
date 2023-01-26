@@ -1,4 +1,4 @@
-#include "SimG4Common/FastSimPhysics.h"
+#include "SimKernel/FastSimPhysics.h"
 
 // Geant4
 #include "G4FastSimulationManagerProcess.hh"

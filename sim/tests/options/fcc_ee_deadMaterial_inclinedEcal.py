@@ -52,24 +52,24 @@ geoservice = GeoSvc("GeoSvc", detectors=[path.join(detector_path, detector) for 
 
 # Geant4 service
 # Configures the Geant simulation: geometry, physics list and user actions
-from Configurables import SimG4Svc
-geantservice = SimG4Svc("SimG4Svc", detector='SimG4DD4hepDetector', physicslist="SimG4FtfpBert", actions="SimG4FullSimActions")
+from Configurables import SimSvc
+geantservice = SimSvc("SimSvc", detector='SimDD4hepDetector', physicslist="SimFtfpBert", actions="SimFullSimActions")
 geantservice.g4PostInitCommands += ["/run/setCut 0.1 mm"]
 
 # Geant4 algorithm
 # Translates EDM to G4Event, passes the event to G4, writes out outputs via tools
 # and a tool that saves the calorimeter hits
-from Configurables import SimG4Alg, SimG4SaveCalHits
-saveecaltool = SimG4SaveCalHits("saveECalBarrelHits",readoutNames = ["ECalBarrelEta"])
+from Configurables import SimAlg, SimSaveCalHits
+saveecaltool = SimSaveCalHits("saveECalBarrelHits",readoutNames = ["ECalBarrelEta"])
 saveecaltool.CaloHits.Path = "ECalBarrelHits"
 
-from Configurables import SimG4PrimariesFromEdmTool
-particle_converter = SimG4PrimariesFromEdmTool("EdmConverter")
+from Configurables import SimPrimariesFromEdmTool
+particle_converter = SimPrimariesFromEdmTool("EdmConverter")
 particle_converter.GenParticles.Path = "GenParticles"
 
 # next, create the G4 algorithm, giving the list of names of tools ("XX/YY")
-geantsim = SimG4Alg("SimG4Alg",
-                    outputs= ["SimG4SaveCalHits/saveECalBarrelHits"],
+geantsim = SimAlg("SimAlg",
+                    outputs= ["SimSaveCalHits/saveECalBarrelHits"],
                     eventProvider = particle_converter,
                     OutputLevel = DEBUG)
 

@@ -17,21 +17,21 @@ geoservice = GeoSvc("GeoSvc", detectors=[path.join(detector_path, 'geometry/comp
 # region & limits
 ### definition is in dd4hep compact file
 ### here, only need to append step limiter to the main physics list
-from Configurables import SimG4UserLimitPhysicsList
-physicslist = SimG4UserLimitPhysicsList("Physics")
-physicslist.fullphysics = "SimG4FtfpBert"
+from Configurables import SimUserLimitPhysicsList
+physicslist = SimUserLimitPhysicsList("Physics")
+physicslist.fullphysics = "SimFtfpBert"
 
 # user actions
-from Configurables import SimG4FullSimActions
-actions = SimG4FullSimActions()
+from Configurables import SimFullSimActions
+actions = SimFullSimActions()
 actions.enableHistory=True # toggle, default: false and no action is binded
 actions.energyCut= 0.1 # min kinetic e the generated track to be saved (in MeV)
 
 # g4 service
 ### Configures the Geant simulation: detector building, fields, regions, physics, actions
-from Configurables import SimG4Svc
-geantservice = SimG4Svc("SimG4Svc")
-geantservice.detector='SimG4DD4hepDetector'
+from Configurables import SimSvc
+geantservice = SimSvc("SimSvc")
+geantservice.detector='SimDD4hepDetector'
 geantservice.physicslist=physicslist
 geantservice.actions= actions
 geantservice.g4PostInitCommands += ["/run/setCut 0.1 mm"]
@@ -43,37 +43,37 @@ geantservice.seedValue = 4242
 # g4 algorithm
 ### Configures event provider (i.e. generator) and output collections via tools
 ##### generator (in g4 unit)
-from Configurables import SimG4SingleParticleGeneratorTool
-pgun=SimG4SingleParticleGeneratorTool('ParticleGun', saveEdm=True,
+from Configurables import SimSingleParticleGeneratorTool
+pgun=SimSingleParticleGeneratorTool('ParticleGun', saveEdm=True,
                                       particleName = "mu-", energyMin = 10000, energyMax = 10000,
                                       etaMin = -4, etaMax = 4, phiMin = -3.14, phiMax = 3.14,
                                       OutputLevel = DEBUG)
 
 ##### output collections
-from Configurables import SimG4SaveCalHits
-saveCalo = SimG4SaveCalHits('saveCalo',readoutNames = ['CztHits'])
+from Configurables import SimSaveCalHits
+saveCalo = SimSaveCalHits('saveCalo',readoutNames = ['CztHits'])
 saveCalo.CaloHits.Path = 'CztHits'
 
-from Configurables import SimG4SaveTrackerHits
-saveTpc = SimG4SaveTrackerHits('saveTpc',readoutNames = ['TpcHits'])
+from Configurables import SimSaveTrackerHits
+saveTpc = SimSaveTrackerHits('saveTpc',readoutNames = ['TpcHits'])
 saveTpc.SimTrackHits.Path = 'TpcHits'
 
 ##### save trajectory and history
-from Configurables import SimG4SaveTrajectory
-savetrajectorytool = SimG4SaveTrajectory("saveTrajectory")
+from Configurables import SimSaveTrajectory
+savetrajectorytool = SimSaveTrajectory("saveTrajectory")
 savetrajectorytool.TrajectoryPoints.Path = "trajectoryPoints"
 
-from Configurables import SimG4SaveParticleHistory
-savehisttool = SimG4SaveParticleHistory("saveHistory")
+from Configurables import SimSaveParticleHistory
+savehisttool = SimSaveParticleHistory("saveHistory")
 savehisttool.GenParticles.Path = "SimParticles"
 
 ##### finally the alg itself
-from Configurables import SimG4Alg
-geantsim = SimG4Alg('SimG4Alg',
-                    outputs= ['SimG4SaveCalHits/saveCalo',
-                              'SimG4SaveTrackerHits/saveTpc',
-                              'SimG4SaveParticleHistory/saveHistory',
-                              'SimG4SaveTrajectory/saveTrajectory',
+from Configurables import SimAlg
+geantsim = SimAlg('SimAlg',
+                    outputs= ['SimSaveCalHits/saveCalo',
+                              'SimSaveTrackerHits/saveTpc',
+                              'SimSaveParticleHistory/saveHistory',
+                              'SimSaveTrajectory/saveTrajectory',
                               ],
                     eventProvider = pgun,
                     OutputLevel = DEBUG)

@@ -10,7 +10,7 @@
 #include "G4VSensitiveDetector.hh"
 
 // megat
-#include "SimG4Common/Geant4PreDigiTrackHit.h"
+#include "SimKernel/Geant4PreDigiTrackHit.h"
 
 /*
  *

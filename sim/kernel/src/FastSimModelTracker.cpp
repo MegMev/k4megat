@@ -1,8 +1,8 @@
-#include "SimG4Common/FastSimModelTracker.h"
+#include "SimKernel/FastSimModelTracker.h"
 
 // FCCSW
-#include "SimG4Common/ParticleInformation.h"
-#include "SimG4Interface/ISimG4ParticleSmearTool.h"
+#include "SimKernel/ParticleInformation.h"
+#include "SimInterface/ISimParticleSmearTool.h"
 
 // Gaudi
 #include "GaudiKernel/IToolSvc.h"
@@ -19,7 +19,7 @@ namespace sim {
 
 FastSimModelTracker::FastSimModelTracker(const std::string& aModelName,
                                          G4Region* aEnvelope,
-                                         ToolHandle<ISimG4ParticleSmearTool>& aSmearTool,
+                                         ToolHandle<ISimParticleSmearTool>& aSmearTool,
                                          double aMinMomentum,
                                          double aMaxMomentum,
                                          double aMaxEta)
@@ -38,7 +38,7 @@ FastSimModelTracker::FastSimModelTracker(const std::string& aModelName,
         << endmsg;
 }
 
-FastSimModelTracker::FastSimModelTracker(const std::string& aModelName, ToolHandle<ISimG4ParticleSmearTool>& aSmearTool)
+FastSimModelTracker::FastSimModelTracker(const std::string& aModelName, ToolHandle<ISimParticleSmearTool>& aSmearTool)
     : G4VFastSimulationModel(aModelName),
       m_msgSvc("MessageSvc", "FastSimModelTracker"),
       m_log(&(*m_msgSvc), "FastSimModelTracker"),

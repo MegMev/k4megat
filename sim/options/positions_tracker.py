@@ -11,20 +11,20 @@ geoservice = GeoSvc("GeoSvc", detectors=[ 'file:Detector/DetFCChhBaseline1/compa
 ],
                     OutputLevel = INFO)
 
-from Configurables import SimG4Svc
-geantservice = SimG4Svc("SimG4Svc", detector='SimG4DD4hepDetector', physicslist="SimG4FtfpBert", actions="SimG4FullSimActions")
+from Configurables import SimSvc
+geantservice = SimSvc("SimSvc", detector='SimDD4hepDetector', physicslist="SimFtfpBert", actions="SimFullSimActions")
 
-from Configurables import SimG4Alg, SimG4SaveTrackerHits
-savetool = SimG4SaveTrackerHits("saveHits", readoutNames = ["TrackerBarrelReadout"])
+from Configurables import SimAlg, SimSaveTrackerHits
+savetool = SimSaveTrackerHits("saveHits", readoutNames = ["TrackerBarrelReadout"])
 savetool.positionedTrackHits.Path = "PositionedHits"
 savetool.trackHits.Path = "Hits"
 savetool.digiTrackHits.Path = "digiHits"
-from Configurables import SimG4SingleParticleGeneratorTool
-pgun=SimG4SingleParticleGeneratorTool("SimG4SingleParticleGeneratorTool",saveEdm=True,
+from Configurables import SimSingleParticleGeneratorTool
+pgun=SimSingleParticleGeneratorTool("SimSingleParticleGeneratorTool",saveEdm=True,
                                       particleName = "mu-", energyMin = 1000, energyMax = 1000, etaMin = 0, etaMax = 0,
                                       OutputLevel = DEBUG)
-geantsim = SimG4Alg("SimG4Alg",
-                    outputs= ["SimG4SaveTrackerHits/saveHits"],
+geantsim = SimAlg("SimAlg",
+                    outputs= ["SimSaveTrackerHits/saveHits"],
                     eventProvider = pgun,
                     OutputLevel=DEBUG)
 

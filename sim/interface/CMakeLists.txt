@@ -1,6 +1,6 @@
 ################################################################################
-# Package: SimG4Interface
+# Package: SimInterface
 ################################################################################
 
 
-gaudi_add_header_only_library(SimG4Interface)
+gaudi_add_header_only_library(SimInterface)

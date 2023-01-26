@@ -1,4 +1,4 @@
-#include "SimG4Common/RunManager.h"
+#include "SimKernel/RunManager.h"
 
 // Geant
 #include "G4VModularPhysicsList.hh"

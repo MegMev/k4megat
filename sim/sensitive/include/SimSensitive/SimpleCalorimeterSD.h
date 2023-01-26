@@ -9,7 +9,7 @@
 #include "G4VSensitiveDetector.hh"
 
 // megat
-#include "SimG4Common/Geant4CaloHit.h"
+#include "SimKernel/Geant4CaloHit.h"
 
 /** SimpleCalorimeterSD
  * DetectorDescription/SimSensitive/src/SimpleCalorimeterSD.h

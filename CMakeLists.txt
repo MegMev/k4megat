@@ -46,7 +46,7 @@ if(NOT CMAKE_CXX_STANDARD MATCHES "14|17")
   message(FATAL_ERROR "Unsupported C++ standard: ${CMAKE_CXX_STANDARD}")
 endif()
 
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+# set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 include(cmake/MegatMacro.cmake)
 

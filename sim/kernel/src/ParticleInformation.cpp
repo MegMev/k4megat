@@ -1,4 +1,4 @@
-#include "SimG4Common/ParticleInformation.h"
+#include "SimKernel/ParticleInformation.h"
 
 namespace sim {
 ParticleInformation::ParticleInformation(const edm4hep::MCParticle& aMCpart) : m_mcParticle(aMCpart), m_smeared(false) {}
