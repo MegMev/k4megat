@@ -1,5 +1,5 @@
-#ifndef DETSENSITIVE_SIMPLEDRIFTCHAMBER_H
-#define DETSENSITIVE_SIMPLEDRIFTCHAMBER_H
+#ifndef MEGAT_SIM_SIMPLEDRIFTCHAMBER_H
+#define MEGAT_SIM_SIMPLEDRIFTCHAMBER_H
 
 // DD4hep
 #include "DD4hep/Segmentations.h"
@@ -9,13 +9,16 @@
 #include "G4THitsCollection.hh"
 #include "G4VSensitiveDetector.hh"
 
+// megat
+#include "SimG4Common/Geant4PreDigiTrackHit.h"
+
 /*
  *
  *  @author    nalipour
  */
 
 namespace megat {
-class Geant4PreDigiTrackHit;
+namespace sim {
 
 class SimpleDriftChamber : public G4VSensitiveDetector {
 public:
@@ -47,6 +50,8 @@ private:
   double m_edepCut = 10 * CLHEP::eV;
   double m_stepLengthCut = 5 * CLHEP::micrometer;
 };
-}
 
-#endif /* DETSENSITIVE_SIMPLEDRIFTCHAMBER_H */
+} // namespace sim
+} // namespace megat
+
+#endif /* MEGAT_SIM_SIMPLEDRIFTCHAMBER_H */

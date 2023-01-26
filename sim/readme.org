@@ -1,0 +1,5 @@
+* code tree structure
+- kernel: the g4 subclasses
+- interface: pure abc as interfaces between gaudi and geant4
+- wrapper: the implementations of these interfaces
+- sensitive: g4 SDs, separated out from kernel cause they are also dd4hep components

@@ -1,4 +1,4 @@
-#include "GeoConstruction.h"
+#include "SimG4Common/GeoConstruction.h"
 
 #include <stdexcept>
 

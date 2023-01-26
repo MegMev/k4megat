@@ -1,7 +1,7 @@
 #include "SimG4FastSimPhysicsList.h"
 
 // FCCSW
-#include "SimG4Fast/FastSimPhysics.h"
+#include "SimG4Common/FastSimPhysics.h"
 #include "SimG4Interface/ISimG4PhysicsList.h"
 
 // Geant4

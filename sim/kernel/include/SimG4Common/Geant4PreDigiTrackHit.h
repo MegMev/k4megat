@@ -8,7 +8,8 @@
 // CLHEP
 #include "CLHEP/Vector/ThreeVector.h"
 
-namespace k4 {
+namespace megat {
+namespace sim {
 
 /** @class  Geant4PreDigiTrackHit 
  *
@@ -76,6 +77,9 @@ inline void Geant4PreDigiTrackHit::operator delete(void* hit) {
   Geant4PreDigiTrackHitAllocator->FreeSingle((Geant4PreDigiTrackHit*)hit);
 }
 
-} // namespace k4
+} // namespace sim
+
+  typedef sim::Geant4PreDigiTrackHit Geant4PreDigiTrackHit;
+} // namespace megat
 
 #endif

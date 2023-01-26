@@ -1,8 +1,8 @@
-#include "DetSensitive/FullParticleAbsorptionSD.h"
+#include "SimSensitive/FullParticleAbsorptionSD.h"
 
 // FCCSW
-#include "DetCommon/DetUtils.h"
-#include "DetCommon/Geant4CaloHit.h"
+#include "SimSensitive/Utils.h"
+#include "SimG4Common/Geant4CaloHit.h"
 
 // DD4hep
 #include "DDG4/Geant4Mapping.h"
@@ -15,6 +15,8 @@
 #include "G4SDManager.hh"
 
 namespace megat {
+namespace sim {
+
 FullParticleAbsorptionSD::FullParticleAbsorptionSD(const std::string& aDetectorName,
                                                    const std::string& aReadoutName,
                                                    const dd4hep::Segmentation& aSeg)
@@ -46,4 +48,6 @@ bool FullParticleAbsorptionSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   aTrack->SetTrackStatus(fStopAndKill);
   return true;
 }
-}
+
+} // namespace sim
+} // namespace megat

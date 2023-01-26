@@ -1,7 +1,7 @@
 #include "EnergyInCaloLayers.h"
 
 // Key4HEP
-#include "k4Interface/IGeoSvc.h"
+#include "SimG4Interface/IGeoSvc.h"
 
 // EDM4HEP
 #include "edm4hep/CalorimeterHitCollection.h"

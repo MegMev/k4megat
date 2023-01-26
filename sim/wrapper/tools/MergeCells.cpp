@@ -1,7 +1,7 @@
 #include "MergeCells.h"
 
 // FCCSW
-#include "k4Interface/IGeoSvc.h"
+#include "SimG4Interface/IGeoSvc.h"
 
 // datamodel
 #include "edm4hep/CalorimeterHitCollection.h"

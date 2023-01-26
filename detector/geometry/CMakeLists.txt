@@ -3,10 +3,10 @@
 
 dd4hep_configure_output()
 file(GLOB sources src/*.cpp)
-dd4hep_add_plugin(MegatDetector GENERATED ${sources}
+dd4hep_add_plugin(DetGeometry GENERATED ${sources}
   USES DD4hep::DDCore
 )
-dd4hep_configure_scripts(MegatDetector DEFAULT_SETUP WITH_TESTS)
+# dd4hep_configure_scripts(DetGeometry DEFAULT_SETUP WITH_TESTS)
 
 
 # copy the geometry files

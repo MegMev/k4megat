@@ -1,7 +1,8 @@
 
 #include "SimG4Common/Geant4PreDigiTrackHit.h"
 
-namespace k4 {
+namespace megat {
+namespace sim {
 
 // G4 allocation method
 G4ThreadLocal G4Allocator<Geant4PreDigiTrackHit>* Geant4PreDigiTrackHitAllocator = 0;
@@ -17,4 +18,5 @@ Geant4PreDigiTrackHit::Geant4PreDigiTrackHit(unsigned int aTrackId, int aPdgId, 
 // comparison operator
 G4int Geant4PreDigiTrackHit::operator==(const Geant4PreDigiTrackHit& right) const { return (this == &right) ? 1 : 0; }
 
-} //namespace k4
+} // namespace sim
+} // namespace megat

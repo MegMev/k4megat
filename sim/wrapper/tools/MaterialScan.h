@@ -1,4 +1,4 @@
-#include "k4Interface/IGeoSvc.h"
+#include "SimG4Interface/IGeoSvc.h"
 
 #include "GaudiKernel/RndmGenerators.h"
 #include "GaudiKernel/Service.h"

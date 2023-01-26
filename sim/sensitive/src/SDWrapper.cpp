@@ -1,13 +1,13 @@
 #include "DD4hep/Detector.h"
 #include "DDG4/Factories.h"
 
-#include "DetSensitive/AggregateCalorimeterSD.h"
-#include "DetSensitive/BirksLawCalorimeterSD.h"
-#include "DetSensitive/FullParticleAbsorptionSD.h"
-#include "DetSensitive/GflashCalorimeterSD.h"
-#include "DetSensitive/SimpleCalorimeterSD.h"
-#include "DetSensitive/SimpleTrackerSD.h"
-#include "DetSensitive/SimpleDriftChamber.h"
+#include "SimSensitive/AggregateCalorimeterSD.h"
+#include "SimSensitive/BirksLawCalorimeterSD.h"
+#include "SimSensitive/FullParticleAbsorptionSD.h"
+#include "SimSensitive/GflashCalorimeterSD.h"
+#include "SimSensitive/SimpleCalorimeterSD.h"
+#include "SimSensitive/SimpleTrackerSD.h"
+#include "SimSensitive/SimpleDriftChamber.h"
 
 namespace megat {
 namespace sim {
@@ -61,8 +61,9 @@ static G4VSensitiveDetector* create_simple_driftchamber(const std::string& aDete
   return new SimpleDriftChamber(
       aDetectorName, readoutName, aLcdd.sensitiveDetector(aDetectorName).readout().segmentation());
 }
-}
-}
+
+} // namespace sim
+} // namespace megat
 
 DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR(SimpleTrackerSD, megat::sim::create_simple_tracker_sd)
 DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR(SimpleCalorimeterSD, megat::sim::create_simple_calorimeter_sd)

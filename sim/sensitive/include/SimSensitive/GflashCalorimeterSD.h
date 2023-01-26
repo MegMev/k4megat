@@ -1,5 +1,5 @@
-#ifndef DETSENSITIVE_GFLASHCALORIMETERSD_H
-#define DETSENSITIVE_GFLASHCALORIMETERSD_H
+#ifndef MEGAT_SIM_GFLASHCALORIMETERSD_H
+#define MEGAT_SIM_GFLASHCALORIMETERSD_H
 
 // DD4hep
 #include "DD4hep/Segmentations.h"
@@ -10,18 +10,23 @@
 #include "G4VGFlashSensitiveDetector.hh"
 #include "G4VSensitiveDetector.hh"
 
-/** GflashCalorimeterSD DetectorDescription/DetSensitive/src/GflashCalorimeterSD.h GflashCalorimeterSD.h
+// megat
+#include "SimG4Common/Geant4CaloHit.h"
+
+/** GflashCalorimeterSD
+ * DetectorDescription/SimSensitive/src/GflashCalorimeterSD.h
+ * GflashCalorimeterSD.h
  *
  *  Sensitive detector for calorimeters that use GFlash parametrisation.
- *  If no parametrisation is invoked, hits are processed as in SimpleCalorimeterSD.
- *  No timing information is saved (for full sim: energy deposits aggregated in the cells,
- *  for gflash: hits are created instantly)
+ *  If no parametrisation is invoked, hits are processed as in
+ * SimpleCalorimeterSD. No timing information is saved (for full sim: energy
+ * deposits aggregated in the cells, for gflash: hits are created instantly)
  *
  *  @author    Anna Zaborowska
  */
 
 namespace megat {
-class Geant4CaloHit;
+namespace sim {
 
 class GflashCalorimeterSD : public G4VSensitiveDetector, public G4VGFlashSensitiveDetector {
 public:
@@ -66,6 +71,8 @@ private:
   /// Segmentation of the detector used to retrieve the cell Ids
   dd4hep::Segmentation m_seg;
 };
-}
 
-#endif /* DETSENSITIVE_GFLASHCALORIMETERSD_H */
+} // namespace sim
+} // namespace megat
+
+#endif /* MEGAT_SIM_GFLASHCALORIMETERSD_H */

@@ -1,5 +1,5 @@
-#ifndef DETSENSITIVE_SIMPLETRACKERSD_H
-#define DETSENSITIVE_SIMPLETRACKERSD_H
+#ifndef MEGAT_SIM_SIMPLETRACKERSD_H
+#define MEGAT_SIM_SIMPLETRACKERSD_H
 
 // DD4hep
 #include "DD4hep/Segmentations.h"
@@ -8,17 +8,22 @@
 #include "G4THitsCollection.hh"
 #include "G4VSensitiveDetector.hh"
 
-/** SimpleTrackerSD DetectorDescription/DetSensitive/src/SimpleTrackerSD.h SimpleTrackerSD.h
+// megat
+#include "SimG4Common/Geant4PreDigiTrackHit.h"
+
+/** SimpleTrackerSD DetectorDescription/SimSensitive/src/SimpleTrackerSD.h
+ * SimpleTrackerSD.h
  *
  *  Simple sensitive detector for tracker.
- *  The position of the hit is set to the position from G4Step::GetPreStepPoint() to ensure that the volume ID
- *  is calculated for the correct volume (in case where step is limited by a boundary, post-step point
+ *  The position of the hit is set to the position from
+ * G4Step::GetPreStepPoint() to ensure that the volume ID is calculated for the
+ * correct volume (in case where step is limited by a boundary, post-step point
  *  belongs to the next volume).
  *
  *  @author    Anna Zaborowska
  */
 namespace megat {
-class Geant4PreDigiTrackHit;
+namespace sim {
 
 class SimpleTrackerSD : public G4VSensitiveDetector {
 public:
@@ -50,6 +55,7 @@ private:
   /// Segmentation of the detector used to retrieve the cell Ids
   dd4hep::Segmentation m_seg;
 };
-}
 
-#endif /* DETSENSITIVE_SIMPLETRACKERSD_H */
+} // namespace sim
+} // namespace megat
+#endif /* MEGAT_SIM_SIMPLETRACKERSD_H */

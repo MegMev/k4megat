@@ -2,7 +2,7 @@
 #define GEOSVC_H
 
 // Interface
-#include "k4Interface/IGeoSvc.h"
+#include "SimG4Interface/IGeoSvc.h"
 
 // Gaudi
 #include "GaudiKernel/IIncidentListener.h"

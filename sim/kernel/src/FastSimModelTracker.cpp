@@ -1,4 +1,4 @@
-#include "SimG4Fast/FastSimModelTracker.h"
+#include "SimG4Common/FastSimModelTracker.h"
 
 // FCCSW
 #include "SimG4Common/ParticleInformation.h"

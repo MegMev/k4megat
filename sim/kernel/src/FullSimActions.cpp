@@ -1,6 +1,6 @@
-#include "SimG4Full/FullSimActions.h"
-#include "SimG4Full/ParticleHistoryAction.h"
-#include "SimG4Full/ParticleHistoryEventAction.h"
+#include "SimG4Common/FullSimActions.h"
+#include "SimG4Common/ParticleHistoryAction.h"
+#include "SimG4Common/ParticleHistoryEventAction.h"
 #include <iostream>
 
 namespace sim {

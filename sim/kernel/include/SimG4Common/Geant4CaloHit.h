@@ -8,7 +8,8 @@
 // CLHEP
 #include "CLHEP/Vector/ThreeVector.h"
 
-namespace k4 {
+namespace megat {
+namespace sim {
 
 /** @class  Geant4CaloHit
  *
@@ -63,6 +64,9 @@ inline void* Geant4CaloHit::operator new(size_t) {
 
 inline void Geant4CaloHit::operator delete(void* hit) { Geant4CaloHitAllocator->FreeSingle((Geant4CaloHit*)hit); }
 
-}  // namespace k4 
+} // namespace sim
+
+  typedef sim::Geant4CaloHit Geant4CaloHit;
+} // namespace megat
 
 #endif

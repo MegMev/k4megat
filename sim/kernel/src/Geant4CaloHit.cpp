@@ -1,7 +1,8 @@
 
 #include "SimG4Common/Geant4CaloHit.h"
 
-namespace k4 {
+namespace megat {
+namespace sim {
 
 // G4 allocation method
 G4ThreadLocal G4Allocator<Geant4CaloHit>* Geant4CaloHitAllocator = 0;
@@ -16,4 +17,5 @@ Geant4CaloHit::Geant4CaloHit(unsigned int aTrackId, int aPdgId, double aEnergyDe
 // comparison operator
 G4int Geant4CaloHit::operator==(const Geant4CaloHit& right) const { return (this == &right) ? 1 : 0; }
 
-}  // namespace k4
+} // namespace sim
+} // namespace megat

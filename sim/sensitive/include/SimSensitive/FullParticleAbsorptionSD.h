@@ -1,39 +1,43 @@
-#ifndef DETSENSITIVE_SIMPLECALORIMETERSD_H
-#define DETSENSITIVE_SIMPLECALORIMETERSD_H
+#ifndef MEGAT_SIM_FULLPARTICLEABSORPTIONSD_H
+#define MEGAT_SIM_FULLPARTICLEABSORPTIONSD_H
 
 // DD4hep
 #include "DD4hep/Segmentations.h"
+#include "DDSegmentation/Segmentation.h"
 
 // Geant
 #include "G4THitsCollection.hh"
 #include "G4VSensitiveDetector.hh"
 
-/** SimpleCalorimeterSD DetectorDescription/DetSensitive/src/SimpleCalorimeterSD.h SimpleCalorimeterSD.h
+// megat
+#include "SimG4Common/Geant4CaloHit.h"
+
+/** FullParticleAbsD DetectorDescription/SimSensitive/src/FullParticleAbsSD.h
+ * FullParticleAbsSD.h
  *
- *  Simple sensitive detector for calorimeter.
- *  It is based on dd4hep::sim::Geant4GenericSD<Calorimeter> (but it is not identical).
- *  In particular, the position of the hit is set to G4Step::GetPreStepPoint() position.
- *  New hit is created for each energy deposit.
- *  No timing information is saved.
+ *  Sensitive detector to fully stop the incoming particles.
+ *  The position of the hit is set to G4Step::GetPreStepPoint() position.
+ *  New hit is created for each incoming particle, the energy is stored and the
+ * track is removed.
  *
- *  @author    Anna Zaborowska
+ *  @author    Coralie Neubueser
  */
 
 namespace megat {
-class Geant4CaloHit;
+namespace sim {
 
-class SimpleCalorimeterSD : public G4VSensitiveDetector {
+class FullParticleAbsorptionSD : public G4VSensitiveDetector {
 public:
   /** Constructor.
    *  @param aDetectorName Name of the detector
    *  @param aReadoutName Name of the readout (used to name the collection)
    *  @param aSeg Segmentation of the detector (used to retrieve the cell ID)
    */
-  SimpleCalorimeterSD(const std::string& aDetectorName,
-                      const std::string& aReadoutName,
-                      const dd4hep::Segmentation& aSeg);
+  FullParticleAbsorptionSD(const std::string& aDetectorName,
+                           const std::string& aReadoutName,
+                           const dd4hep::Segmentation& aSeg);
   /// Destructor
-  virtual ~SimpleCalorimeterSD();
+  virtual ~FullParticleAbsorptionSD();
   /** Initialization.
    *  Creates the hit collection with the name passed in the constructor.
    *  The hit collection is registered in Geant.
@@ -41,9 +45,9 @@ public:
    */
   virtual void Initialize(G4HCofThisEvent* aHitsCollections) final;
   /** Process hit once the particle hit the sensitive volume.
-   *  Checks if the energy deposit is larger than 0, calculates the position and cellID,
+   *  Gets the kinetic energy from the particle track, calculates the position and cellID,
    *  saves that into the hit collection.
-   *  New hit is created for each energy deposit.
+   *  New hit is created for first track of each particle within sensitive detector.
    *  @param aStep Step in which particle deposited the energy.
    */
   virtual bool ProcessHits(G4Step* aStep, G4TouchableHistory*) final;
@@ -54,6 +58,8 @@ private:
   /// Segmentation of the detector used to retrieve the cell Ids
   dd4hep::Segmentation m_seg;
 };
-}
 
-#endif /* DETSENSITIVE_SIMPLECALORIMETERSD_H */
+} // namespace sim
+} // namespace megat
+#endif /* MEGAT_SIM_FULLPARTICLEPABSORPTIONSD_H */
+

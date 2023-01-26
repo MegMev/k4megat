@@ -1,8 +1,8 @@
-#include "DetSensitive/BirksLawCalorimeterSD.h"
+#include "SimSensitive/BirksLawCalorimeterSD.h"
 
 // FCCSW
-#include "DetCommon/DetUtils.h"
-#include "DetCommon/Geant4CaloHit.h"
+#include "SimSensitive/Utils.h"
+#include "SimG4Common/Geant4CaloHit.h"
 
 // DD4hep
 #include "DDG4/Geant4Mapping.h"
@@ -18,6 +18,8 @@
 
 
 namespace megat {
+namespace sim {
+
 BirksLawCalorimeterSD::BirksLawCalorimeterSD(const std::string& aDetectorName,
                                              const std::string& aReadoutName,
                                              const dd4hep::Segmentation& aSeg)
@@ -82,4 +84,6 @@ bool BirksLawCalorimeterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   m_calorimeterCollection->insert(hit);
   return true;
 }
-}
+
+} // namespace sim
+} // namespace megat

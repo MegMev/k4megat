@@ -1,8 +1,8 @@
-#include "DetSensitive/SimpleCalorimeterSD.h"
+#include "SimSensitive/SimpleCalorimeterSD.h"
 
 // FCCSW
-#include "DetCommon/DetUtils.h"
-#include "DetCommon/Geant4CaloHit.h"
+#include "SimSensitive/Utils.h"
+#include "SimG4Common/Geant4CaloHit.h"
 
 // DD4hep
 #include "DDG4/Defs.h"
@@ -16,6 +16,8 @@
 #include "G4SDManager.hh"
 
 namespace megat {
+namespace sim {
+
 SimpleCalorimeterSD::SimpleCalorimeterSD(const std::string& aDetectorName,
                                          const std::string& aReadoutName,
                                          const dd4hep::Segmentation& aSeg)
@@ -50,4 +52,6 @@ bool SimpleCalorimeterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   m_calorimeterCollection->insert(hit);
   return true;
 }
-}
+
+} // namespace sim
+} // namespace megat

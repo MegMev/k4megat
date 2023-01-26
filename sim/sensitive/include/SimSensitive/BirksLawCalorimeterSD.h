@@ -1,5 +1,5 @@
-#ifndef DETSENSITIVE_BIRKSLAWCALORIMETERSD_H
-#define DETSENSITIVE_BIRKSLAWCALORIMETERSD_H
+#ifndef MEGAT_SIM_BIRKSLAWCALORIMETERSD_H
+#define MEGAT_SIM_BIRKSLAWCALORIMETERSD_H
 
 // DD4hep
 #include "DD4hep/Segmentations.h"
@@ -8,19 +8,24 @@
 #include "G4THitsCollection.hh"
 #include "G4VSensitiveDetector.hh"
 
-/** BirksLawCalorimeterSD DetectorDescription/DetSensitive/src/BirksLawCalorimeterSD.h BirksLawCalorimeterSD.h
+// megat
+#include "SimG4Common/Geant4CaloHit.h"
+
+/** BirksLawCalorimeterSD
+ * DetectorDescription/SimSensitive/src/BirksLawCalorimeterSD.h
+ * BirksLawCalorimeterSD.h
  *
  *  Sensitive detector for calorimeters, using Polystyrene.
- *  It is based on dd4hep::sim::Geant4GenericSD<Calorimeter> (but it is not identical).
- *  In particular, the position of the hit is set to G4Step::GetPreStepPoint() position.
- *  New hit is created for each energy deposit.
- *  No timing information is saved.
- *  Birks law reduces the energy deposited in the scintillator.
+ *  It is based on dd4hep::sim::Geant4GenericSD<Calorimeter> (but it is not
+ * identical). In particular, the position of the hit is set to
+ * G4Step::GetPreStepPoint() position. New hit is created for each energy
+ * deposit. No timing information is saved. Birks law reduces the energy
+ * deposited in the scintillator.
  *  @author    Coralie Neubueser
  */
 
 namespace megat {
-class Geant4CaloHit;
+namespace sim {
 
 class BirksLawCalorimeterSD : public G4VSensitiveDetector {
 public:
@@ -62,6 +67,8 @@ private:
   const double m_birk1;
   const double m_birk2;
 };
-}
 
-#endif /* DETSENSITIVE_BIRKSLAWCALORIMETERSD_H */
+} // namespace sim
+} // namespace megat
+
+#endif /* MEGAT_SIM_BIRKSLAWCALORIMETERSD_H */

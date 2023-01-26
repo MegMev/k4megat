@@ -1,9 +1,8 @@
-#include "DetSensitive/AggregateCalorimeterSD.h"
+#include "SimSensitive/AggregateCalorimeterSD.h"
 
 
 // FCCSW
-#include "DetCommon/DetUtils.h"
-#include "DetCommon/Geant4CaloHit.h"
+#include "SimSensitive/Utils.h"
 
 
 // DD4hep
@@ -17,6 +16,7 @@
 #include "G4SDManager.hh"
 
 namespace megat {
+namespace sim {
 AggregateCalorimeterSD::AggregateCalorimeterSD(const std::string& aDetectorName,
                                                const std::string& aReadoutName,
                                                const dd4hep::Segmentation& aSeg)
@@ -71,4 +71,6 @@ bool AggregateCalorimeterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   m_calorimeterCollection->insert(hitMatch);
   return true;
 }
-}
+
+} // namespace sim
+} // namespace megat

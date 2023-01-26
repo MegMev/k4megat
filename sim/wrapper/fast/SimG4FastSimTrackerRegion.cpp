@@ -1,7 +1,7 @@
 #include "SimG4FastSimTrackerRegion.h"
 
 // FCCSW
-#include "SimG4Fast/FastSimModelTracker.h"
+#include "SimG4Common/FastSimModelTracker.h"
 
 // Geant4
 #include "G4RegionStore.hh"

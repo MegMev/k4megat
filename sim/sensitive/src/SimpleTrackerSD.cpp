@@ -1,8 +1,8 @@
-#include "DetSensitive/SimpleTrackerSD.h"
+#include "SimSensitive/SimpleTrackerSD.h"
 
 // FCCSW
-#include "DetCommon/DetUtils.h"
-#include "DetCommon/Geant4PreDigiTrackHit.h"
+#include "SimSensitive/Utils.h"
+#include "SimG4Common/Geant4PreDigiTrackHit.h"
 
 // DD4hep
 #include "DDG4/Geant4Mapping.h"
@@ -16,6 +16,7 @@
 
 
 namespace megat {
+namespace sim {
 SimpleTrackerSD::SimpleTrackerSD(const std::string& aDetectorName,
                                  const std::string& aReadoutName,
                                  const dd4hep::Segmentation& aSeg)
@@ -52,4 +53,6 @@ bool SimpleTrackerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   m_trackerCollection->insert(hit);
   return true;
 }
-}
+
+} // namespace sim
+} // namespace megat

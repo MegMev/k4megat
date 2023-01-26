@@ -1,8 +1,8 @@
-#include "DetSensitive/GflashCalorimeterSD.h"
+#include "SimSensitive/GflashCalorimeterSD.h"
 
 // FCCSW
-#include "DetCommon/DetUtils.h"
-#include "DetCommon/Geant4CaloHit.h"
+#include "SimSensitive/Utils.h"
+#include "SimG4Common/Geant4CaloHit.h"
 
 // DD4hep
 #include "DDG4/Geant4Converter.h"
@@ -16,18 +16,10 @@
 // Geant4
 #include "G4SDManager.hh"
 
-// todo: review
-#ifdef HAVE_GEANT4_UNITS
-#define MM_2_CM 1.0
-#else
-#define MM_2_CM 0.1
-#endif
-
-
-
-
 
 namespace megat {
+namespace sim {
+
 GflashCalorimeterSD::GflashCalorimeterSD(const std::string& aDetectorName,
                                          const std::string& aReadoutName,
                                          const dd4hep::Segmentation& aSeg)
@@ -93,4 +85,6 @@ uint64_t GflashCalorimeterSD::cellID(const G4GFlashSpot& aSpot) {
   }
   return volID;
 }
-}
+
+} // namespace sim
+} // namespace megat

@@ -1,7 +1,7 @@
-#include "DetSensitive/SimpleDriftChamber.h"
+#include "SimSensitive/SimpleDriftChamber.h"
 
 // FCCSW
-#include "DetCommon/DetUtils.h"
+#include "SimSensitive/Utils.h"
 
 // DD4hep
 #include "DDG4/Geant4Mapping.h"
@@ -13,9 +13,9 @@
 // Geant4
 #include "G4SDManager.hh"
 
-#include "DetCommon/Geant4PreDigiTrackHit.h"
-
 namespace megat {
+namespace sim {
+
 SimpleDriftChamber::SimpleDriftChamber(const std::string& aDetectorName,
                                        const std::string& aReadoutName,
                                        const dd4hep::Segmentation& aSeg)
@@ -61,4 +61,6 @@ bool SimpleDriftChamber::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   m_driftChamberCollection->insert(hit);
   return true;
 }
-}
+
+} // namespace sim
+} // namespace megat

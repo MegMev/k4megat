@@ -1,7 +1,7 @@
 
 #include "GeoSvc.h"
 #include "GaudiKernel/Service.h"
-#include "GeoConstruction.h"
+#include "SimG4Common/GeoConstruction.h"
 #include "TGeoManager.h"
 
 #include "DD4hep/Printout.h"

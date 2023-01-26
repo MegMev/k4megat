@@ -1,0 +1,12 @@
+* Coding Convention
+** Code Tree Structure
+*** Prefer short directory name as long as no ambiguity in the meaning. Truncate or abbreviate long name if needed.
+*** Prefer lower-case directory name except it's a build interface.
+*** Library directory should be decomposed into _include_ and _src_
+**** Put headers under a subdirectory of _include_, with the library name as its name.
+     For example, the package #TestLib# will have following tree structure:
+     todo: add the snippet
+**** Put sources under _src_
+*** Plugin/Component sources and headers should locate in the same directory
+
+** Naming

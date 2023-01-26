@@ -62,7 +62,7 @@ StatusCode SimG4SaveCalHits::finalize() { return GaudiTool::finalize(); }
 StatusCode SimG4SaveCalHits::saveOutput(const G4Event& aEvent) {
   G4HCofThisEvent* collections = aEvent.GetHCofThisEvent();
   G4VHitsCollection* collect;
-  k4::Geant4CaloHit* hit;
+  megat::Geant4CaloHit* hit;
   if (collections != nullptr) {
     auto edmHits = m_caloHits.createAndPut();
     for (int iter_coll = 0; iter_coll < collections->GetNumberOfCollections(); iter_coll++) {
@@ -80,7 +80,7 @@ StatusCode SimG4SaveCalHits::saveOutput(const G4Event& aEvent) {
         debug() << "\t" << n_hit << " hits are stored in a collection #" << iter_coll << ": " << collect->GetName()
                 << endmsg;
         for (size_t iter_hit = 0; iter_hit < n_hit; iter_hit++) {
-          hit = dynamic_cast<k4::Geant4CaloHit*>(collect->GetHit(iter_hit));
+          hit = dynamic_cast<megat::Geant4CaloHit*>(collect->GetHit(iter_hit));
           auto edmHit = edmHits->create();
           edmHit.setCellID(hit->cellID);
           //todo

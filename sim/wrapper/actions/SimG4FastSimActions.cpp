@@ -1,7 +1,7 @@
 #include "SimG4FastSimActions.h"
 
 // FCCSW
-#include "SimG4Fast/FastSimActions.h"
+#include "SimG4Common/FastSimActions.h"
 
 DECLARE_COMPONENT(SimG4FastSimActions)
 

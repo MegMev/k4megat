@@ -1,4 +1,4 @@
-#include "SimG4Full/ParticleHistoryEventAction.h"
+#include "SimG4Common/ParticleHistoryEventAction.h"
 
 #include "SimG4Common/EventInformation.h"
 
