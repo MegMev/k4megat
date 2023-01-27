@@ -21,8 +21,9 @@ if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR DD4HEP_BUILD_TEST) AND TEST)
   dd4hep_enable_tests()
 endif()
 
-find_package(podio)
+find_package(ROOT COMPONENTS RIO Tree)
 find_package(EDM4HEP)
+find_package(Geant4)
 find_package(CLHEP)
 
 set(MEGAT_CORE k4FWCore)
