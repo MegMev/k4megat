@@ -14,7 +14,7 @@
 
 namespace megat {
 
-  DECLARE_COMPONENT_WITH_ID( InspectHitsCollectionsTool, "InspectHitsCollectionsTool" )
+  DECLARE_COMPONENT_WITH_ID( InspectHitsCollectionsTool, "InspectHitsColTool" )
 
   InspectHitsCollectionsTool::InspectHitsCollectionsTool( const std::string& aType, const std::string& aName,
                                                           const IInterface* aParent )
