@@ -53,7 +53,9 @@ namespace megat {
         this, "detectors", {}, "Detector descriptions XML-files" };
     /// mapping of sensitive detector names
     Gaudi::Property<std::map<std::string, std::string>> m_sensitive_types{
-        this, "sensitiveTypes", { { "tracker", "SimpleTrackerSD" }, { "calorimeter", "SimpleCalorimeterSD" } } };
+        this,
+        "sensitiveTypes",
+        { { "tracker", "MegatSimpleTrackerSD" }, { "calorimeter", "MegatAggregateCalorimeterSD" } } };
   };
 
 } // namespace megat
