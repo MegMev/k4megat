@@ -30,7 +30,6 @@ option(USE_EXTERNAL_K4CORE "Use external k4FWCore, make it exists" ON)
 mark_as_advanced(USE_EXTERNAL_K4CORE)
 if(USE_EXTERNAL_K4CORE)
   find_package(k4FWCore)
-  find_package(k4SimGeant4)
   set(MEGAT_CORE k4FWCore::k4FWCore)
 endif()
 
