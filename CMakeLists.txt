@@ -10,6 +10,11 @@ message(STATUS "cpp: ${CPPGSL_INCLUDE_DIR}")
 #---------------------------------------------------------------
 # Load macros and functions for Gaudi-based projects
 find_package(Gaudi)
+set(GAUDI_GENCONF_DIR "genConfDir")
+if (${Gaudi_VERSION} VERSION_LESS 35.1)
+  set(GAUDI_GENCONF_DIR "genConf")
+endif()
+
 find_package(DD4hep)
 dd4hep_set_compiler_flags()
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR DD4HEP_BUILD_TEST) AND TEST)

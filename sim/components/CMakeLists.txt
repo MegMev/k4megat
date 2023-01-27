@@ -14,8 +14,11 @@ endforeach()
 gaudi_add_module(SimComponents
                  SOURCES ${sources}
                  LINK Gaudi::GaudiAlgLib
+                      Gaudi::GaudiKernel
                       DD4hep::DDCore
                       DD4hep::DDG4
+                      ROOT::Core
+                      ROOT::Hist
                       ${Geant4_LIBRARIES}
                       CLHEP::CLHEP
                       EDM4HEP::edm4hep
