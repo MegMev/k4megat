@@ -25,7 +25,7 @@ namespace megat {
       , m_eventDataSvc( "EventDataSvc", "SimSaveCalHits" ) {
     declareInterface<ISimSaveOutputTool>( this );
     declareProperty( "CaloHits", m_caloHits, "Handle for calo hits" );
-    declareProperty( "MegatGeoSvc", m_geoSvc );
+    declareProperty( "GeoSvc", m_geoSvc );
   }
 
   SimSaveCalHits::~SimSaveCalHits() {}
@@ -63,7 +63,7 @@ namespace megat {
   StatusCode SimSaveCalHits::saveOutput( const G4Event& aEvent ) {
     G4HCofThisEvent*      collections = aEvent.GetHCofThisEvent();
     G4VHitsCollection*    collect;
-    megat::Geant4CaloHit* hit;
+    sim::Geant4CaloHit* hit;
     if ( collections != nullptr ) {
       auto edmHits = m_caloHits.createAndPut();
       for ( int iter_coll = 0; iter_coll < collections->GetNumberOfCollections(); iter_coll++ ) {
@@ -81,7 +81,7 @@ namespace megat {
           debug() << "\t" << n_hit << " hits are stored in a collection #" << iter_coll << ": " << collect->GetName()
                   << endmsg;
           for ( size_t iter_hit = 0; iter_hit < n_hit; iter_hit++ ) {
-            hit         = dynamic_cast<megat::Geant4CaloHit*>( collect->GetHit( iter_hit ) );
+            hit         = dynamic_cast<sim::Geant4CaloHit*>( collect->GetHit( iter_hit ) );
             auto edmHit = edmHits->create();
             edmHit.setCellID( hit->cellID );
             // todo
