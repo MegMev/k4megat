@@ -21,67 +21,69 @@
  *
  *  @author Anna Zaborowska
  */
+namespace megat {
 
-namespace sim {
-class ParticleInformation : public G4VUserPrimaryParticleInformation {
-public:
-  /** A constructor.
-   *  @param[in] aMCpart EDM MCParticle.
-   */
-  explicit ParticleInformation(const edm4hep::MCParticle& aMCpart);
-  /// A destructor
-  virtual ~ParticleInformation();
-  /// A printing method
-  virtual void Print() const final;
-  /** Getter of the MCParticle.
-   *  @returns EDM MCParticle.
-   */
-  edm4hep::MCParticle& mcParticle();
-  /** Setter of the end-of-tracking momentum (used for fast simulation).
-   *  @param[in] aMom Particle momentum.
-   */
-  void setEndMomentum(const CLHEP::Hep3Vector& aMom);
-  /** Getter of the vertex posiiton taken at the end-of-tracking (used for fast simulation).
-   *  @returns Vertex position.
-   */
-  const CLHEP::Hep3Vector& endMomentum() const;
-  /** Setter of the vertex positon (used for fast simulation).
-   *  @param[in] aPos Vertex position.
-   */
-  void setVertexPosition(const CLHEP::Hep3Vector& aPos);
-  /** Getter of the vertex positon (used for fast simulation).
-   *  @returns Vertex position.
-   */
-  const CLHEP::Hep3Vector& vertexPosition() const;
-  /** Setter of the end-of-tracking particle status (used for fast simulation).
-   *  @param[in] aStat Particle status.
-   */
-  void setEndStatus(int aStat);
-  /** Getter of the end-of-tracking particle status (used for fast simulation).
-   *  @returns Particle status.
-   */
-  int endStatus() const;
-  /** Setter of the flag indicating if particle was smeared in the tracker (used for fast simulation).
-   *  @param[in] aFlag If particle was smeared in the tracker.
-   */
-  void setSmeared(bool aFlag);
-  /** Getter of the flag indicating if particle was smeared in the tracker (used for fast simulation).
-   *  @returns Flag indicating if particle was smeared in the tracker.
-   */
-  bool smeared() const;
+  namespace sim {
+    class ParticleInformation : public G4VUserPrimaryParticleInformation {
+    public:
+      /** A constructor.
+       *  @param[in] aMCpart EDM MCParticle.
+       */
+      explicit ParticleInformation( const edm4hep::MCParticle& aMCpart );
+      /// A destructor
+      virtual ~ParticleInformation();
+      /// A printing method
+      virtual void Print() const final;
+      /** Getter of the MCParticle.
+       *  @returns EDM MCParticle.
+       */
+      edm4hep::MCParticle& mcParticle();
+      /** Setter of the end-of-tracking momentum (used for fast simulation).
+       *  @param[in] aMom Particle momentum.
+       */
+      void setEndMomentum( const CLHEP::Hep3Vector& aMom );
+      /** Getter of the vertex posiiton taken at the end-of-tracking (used for fast simulation).
+       *  @returns Vertex position.
+       */
+      const CLHEP::Hep3Vector& endMomentum() const;
+      /** Setter of the vertex positon (used for fast simulation).
+       *  @param[in] aPos Vertex position.
+       */
+      void setVertexPosition( const CLHEP::Hep3Vector& aPos );
+      /** Getter of the vertex positon (used for fast simulation).
+       *  @returns Vertex position.
+       */
+      const CLHEP::Hep3Vector& vertexPosition() const;
+      /** Setter of the end-of-tracking particle status (used for fast simulation).
+       *  @param[in] aStat Particle status.
+       */
+      void setEndStatus( int aStat );
+      /** Getter of the end-of-tracking particle status (used for fast simulation).
+       *  @returns Particle status.
+       */
+      int endStatus() const;
+      /** Setter of the flag indicating if particle was smeared in the tracker (used for fast simulation).
+       *  @param[in] aFlag If particle was smeared in the tracker.
+       */
+      void setSmeared( bool aFlag );
+      /** Getter of the flag indicating if particle was smeared in the tracker (used for fast simulation).
+       *  @returns Flag indicating if particle was smeared in the tracker.
+       */
+      bool smeared() const;
 
-private:
-  /// EDM MC particle
-  edm4hep::MCParticle m_mcParticle;
-  /// Particle momentum at the end of tracking (filled for fast-sim)
-  CLHEP::Hep3Vector m_endMomentum;
-  /// Particle vertex position saved at the end of tracking (filled for fast-sim)
-  CLHEP::Hep3Vector m_vertexPosition;
-  /// Particle status at the end of tracking (filled for fast-sim)
-  int m_endStatus;
-  /// Flag indicating if particle was smeared in the tracker (filled for fast-sim)
-  bool m_smeared;
-};
-}
+    private:
+      /// EDM MC particle
+      edm4hep::MCParticle m_mcParticle;
+      /// Particle momentum at the end of tracking (filled for fast-sim)
+      CLHEP::Hep3Vector m_endMomentum;
+      /// Particle vertex position saved at the end of tracking (filled for fast-sim)
+      CLHEP::Hep3Vector m_vertexPosition;
+      /// Particle status at the end of tracking (filled for fast-sim)
+      int m_endStatus;
+      /// Flag indicating if particle was smeared in the tracker (filled for fast-sim)
+      bool m_smeared;
+    };
+  } // namespace sim
+} // namespace megat
 
 #endif /* SIMG4COMMON_PARTICLEINFORMATION_H */

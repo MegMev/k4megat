@@ -9,6 +9,8 @@
 // FCCSW
 #include "SimInterface/ISimActionTool.h"
 
+namespace megat {
+
 /** @class SimFullSimActions SimFull/src/components/SimFullSimActions.h SimFullSimActions.h
  *
  *  Tool for loading full simulation user action initialization (list of user actions)
@@ -39,5 +41,7 @@ private:
   Gaudi::Property<bool> m_enableHistory{this, "enableHistory", false, "Set to true to save secondary particle info"};
   Gaudi::Property<double> m_energyCut{this, "energyCut", 0.0 * Gaudi::Units::GeV, "minimum energy for secondaries to be saved"};
 };
+
+} // namespace megat
 
 #endif /* SIMG4FULL_G4FULLSIMACTIONS_H */

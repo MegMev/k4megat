@@ -14,137 +14,137 @@
 #include "G4VisExecutive.hh"
 #include "G4VisManager.hh"
 
-DECLARE_COMPONENT(SimSvc)
+namespace megat {
 
-SimSvc::SimSvc(const std::string& aName, ISvcLocator* aSL) : base_class(aName, aSL) {
-  declareProperty("detector", m_detectorTool, "Handle for the detector construction tool");
-  declareProperty("physicslist", m_physicsListTool, "Handle for the Geant physics list tool");
-  declareProperty("actions", m_actionsTool, "Handle for the user action initialization");
-  declareProperty("magneticField", m_magneticFieldTool, "Handle for the magnetic field initialization");
-}
+  DECLARE_COMPONENT_WITH_ID( SimSvc, "SimSvc" )
 
-SimSvc::~SimSvc() {}
-
-StatusCode SimSvc::initialize() {
-  // Initialize necessary Gaudi components
-  if (Service::initialize().isFailure()) {
-    error() << "Unable to initialize Service()" << endmsg;
-    return StatusCode::FAILURE;
-  }
-  m_toolSvc = service("ToolSvc");
-  if (!m_toolSvc) {
-    error() << "Unable to locate Tool Service" << endmsg;
-    return StatusCode::FAILURE;
-  }
-  m_randSvc = service("RndmGenSvc");
-  if (!m_randSvc) {
-    error() << "Unable to locate RndmGen Service" << endmsg;
-    return StatusCode::FAILURE;
-  }
-  if (!m_detectorTool.retrieve()) {
-    error() << "Unable to retrieve detector construction" << endmsg;
-    return StatusCode::FAILURE;
-  }
-  if (!m_physicsListTool.retrieve()) {
-    error() << "Unable to retrieve physics list" << endmsg;
-    return StatusCode::FAILURE;
-  }
-  if (!m_actionsTool.retrieve()) {
-    error() << "Unable to retrieve list of user actions" << endmsg;
-    return StatusCode::FAILURE;
-  }
-  if (!m_magneticFieldTool.retrieve()) {
-    error() << "Unable to retrieve the magnetic field" << endmsg;
-    return StatusCode::FAILURE;
+  SimSvc::SimSvc( const std::string& aName, ISvcLocator* aSL ) : base_class( aName, aSL ) {
+    declareProperty( "detector", m_detectorTool, "Handle for the detector construction tool" );
+    declareProperty( "physicslist", m_physicsListTool, "Handle for the Geant physics list tool" );
+    declareProperty( "actions", m_actionsTool, "Handle for the user action initialization" );
+    declareProperty( "magneticField", m_magneticFieldTool, "Handle for the magnetic field initialization" );
   }
 
-  // Initialize Geant run manager
-  // Load physics list, deleted in ~G4RunManager()
-  m_runManager.SetUserInitialization(m_physicsListTool->physicsList());
-  // Take geometry (from DD4Hep), deleted in ~G4RunManager()
-  m_runManager.SetUserInitialization(m_detectorTool->detectorConstruction());
+  SimSvc::~SimSvc() {}
 
-  G4UImanager* UImanager = G4UImanager::GetUIpointer();
-  for (auto command : m_g4PreInitCommands) {
-    UImanager->ApplyCommand(command);
-  }
-
-  m_runManager.Initialize();
-
-  if (m_interactiveMode) {
-    m_visManager = std::make_unique<G4VisExecutive>();
-    m_visManager->Initialize();
-
-    m_session = std::make_unique<G4UIterminal>();
-    m_session->SessionStart();
-  }
-
-  // Attach user actions
-  m_runManager.SetUserInitialization(m_actionsTool->userActionInitialization());
-  if (msgLevel() < MSG::INFO) {
-    G4HadronicProcessStore::Instance()->SetVerbose(0);
-    UImanager->ApplyCommand("/run/verbose 0");
-    UImanager->ApplyCommand("/process/em/verbose 0");
-    UImanager->ApplyCommand("/process/had/verbose 0");
-  }
-  // Create regions
-  for (auto& toolname : m_regionToolNames) {
-    ISimRegionTool* tool = nullptr;
-    if (m_toolSvc->retrieveTool(toolname, tool).isFailure()) {
-      error() << "Unable to retrieve region tool " << toolname << endmsg;
+  StatusCode SimSvc::initialize() {
+    // Initialize necessary Gaudi components
+    if ( Service::initialize().isFailure() ) {
+      error() << "Unable to initialize Service()" << endmsg;
       return StatusCode::FAILURE;
     }
-    m_regionTools.push_back(tool);
-  }
-  for (auto& tool : m_regionTools) {
-    if (tool->create().isFailure()) {
-      error() << "Unable to create regions for specified volumes" << endmsg;
+    m_toolSvc = service( "ToolSvc" );
+    if ( !m_toolSvc ) {
+      error() << "Unable to locate Tool Service" << endmsg;
       return StatusCode::FAILURE;
     }
-  }
-  for (auto command : m_g4PostInitCommands) {
-    UImanager->ApplyCommand(command);
+    m_randSvc = service( "RndmGenSvc" );
+    if ( !m_randSvc ) {
+      error() << "Unable to locate RndmGen Service" << endmsg;
+      return StatusCode::FAILURE;
+    }
+    if ( !m_detectorTool.retrieve() ) {
+      error() << "Unable to retrieve detector construction" << endmsg;
+      return StatusCode::FAILURE;
+    }
+    if ( !m_physicsListTool.retrieve() ) {
+      error() << "Unable to retrieve physics list" << endmsg;
+      return StatusCode::FAILURE;
+    }
+    if ( !m_actionsTool.retrieve() ) {
+      error() << "Unable to retrieve list of user actions" << endmsg;
+      return StatusCode::FAILURE;
+    }
+    if ( !m_magneticFieldTool.retrieve() ) {
+      error() << "Unable to retrieve the magnetic field" << endmsg;
+      return StatusCode::FAILURE;
+    }
+
+    // Initialize Geant run manager
+    // Load physics list, deleted in ~G4RunManager()
+    m_runManager.SetUserInitialization( m_physicsListTool->physicsList() );
+    // Take geometry (from DD4Hep), deleted in ~G4RunManager()
+    m_runManager.SetUserInitialization( m_detectorTool->detectorConstruction() );
+
+    G4UImanager* UImanager = G4UImanager::GetUIpointer();
+    for ( auto command : m_g4PreInitCommands ) { UImanager->ApplyCommand( command ); }
+
+    m_runManager.Initialize();
+
+    if ( m_interactiveMode ) {
+      m_visManager = std::make_unique<G4VisExecutive>();
+      m_visManager->Initialize();
+
+      m_session = std::make_unique<G4UIterminal>();
+      m_session->SessionStart();
+    }
+
+    // Attach user actions
+    m_runManager.SetUserInitialization( m_actionsTool->userActionInitialization() );
+    if ( msgLevel() < MSG::INFO ) {
+      G4HadronicProcessStore::Instance()->SetVerbose( 0 );
+      UImanager->ApplyCommand( "/run/verbose 0" );
+      UImanager->ApplyCommand( "/process/em/verbose 0" );
+      UImanager->ApplyCommand( "/process/had/verbose 0" );
+    }
+    // Create regions
+    for ( auto& toolname : m_regionToolNames ) {
+      ISimRegionTool* tool = nullptr;
+      if ( m_toolSvc->retrieveTool( toolname, tool ).isFailure() ) {
+        error() << "Unable to retrieve region tool " << toolname << endmsg;
+        return StatusCode::FAILURE;
+      }
+      m_regionTools.push_back( tool );
+    }
+    for ( auto& tool : m_regionTools ) {
+      if ( tool->create().isFailure() ) {
+        error() << "Unable to create regions for specified volumes" << endmsg;
+        return StatusCode::FAILURE;
+      }
+    }
+    for ( auto command : m_g4PostInitCommands ) { UImanager->ApplyCommand( command ); }
+
+    // configure the random service
+    if ( m_rndmFromGaudi ) {
+      std::vector<long> seedsVec;
+      m_randSvc->engine()->seeds( seedsVec ).ignore();
+      long seedsList[] = { seedsVec[0], seedsVec[1] };
+      CLHEP::HepRandom::setTheSeeds( seedsList );
+      info() << "Random numbers seeds: " << CLHEP::HepRandom::getTheSeeds()[0] << "\t"
+             << CLHEP::HepRandom::getTheSeeds()[1] << endmsg;
+    } else {
+      m_randSvc->engine()->setSeeds( { m_seedValue } ).ignore();
+      std::vector<long> seedsVec;
+      m_randSvc->engine()->seeds( seedsVec ).ignore();
+      info() << "Random numbers seeds: " << seedsVec << endmsg;
+    }
+
+    if ( !m_runManager.start() ) {
+      error() << "Unable to initialize GEANT correctly." << endmsg;
+      return StatusCode::FAILURE;
+    }
+    return StatusCode::SUCCESS;
   }
 
-  // configure the random service
-  if (m_rndmFromGaudi) {
-    std::vector<long> seedsVec;
-    m_randSvc->engine()->seeds(seedsVec).ignore();
-    long seedsList[] = {seedsVec[0], seedsVec[1]};
-    CLHEP::HepRandom::setTheSeeds(seedsList);
-    info() << "Random numbers seeds: " << CLHEP::HepRandom::getTheSeeds()[0] << "\t" << CLHEP::HepRandom::getTheSeeds()[1] << endmsg;
-  }
-  else {
-    m_randSvc->engine()->setSeeds({m_seedValue}).ignore();
-    std::vector<long> seedsVec;
-    m_randSvc->engine()->seeds(seedsVec).ignore();
-    info() << "Random numbers seeds: " << seedsVec << endmsg;
+  StatusCode SimSvc::processEvent( G4Event& aEvent ) {
+    StatusCode status = m_runManager.processEvent( aEvent );
+    if ( !status ) {
+      error() << "Unable to process event in Geant" << endmsg;
+      return StatusCode::FAILURE;
+    }
+    return StatusCode::SUCCESS;
   }
 
-  if (!m_runManager.start()) {
-    error() << "Unable to initialize GEANT correctly." << endmsg;
-    return StatusCode::FAILURE;
+  StatusCode SimSvc::retrieveEvent( G4Event*& aEvent ) { return m_runManager.retrieveEvent( aEvent ); }
+
+  StatusCode SimSvc::terminateEvent() {
+    m_runManager.terminateEvent().ignore();
+    return StatusCode::SUCCESS;
   }
-  return StatusCode::SUCCESS;
-}
 
-StatusCode SimSvc::processEvent(G4Event& aEvent) {
-  StatusCode status = m_runManager.processEvent(aEvent);
-  if (!status) {
-    error() << "Unable to process event in Geant" << endmsg;
-    return StatusCode::FAILURE;
+  StatusCode SimSvc::finalize() {
+    m_runManager.finalize();
+    return Service::finalize();
   }
-  return StatusCode::SUCCESS;
-}
 
-StatusCode SimSvc::retrieveEvent(G4Event*& aEvent) { return m_runManager.retrieveEvent(aEvent); }
-
-StatusCode SimSvc::terminateEvent() {
-  m_runManager.terminateEvent().ignore();
-  return StatusCode::SUCCESS;
-}
-
-StatusCode SimSvc::finalize() {
-  m_runManager.finalize();
-  return Service::finalize();
-}
+} // namespace megat

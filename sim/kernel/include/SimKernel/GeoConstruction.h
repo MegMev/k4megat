@@ -8,7 +8,7 @@
 #include "G4VUserDetectorConstruction.hh"
 
 namespace dd4hep {
-class Detector;
+  class Detector;
 }
 /** @class GeoConstruction DetectorDescription/DetDesServices/src/GeoConstruction.h GeoConstruction.h
  *
@@ -19,24 +19,27 @@ class Detector;
  *  @author Markus Frank
  *  @author Anna Zaborowska
  */
+namespace megat {
 
-namespace det {
-class GeoConstruction : public G4VUserDetectorConstruction {
-public:
-  /// Constructor
-  GeoConstruction(dd4hep::Detector& lcdd, std::map<std::string, std::string> sensitive_types);
-  /// Default destructor
-  virtual ~GeoConstruction();
-  /// Geometry construction callback: Invoke the conversion to Geant4
-  /// All volumes (including world) are deleted in ~G4PhysicalVolumeStore()
-  virtual G4VPhysicalVolume* Construct() final;
-  /// Construct SD
-  virtual void ConstructSDandField() final;
+  namespace sim {
+    class GeoConstruction : public G4VUserDetectorConstruction {
+    public:
+      /// Constructor
+      GeoConstruction( dd4hep::Detector& lcdd, std::map<std::string, std::string> sensitive_types );
+      /// Default destructor
+      virtual ~GeoConstruction();
+      /// Geometry construction callback: Invoke the conversion to Geant4
+      /// All volumes (including world) are deleted in ~G4PhysicalVolumeStore()
+      virtual G4VPhysicalVolume* Construct() final;
+      /// Construct SD
+      virtual void ConstructSDandField() final;
 
-private:
-  /// Reference to geometry object
-  dd4hep::Detector& m_lcdd;
-  std::map<std::string, std::string> m_sensitive_types;
-};
-}
+    private:
+      /// Reference to geometry object
+      dd4hep::Detector&                  m_lcdd;
+      std::map<std::string, std::string> m_sensitive_types;
+    };
+  } // namespace sim
+} // namespace megat
+
 #endif /* DETDESSERVICES_GEOCONSTRUCTION_H */

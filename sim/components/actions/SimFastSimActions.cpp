@@ -3,22 +3,24 @@
 // FCCSW
 #include "SimKernel/FastSimActions.h"
 
-DECLARE_COMPONENT(SimFastSimActions)
+namespace megat {
 
-SimFastSimActions::SimFastSimActions(const std::string& type, const std::string& name, const IInterface* parent)
-    : AlgTool(type, name, parent) {
-  declareInterface<ISimActionTool>(this);
-}
+  DECLARE_COMPONENT_WITH_ID( SimFastSimActions, "SimFastSimActions" )
 
-SimFastSimActions::~SimFastSimActions() {}
-
-StatusCode SimFastSimActions::initialize() {
-  if (AlgTool::initialize().isFailure()) {
-    return StatusCode::FAILURE;
+  SimFastSimActions::SimFastSimActions( const std::string& type, const std::string& name, const IInterface* parent )
+      : AlgTool( type, name, parent ) {
+    declareInterface<ISimActionTool>( this );
   }
-  return StatusCode::SUCCESS;
-}
 
-StatusCode SimFastSimActions::finalize() { return AlgTool::finalize(); }
+  SimFastSimActions::~SimFastSimActions() {}
 
-G4VUserActionInitialization* SimFastSimActions::userActionInitialization() { return new sim::FastSimActions(); }
+  StatusCode SimFastSimActions::initialize() {
+    if ( AlgTool::initialize().isFailure() ) { return StatusCode::FAILURE; }
+    return StatusCode::SUCCESS;
+  }
+
+  StatusCode SimFastSimActions::finalize() { return AlgTool::finalize(); }
+
+  G4VUserActionInitialization* SimFastSimActions::userActionInitialization() { return new sim::FastSimActions(); }
+
+} // namespace megat

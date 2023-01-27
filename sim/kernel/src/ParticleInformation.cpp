@@ -1,19 +1,23 @@
 #include "SimKernel/ParticleInformation.h"
 
-namespace sim {
-ParticleInformation::ParticleInformation(const edm4hep::MCParticle& aMCpart) : m_mcParticle(aMCpart), m_smeared(false) {}
+namespace megat {
 
-ParticleInformation::~ParticleInformation() {}
+  namespace sim {
+    ParticleInformation::ParticleInformation( const edm4hep::MCParticle& aMCpart )
+        : m_mcParticle( aMCpart ), m_smeared( false ) {}
 
-void ParticleInformation::Print() const {}
+    ParticleInformation::~ParticleInformation() {}
 
-edm4hep::MCParticle& ParticleInformation::mcParticle() { return m_mcParticle; }
-void ParticleInformation::setEndMomentum(const CLHEP::Hep3Vector& aMom) { m_endMomentum = aMom; }
-const CLHEP::Hep3Vector& ParticleInformation::endMomentum() const { return m_endMomentum; }
-void ParticleInformation::setVertexPosition(const CLHEP::Hep3Vector& aPos) { m_vertexPosition = aPos; }
-const CLHEP::Hep3Vector& ParticleInformation::vertexPosition() const { return m_vertexPosition; }
-void ParticleInformation::setEndStatus(int aStat) { m_endStatus = aStat; }
-int ParticleInformation::endStatus() const { return m_endStatus; }
-void ParticleInformation::setSmeared(bool aFlag) { m_smeared = aFlag; }
-bool ParticleInformation::smeared() const { return m_smeared; }
-}
+    void ParticleInformation::Print() const {}
+
+    edm4hep::MCParticle& ParticleInformation::mcParticle() { return m_mcParticle; }
+    void                 ParticleInformation::setEndMomentum( const CLHEP::Hep3Vector& aMom ) { m_endMomentum = aMom; }
+    const CLHEP::Hep3Vector& ParticleInformation::endMomentum() const { return m_endMomentum; }
+    void ParticleInformation::setVertexPosition( const CLHEP::Hep3Vector& aPos ) { m_vertexPosition = aPos; }
+    const CLHEP::Hep3Vector& ParticleInformation::vertexPosition() const { return m_vertexPosition; }
+    void                     ParticleInformation::setEndStatus( int aStat ) { m_endStatus = aStat; }
+    int                      ParticleInformation::endStatus() const { return m_endStatus; }
+    void                     ParticleInformation::setSmeared( bool aFlag ) { m_smeared = aFlag; }
+    bool                     ParticleInformation::smeared() const { return m_smeared; }
+  } // namespace sim
+} // namespace megat

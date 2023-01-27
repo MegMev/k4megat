@@ -10,21 +10,23 @@
  *  @author A. Zaborowska
  *  @author J. Lingemann (adding particle history)
  */
+namespace megat {
 
-namespace sim {
-class FullSimActions : public G4VUserActionInitialization {
-public:
-  FullSimActions(bool enableHistory, double aEnergyCut);
-  virtual ~FullSimActions();
-  /// Create all user actions.
-  virtual void Build() const final;
+  namespace sim {
+    class FullSimActions : public G4VUserActionInitialization {
+    public:
+      FullSimActions( bool enableHistory, double aEnergyCut );
+      virtual ~FullSimActions();
+      /// Create all user actions.
+      virtual void Build() const final;
 
-private:
-  /// Flag whether or not to store particle history
-  bool m_enableHistory;
-  /// energy threshold for secondaries to be saved
-  double m_energyCut;
-};
-}
+    private:
+      /// Flag whether or not to store particle history
+      bool m_enableHistory;
+      /// energy threshold for secondaries to be saved
+      double m_energyCut;
+    };
+  } // namespace sim
+} // namespace megat
 
 #endif /* SIMG4FULL_FULLSIMACTIONS_H */

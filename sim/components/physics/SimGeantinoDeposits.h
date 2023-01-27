@@ -6,28 +6,28 @@
 // FCCSW
 #include "SimInterface/ISimPhysicsList.h"
 
+namespace megat {
 
-class SimGeantinoDeposits: public AlgTool, virtual public ISimPhysicsList {
-public:
-  explicit SimGeantinoDeposits(const std::string& aType , const std::string& aName,
-                  const IInterface* aParent);
-  virtual ~SimGeantinoDeposits() = default;
+  class SimGeantinoDeposits : public AlgTool, virtual public ISimPhysicsList {
+  public:
+    explicit SimGeantinoDeposits( const std::string& aType, const std::string& aName, const IInterface* aParent );
+    virtual ~SimGeantinoDeposits() = default;
 
-  /**  Initialize.
-   *   @return status code
-   */
-  virtual StatusCode initialize() override final;
+    /**  Initialize.
+     *   @return status code
+     */
+    virtual StatusCode initialize() override final;
 
-  /**  Finalize.
-   *   @return status code
-   */
-  virtual StatusCode finalize() override final;
+    /**  Finalize.
+     *   @return status code
+     */
+    virtual StatusCode finalize() override final;
 
-  /** Get the physics list.
-   *  @return pointer to G4VModularPhysicsList (ownership is transferred to the caller)
-   */
-  virtual G4VModularPhysicsList* physicsList() override final;
-
-};
+    /** Get the physics list.
+     *  @return pointer to G4VModularPhysicsList (ownership is transferred to the caller)
+     */
+    virtual G4VModularPhysicsList* physicsList() override final;
+  };
+} // namespace megat
 
 #endif /* SIMG4COMPONENTS_G4GEANTINODEPOSITS_H */

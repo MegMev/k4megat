@@ -13,71 +13,75 @@
 // DD4hep
 #include "DD4hep/Segmentations.h"
 
-DECLARE_COMPONENT(SimSmearGenParticles)
+namespace megat {
 
-SimSmearGenParticles::SimSmearGenParticles(const std::string& aName,ISvcLocator* aSvcLoc) : GaudiAlgorithm(aName, aSvcLoc) {
-  declareProperty("inParticles", m_inParticles, "Handle for the input particles");
-  declareProperty("smearedParticles", m_particles, "Handle for the particles to be written");
-  declareProperty("smearTool", m_smearTool, "Handle to smear generated particles tool");
-}
+  DECLARE_COMPONENT_WITH_ID( SimSmearGenParticles, "SimSmearGenParticles" )
 
-StatusCode SimSmearGenParticles::initialize() { 
+  SimSmearGenParticles::SimSmearGenParticles( const std::string& aName, ISvcLocator* aSvcLoc )
+      : GaudiAlgorithm( aName, aSvcLoc ) {
+    declareProperty( "inParticles", m_inParticles, "Handle for the input particles" );
+    declareProperty( "smearedParticles", m_particles, "Handle for the particles to be written" );
+    declareProperty( "smearTool", m_smearTool, "Handle to smear generated particles tool" );
+  }
 
-  StatusCode sc = GaudiAlgorithm::initialize();
-  // Use smearing tool                                                                                                                                                                                     
-  if (!m_smearTool.retrieve()) {
-    info() << "Generated particles will not be smeared!!!" << endmsg;
+  StatusCode SimSmearGenParticles::initialize() {
+
+    StatusCode sc = GaudiAlgorithm::initialize();
+    // Use smearing tool
+    if ( !m_smearTool.retrieve() ) {
+      info() << "Generated particles will not be smeared!!!" << endmsg;
+      return StatusCode::SUCCESS;
+    }
+    return sc;
+  }
+
+  StatusCode SimSmearGenParticles::execute() {
+
+    auto                                 particles = m_particles.createAndPut();
+    const edm4hep::MCParticleCollection* coll      = m_inParticles.get();
+    info() << "Input particle collection size: " << coll->size() << endmsg;
+
+    int n_part = 0;
+    for ( auto j : *coll ) {
+      // save only charged particles, visible in tracker
+      verbose() << "Charge of input particles: " << j.getCharge() << endmsg;
+
+      if ( j.getCharge() != 0 || j.getPDG() == -211 || !m_simTracker ) {
+
+        // todo: replace with copy / ctor method when available in podio
+        // relations currently  not set!
+        auto particle = particles->create();
+        particle.setCharge( j.getCharge() );
+        particle.setPDG( j.getPDG() );
+        particle.setMass( j.getMass() );
+        particle.setTime( j.getTime() );
+        particle.setSimulatorStatus( j.getSimulatorStatus() );
+        particle.setMomentumAtEndpoint( j.getMomentumAtEndpoint() );
+        particle.setSpin( j.getSpin() );
+        particle.setColorFlow( j.getColorFlow() );
+        particle.setVertex( j.getVertex() );
+
+        // smear momentum according to trackers resolution
+        auto              edm_mom = j.getMomentum();
+        CLHEP::Hep3Vector mom     = CLHEP::Hep3Vector( edm_mom.x, edm_mom.y, edm_mom.z );
+        //    m_smearTool->checkConditions(5000,10000000,6);
+        m_smearTool->smearMomentum( mom, j.getPDG() ).ignore();
+        particle.setMomentum( {
+            (float)mom.x(),
+            (float)mom.y(),
+            (float)mom.z(),
+        } );
+
+        n_part++;
+      }
+    }
+
+    debug() << "\t" << n_part << " particles are stored in smeared particles collection" << endmsg;
+    debug() << "Output particle collection size: " << particles->size() << endmsg;
+
     return StatusCode::SUCCESS;
   }
-  return sc;
-}
 
-StatusCode SimSmearGenParticles::execute() {
+  StatusCode SimSmearGenParticles::finalize() { return GaudiAlgorithm::finalize(); }
 
-  auto particles = m_particles.createAndPut();
-  const edm4hep::MCParticleCollection* coll = m_inParticles.get();
-  info() << "Input particle collection size: " << coll->size() << endmsg;
-  
-  int n_part = 0;
-  for (auto j : *coll) {
-    // save only charged particles, visible in tracker
-    verbose() << "Charge of input particles: " << j.getCharge() << endmsg;
-
-    if ( j.getCharge()!=0 || j.getPDG()==-211 || !m_simTracker){
-      
-      // todo: replace with copy / ctor method when available in podio
-      // relations currently  not set!
-      auto particle = particles->create();
-      particle.setCharge(j.getCharge());
-      particle.setPDG(j.getPDG());
-      particle.setMass(j.getMass());
-      particle.setTime(j.getTime());
-      particle.setSimulatorStatus(j.getSimulatorStatus());
-      particle.setMomentumAtEndpoint(j.getMomentumAtEndpoint());
-      particle.setSpin(j.getSpin());
-      particle.setColorFlow(j.getColorFlow());
-      particle.setVertex(j.getVertex());
-
-
-      // smear momentum according to trackers resolution
-      auto edm_mom = j.getMomentum();
-      CLHEP::Hep3Vector mom = CLHEP::Hep3Vector(edm_mom.x, edm_mom.y, edm_mom.z);
-      //    m_smearTool->checkConditions(5000,10000000,6);
-      m_smearTool->smearMomentum(mom, j.getPDG()).ignore();
-      particle.setMomentum({
-                (float) mom.x(),
-                (float) mom.y(),
-                (float) mom.z(),
-      });
-      
-      n_part++;
-    }
-  }
-  
-  debug() << "\t" << n_part << " particles are stored in smeared particles collection" << endmsg;
-  debug() << "Output particle collection size: " << particles->size() << endmsg;
-
-  return StatusCode::SUCCESS;
-}
-
-StatusCode SimSmearGenParticles::finalize() { return GaudiAlgorithm::finalize(); }
+} // namespace megat

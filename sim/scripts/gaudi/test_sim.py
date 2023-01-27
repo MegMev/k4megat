@@ -7,10 +7,10 @@ podioevent = k4DataSvc("EventDataSvc")
 
 # geometry service
 ### Configures the detector construction: geometry and sd
-from Configurables import GeoSvc
+from Configurables import MegatGeoSvc as GeoSvc
 from os import environ, path
 detector_path = environ.get("MEGAT_ROOT", "")
-geoservice = GeoSvc("GeoSvc", detectors=[path.join(detector_path, 'geometry/compact/Megat.xml')],
+geoservice = GeoSvc("MegatGeoSvc", detectors=[path.join(detector_path, 'geometry/compact/Megat.xml')],
                     sensitiveTypes={'tracker':'SimpleTrackerSD','calorimeter':'AggregateCalorimeterSD'},
                     OutputLevel = WARNING)
 
@@ -88,7 +88,7 @@ out.outputCommands = ['keep *']
 from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg = [geantsim, out],
                 EvtSel = 'NONE',
-                EvtMax = 1000,
+                EvtMax = 1,
                 # order is important, as GeoSvc is needed by G4SimSvc
                 ExtSvc = [podioevent, geoservice, geantservice],
                 OutputLevel = DEBUG)

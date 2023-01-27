@@ -10,18 +10,20 @@
  *  @author V. Volkl
  */
 
-namespace sim {
-class ParticleHistoryEventAction : public G4UserEventAction {
-public:
-  ParticleHistoryEventAction();
-  virtual ~ParticleHistoryEventAction() = default;
+namespace megat {
 
-  /// EventInformation data structure is created here
-  virtual void  BeginOfEventAction ( const G4Event *anEvent);
-  /// empty action 
-  virtual void  EndOfEventAction (const G4Event *anEvent);
+  namespace sim {
+    class ParticleHistoryEventAction : public G4UserEventAction {
+    public:
+      ParticleHistoryEventAction();
+      virtual ~ParticleHistoryEventAction() = default;
 
-};
-}
+      /// EventInformation data structure is created here
+      virtual void BeginOfEventAction( const G4Event* anEvent );
+      /// empty action
+      virtual void EndOfEventAction( const G4Event* anEvent );
+    };
+  } // namespace sim
+} // namespace megat
 
 #endif /* SIMG4FULL_PARTICLEHISTORYEVENTACTION_H */

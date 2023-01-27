@@ -2,20 +2,23 @@
 
 #include "SimKernel/EventInformation.h"
 
+#include "G4Event.hh"
 #include "G4EventManager.hh"
 #include "G4LorentzVector.hh"
-#include "G4Event.hh"
 
-namespace sim {
+namespace megat {
 
-ParticleHistoryEventAction::ParticleHistoryEventAction() {}
+  namespace sim {
 
-void  ParticleHistoryEventAction::BeginOfEventAction (const G4Event * /*anEvent*/) {
+    ParticleHistoryEventAction::ParticleHistoryEventAction() {}
 
-  auto eventInfo = new sim::EventInformation();
-  G4EventManager::GetEventManager()->SetUserInformation(eventInfo);
-}
-  
-void  ParticleHistoryEventAction::EndOfEventAction (const G4Event * /*anEvent*/) {}
+    void ParticleHistoryEventAction::BeginOfEventAction( const G4Event* /*anEvent*/ ) {
 
-}
+      auto eventInfo = new EventInformation();
+      G4EventManager::GetEventManager()->SetUserInformation( eventInfo );
+    }
+
+    void ParticleHistoryEventAction::EndOfEventAction( const G4Event* /*anEvent*/ ) {}
+
+  } // namespace sim
+} // namespace megat

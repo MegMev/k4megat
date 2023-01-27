@@ -3,16 +3,19 @@
 #include "SimKernel/ParticleHistoryEventAction.h"
 #include <iostream>
 
-namespace sim {
-FullSimActions::FullSimActions(bool enableHistory, double aEnergyCut)
-    : G4VUserActionInitialization(), m_enableHistory(enableHistory), m_energyCut(aEnergyCut) {}
+namespace megat {
 
-FullSimActions::~FullSimActions() {}
+  namespace sim {
+    FullSimActions::FullSimActions( bool enableHistory, double aEnergyCut )
+        : G4VUserActionInitialization(), m_enableHistory( enableHistory ), m_energyCut( aEnergyCut ) {}
 
-void FullSimActions::Build() const {
-  if (m_enableHistory) {
-    SetUserAction(new ParticleHistoryEventAction());
-    SetUserAction(new ParticleHistoryAction(m_energyCut));
-  }
-}
-}
+    FullSimActions::~FullSimActions() {}
+
+    void FullSimActions::Build() const {
+      if ( m_enableHistory ) {
+        SetUserAction( new ParticleHistoryEventAction() );
+        SetUserAction( new ParticleHistoryAction( m_energyCut ) );
+      }
+    }
+  } // namespace sim
+} // namespace megat

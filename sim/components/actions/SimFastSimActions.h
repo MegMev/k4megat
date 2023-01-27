@@ -8,29 +8,33 @@
 // FCCSW
 #include "SimInterface/ISimActionTool.h"
 
-/** @class SimFastSimActions SimFast/src/components/SimFastSimActions.h SimFastSimActions.h
- *
- *  Tool for loading fast simulation user action initialization (list of user actions)
- *
- *  @author Anna Zaborowska
-*/
+namespace megat {
 
-class SimFastSimActions : public AlgTool, virtual public ISimActionTool {
-public:
-  explicit SimFastSimActions(const std::string& type, const std::string& name, const IInterface* parent);
-  virtual ~SimFastSimActions();
-  /**  Initialize.
-   *   @return status code
+  /** @class SimFastSimActions SimFast/src/components/SimFastSimActions.h SimFastSimActions.h
+   *
+   *  Tool for loading fast simulation user action initialization (list of user actions)
+   *
+   *  @author Anna Zaborowska
    */
-  virtual StatusCode initialize() final;
-  /**  Finalize.
-   *   @return status code
-   */
-  virtual StatusCode finalize() final;
-  /** Get the user action initialization.
-   *  @return pointer to G4VUserActionInitialization (ownership is transferred to the caller)
-   */
-  virtual G4VUserActionInitialization* userActionInitialization() final;
-};
+
+  class SimFastSimActions : public AlgTool, virtual public ISimActionTool {
+  public:
+    explicit SimFastSimActions( const std::string& type, const std::string& name, const IInterface* parent );
+    virtual ~SimFastSimActions();
+    /**  Initialize.
+     *   @return status code
+     */
+    virtual StatusCode initialize() final;
+    /**  Finalize.
+     *   @return status code
+     */
+    virtual StatusCode finalize() final;
+    /** Get the user action initialization.
+     *  @return pointer to G4VUserActionInitialization (ownership is transferred to the caller)
+     */
+    virtual G4VUserActionInitialization* userActionInitialization() final;
+  };
+
+} // namespace megat
 
 #endif /* SIMG4FAST_G4FASTSIMACTIONS_H */

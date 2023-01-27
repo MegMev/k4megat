@@ -6,28 +6,30 @@
 // Geant4
 #include "G4VUserDetectorConstruction.hh"
 
-DECLARE_COMPONENT(SimDD4hepDetector)
+namespace megat {
 
-SimDD4hepDetector::SimDD4hepDetector(const std::string& aType, const std::string& aName, const IInterface* aParent)
-    : GaudiTool(aType, aName, aParent), m_geoSvc("GeoSvc", aName) {
-  declareInterface<ISimDetectorConstruction>(this);
-  declareProperty("GeoSvc", m_geoSvc);
-}
+  DECLARE_COMPONENT_WITH_ID( SimDD4hepDetector, "SimDD4hepDetector" )
 
-SimDD4hepDetector::~SimDD4hepDetector() {}
-
-StatusCode SimDD4hepDetector::initialize() {
-  if (GaudiTool::initialize().isFailure()) {
-    return StatusCode::FAILURE;
+  SimDD4hepDetector::SimDD4hepDetector( const std::string& aType, const std::string& aName, const IInterface* aParent )
+      : GaudiTool( aType, aName, aParent ), m_geoSvc( "MegatGeoSvc", aName ) {
+    declareInterface<ISimDetectorConstruction>( this );
+    declareProperty( "MegatGeoSvc", m_geoSvc );
   }
-  if (!m_geoSvc) {
-    error() << "Unable to locate Geometry Service. "
-            << "Make sure you have GeoSvc and SimSvc in the right order in the configuration." << endmsg;
-    return StatusCode::FAILURE;
+
+  SimDD4hepDetector::~SimDD4hepDetector() {}
+
+  StatusCode SimDD4hepDetector::initialize() {
+    if ( GaudiTool::initialize().isFailure() ) { return StatusCode::FAILURE; }
+    if ( !m_geoSvc ) {
+      error() << "Unable to locate Geometry Service. "
+              << "Make sure you have GeoSvc and SimSvc in the right order in the configuration." << endmsg;
+      return StatusCode::FAILURE;
+    }
+    return StatusCode::SUCCESS;
   }
-  return StatusCode::SUCCESS;
-}
 
-StatusCode SimDD4hepDetector::finalize() { return GaudiTool::finalize(); }
+  StatusCode SimDD4hepDetector::finalize() { return GaudiTool::finalize(); }
 
-G4VUserDetectorConstruction* SimDD4hepDetector::detectorConstruction() { return m_geoSvc->getGeant4Geo(); }
+  G4VUserDetectorConstruction* SimDD4hepDetector::detectorConstruction() { return m_geoSvc->getGeant4Geo(); }
+
+} // namespace megat

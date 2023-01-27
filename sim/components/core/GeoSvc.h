@@ -19,37 +19,43 @@
 #include "G4RunManager.hh"
 #include "G4VUserDetectorConstruction.hh"
 
-class GeoSvc : public extends<Service, IGeoSvc> {
+namespace megat {
 
-public:
-  /// Default constructor
-  GeoSvc(const std::string& name, ISvcLocator* svc);
+  class GeoSvc : public extends<Service, IGeoSvc> {
 
-  /// Destructor
-  virtual ~GeoSvc();
-  /// Initialize function
-  virtual StatusCode initialize() final;
-  /// Finalize function
-  virtual StatusCode finalize() final;
-  /// This function generates the DD4hep geometry
-  StatusCode buildDD4HepGeo();
-  /// This function generates the Geant4 geometry
-  StatusCode buildGeant4Geo();
-  // receive DD4hep Geometry
-  virtual dd4hep::DetElement getDD4HepGeo() override;
-  virtual dd4hep::Detector* lcdd() override;
-  // receive Geant4 Geometry
-  virtual G4VUserDetectorConstruction* getGeant4Geo() override;
+  public:
+    /// Default constructor
+    GeoSvc( const std::string& name, ISvcLocator* svc );
 
-private:
-  /// Pointer to the interface to the DD4hep geometry
-  dd4hep::Detector* m_dd4hepgeo;
-  /// Pointer to the detector construction of DDG4
-  std::shared_ptr<G4VUserDetectorConstruction> m_geant4geo;
-  /// XML-files with the detector description
-  Gaudi::Property<std::vector<std::string>> m_xmlFileNames{this, "detectors", {}, "Detector descriptions XML-files"};
-  /// mapping of sensitive detector names
-  Gaudi::Property<std::map<std::string, std::string>> m_sensitive_types{this, "sensitiveTypes", {{"tracker", "SimpleTrackerSD"}, {"calorimeter", "SimpleCalorimeterSD"}}};
-};
+    /// Destructor
+    virtual ~GeoSvc();
+    /// Initialize function
+    virtual StatusCode initialize() final;
+    /// Finalize function
+    virtual StatusCode finalize() final;
+    /// This function generates the DD4hep geometry
+    StatusCode buildDD4HepGeo();
+    /// This function generates the Geant4 geometry
+    StatusCode buildGeant4Geo();
+    // receive DD4hep Geometry
+    virtual dd4hep::DetElement getDD4HepGeo() override;
+    virtual dd4hep::Detector*  lcdd() override;
+    // receive Geant4 Geometry
+    virtual G4VUserDetectorConstruction* getGeant4Geo() override;
 
-#endif  // GEOSVC_H
+  private:
+    /// Pointer to the interface to the DD4hep geometry
+    dd4hep::Detector* m_dd4hepgeo;
+    /// Pointer to the detector construction of DDG4
+    std::shared_ptr<G4VUserDetectorConstruction> m_geant4geo;
+    /// XML-files with the detector description
+    Gaudi::Property<std::vector<std::string>> m_xmlFileNames{
+        this, "detectors", {}, "Detector descriptions XML-files" };
+    /// mapping of sensitive detector names
+    Gaudi::Property<std::map<std::string, std::string>> m_sensitive_types{
+        this, "sensitiveTypes", { { "tracker", "SimpleTrackerSD" }, { "calorimeter", "SimpleCalorimeterSD" } } };
+  };
+
+} // namespace megat
+
+#endif // GEOSVC_H
