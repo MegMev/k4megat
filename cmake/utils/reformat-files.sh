@@ -29,7 +29,7 @@ XML_LINT="xmllint"
 if [ $# -eq 0 ]; then
   echo ' '
   echo 'This script formats the source directory /path/to/source/'
-  echo 'given as the only argument. Only *.h, *.cxx, *.cc, *.C and *.rml files will be reformatted.'
+  echo 'given as the only argument. Only *.h, *.cpp, *.cc, *.C and *.rml files will be reformatted.'
   echo ' '
   echo 'The formatting will consider the .clang-format file closer to the source directory given.'
   echo ' '
@@ -58,7 +58,7 @@ if [ -d "$pathToFormat" ]; then
   for DIRECTORY in $pathToFormat; do
     echo "Formatting code under $DIRECTORY/"
     if [[ -z "$CLANG_FORMAT_DISABLED" ]]; then
-      find "$DIRECTORY" \( -name '*.h' -or -name '*.cxx' -or -name '*.cc' -or -name '*.C' \) -print0 | xargs -0 "$CLANG_FORMAT" -i
+      find "$DIRECTORY" \( -name '*.h' -or -name '*.cpp' -or -name '*.cc' -or -name '*.C' \) -print0 | xargs -0 "$CLANG_FORMAT" -i
     fi
     if [[ -z "$XML_LINT_DISABLED" ]]; then
       find "$DIRECTORY" -name "*.rml" -type f -exec $XML_LINT --output '{}' --format '{}' \;
@@ -68,13 +68,13 @@ if [ -d "$pathToFormat" ]; then
 elif [ -f "$pathToFormat" ]; then
   echo "Formatting file \"$pathToFormat\""
   ext="${pathToFormat##*.}"
-  if [[ "$ext" == "h" || "$ext" == "cxx" || "$ext" == "cc" || "$ext" == "C" ]]; then
+  if [[ "$ext" == "h" || "$ext" == "cpp" || "$ext" == "cc" || "$ext" == "C" ]]; then
     echo "$CLANG_FORMAT -i $pathToFormat"
     eval "$CLANG_FORMAT -i $pathToFormat"
   elif [[ "$ext" == "rml" ]]; then
     $XML_LINT --output "$pathToFormat" --format "$pathToFormat"
   else
-    echo "Not valid extension $ext, valid extensions are *.h, *.cxx, *.cc, *.C or *.rml"
+    echo "Not valid extension $ext, valid extensions are *.h, *.cpp, *.cc, *.C or *.rml"
   fi
 else
   echo "$pathToFormat is not valid file or directory"
