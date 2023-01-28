@@ -54,7 +54,7 @@ bool SimpleDriftChamber::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   auto hit = new Geant4PreDigiTrackHit(
       track->GetTrackID(), track->GetDefinition()->GetPDGEncoding(), edep, track->GetGlobalTime());
 
-  hit->cellID = utils::cellID(m_seg, *aStep, true);
+  hit->cellID = utils::cellID(m_seg, *aStep, false);
   hit->energyDeposit = edep;
   hit->prePos = prePos;
   hit->postPos = postPos;

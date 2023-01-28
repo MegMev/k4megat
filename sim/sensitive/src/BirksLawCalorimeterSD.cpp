@@ -78,7 +78,7 @@ bool BirksLawCalorimeterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   CLHEP::Hep3Vector prePos = aStep->GetPreStepPoint()->GetPosition();
   auto hit = new Geant4CaloHit(
       track->GetTrackID(), track->GetDefinition()->GetPDGEncoding(), edep, track->GetGlobalTime());
-  hit->cellID = utils::cellID(m_seg, *aStep, true);
+  hit->cellID = utils::cellID(m_seg, *aStep, false);
   hit->position = prePos;
   hit->energyDeposit = edep;
   m_calorimeterCollection->insert(hit);

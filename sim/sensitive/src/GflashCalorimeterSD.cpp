@@ -50,7 +50,7 @@ bool GflashCalorimeterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   Geant4CaloHit* hit = new Geant4CaloHit();
   CLHEP::Hep3Vector prePos = aStep->GetPreStepPoint()->GetPosition();
   hit->position = prePos;
-  hit->cellID = utils::cellID(m_seg, *aStep, true);
+  hit->cellID = utils::cellID(m_seg, *aStep, false);
   hit->energyDeposit = edep;
   m_calorimeterCollection->insert(hit);
   return true;

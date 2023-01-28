@@ -40,7 +40,7 @@ bool FullParticleAbsorptionSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   G4double kineticEnergy = aTrack->GetKineticEnergy();
   auto hit = new Geant4CaloHit(
       aTrack->GetTrackID(), aTrack->GetDefinition()->GetPDGEncoding(), kineticEnergy, aTrack->GetGlobalTime());
-  hit->cellID = utils::cellID(m_seg, *aStep, true);
+  hit->cellID = utils::cellID(m_seg, *aStep, false);
   CLHEP::Hep3Vector prePos = aStep->GetPreStepPoint()->GetPosition();
   hit->position = prePos;
   m_calorimeterCollection->insert(hit);

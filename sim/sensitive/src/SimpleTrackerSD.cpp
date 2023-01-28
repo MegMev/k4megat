@@ -47,7 +47,7 @@ bool SimpleTrackerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   // deleted in ~G4Event
   auto hit = new Geant4PreDigiTrackHit(
       track->GetTrackID(), track->GetDefinition()->GetPDGEncoding(), edep, track->GetGlobalTime());
-  hit->cellID = utils::cellID(m_seg, *aStep, true);
+  hit->cellID = utils::cellID(m_seg, *aStep, false);
   hit->prePos = prePos;
   hit->postPos = postPos;
   m_trackerCollection->insert(hit);

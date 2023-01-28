@@ -11,7 +11,7 @@ from Configurables import GeoSvc
 from os import environ, path
 detector_path = environ.get("MEGAT_ROOT", "")
 geoservice = GeoSvc("GeoSvc", detectors=[path.join(detector_path, 'geometry/compact/Megat.xml')],
-                    # sensitiveTypes={'tracker':'MegatSimpleTrackerSD','calorimeter':'MegatAggregateCalorimeterSD'},
+                    sensitiveTypes={'tracker':'MegatSimpleTrackerSD','calorimeter':'MegatAggregateCalorimeterSD'},
                     OutputLevel = WARNING)
 
 # region & limits
@@ -30,7 +30,7 @@ actions.energyCut= 0.1 # min kinetic e the generated track to be saved (in MeV)
 # detector
 from Configurables import SimDD4hepDetector
 detector = SimDD4hepDetector()
-detector.MegatGeoSvc = 'GeoSvc'
+detector.GeoSvc = 'GeoSvc'
 
 # g4 service
 ### Configures the Geant simulation: detector building, fields, regions, physics, actions
