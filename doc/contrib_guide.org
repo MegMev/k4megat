@@ -17,4 +17,7 @@
 *** However, class names defined in libraries should not be prefixed with /Megat/ to keep simplicity. Namespace *megat::* should be used instead.
 
 ** Coding style
-*** File ~.clang-format~ is used to force a consistent style. 
+*** Git pre-commit hook and ~.clang-format~ is used to force a consistent style (adapted from REST)
+    Make sure clang-format is installed in your development machine.
+    Don't use USTC server as your develompent machine.
+    The clang-format version in USTC server is too old that can-t recognize some  config opions.
