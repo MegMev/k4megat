@@ -7,3 +7,16 @@
 
 * Analysis
 ** Spark & RDataFrame mini-framework
+
+* Software Management
+** Spack-based dependence management
+** Continuous integration
+
+* Detector
+** Consider a geometry service with no dependency on Geant4
+
+* Simulation
+** TPC digi implementation
+
+* Analysis
+** Spark & RDataFrame mini-framework
