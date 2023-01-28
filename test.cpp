@@ -1,4 +1,1 @@
-int main
-(int a
- , int c) {
-}
+int main( int a, int c ) {}
