@@ -2,12 +2,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.15)
 
 project(k4megat)
 
-message(STATUS "$ENV{CPPGSL_ROOT_DIR}")
-find_path(CPPGSL_INCLUDE_DIR
-  NAMES gsl/gsl
-  HINTS $ENV{CPPGSL_ROOT_DIR} ${CPPGSL_ROOT_DIR})
-message(STATUS "cpp: ${CPPGSL_INCLUDE_DIR}")
+
 #---------------------------------------------------------------
+# external dependencies
 # Load macros and functions for Gaudi-based projects
 find_package(Gaudi)
 set(GAUDI_GENCONF_DIR "genConfDir")
@@ -16,22 +13,20 @@ if (${Gaudi_VERSION} VERSION_LESS 35.1)
 endif()
 
 find_package(DD4hep)
-dd4hep_set_compiler_flags()
-if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR DD4HEP_BUILD_TEST) AND TEST)
-  dd4hep_enable_tests()
-endif()
-
-find_package(ROOT COMPONENTS RIO Tree)
+find_package(ROOT)
 find_package(EDM4HEP)
 find_package(Geant4)
 find_package(CLHEP)
 
-set(MEGAT_CORE k4FWCore)
+# core package maybe built as subproject
 option(USE_EXTERNAL_K4CORE "Use external k4FWCore, make it exists" ON)
 mark_as_advanced(USE_EXTERNAL_K4CORE)
 if(USE_EXTERNAL_K4CORE)
   find_package(k4FWCore)
-  set(MEGAT_CORE k4FWCore::k4FWCore)
+else()
+  find_path(CPPGSL_INCLUDE_DIR
+    NAMES gsl/gsl
+    HINTS $ENV{CPPGSL_ROOT_DIR} ${CPPGSL_ROOT_DIR})
 endif()
 
 #---------------------------------------------------------------
@@ -51,10 +46,12 @@ if(NOT CMAKE_CXX_STANDARD MATCHES "14|17")
   message(FATAL_ERROR "Unsupported C++ standard: ${CMAKE_CXX_STANDARD}")
 endif()
 
+# This mandatory
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 include(cmake/MegatMacro.cmake)
 
+#---------------------------------------------------------------
 add_subdirectory(k4libs)
 add_subdirectory(detector)
 add_subdirectory(sim)
