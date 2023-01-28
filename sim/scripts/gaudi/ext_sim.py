@@ -75,11 +75,11 @@ savehisttool.GenParticles.Path = "SimParticles"
 ##### finally the alg itself
 from Configurables import SimAlg
 geantsim = SimAlg('SimAlg',
-                    outputs= ['SimSaveCalHits/saveCalo',
-                              'SimSaveTrackerHits/saveTpc',
-                              'SimSaveParticleHistory/saveHistory',
-                              'SimSaveTrajectory/saveTrajectory',
-                              ],
+                    # outputs= ['SimSaveCalHits/saveCalo',
+                    #           'SimSaveTrackerHits/saveTpc',
+                    #           'SimSaveParticleHistory/saveHistory',
+                    #           'SimSaveTrajectory/saveTrajectory',
+                    #           ],
                     eventProvider = pgun,
                     OutputLevel = DEBUG)
 
