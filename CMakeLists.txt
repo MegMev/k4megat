@@ -49,7 +49,11 @@ endif()
 # This mandatory
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-include(cmake/MegatMacro.cmake)
+# cmake modules
+set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake )
+include(MegatMacro)
+# Includes githooks, now using clang-format
+include(GitHooks)
 
 #---------------------------------------------------------------
 add_subdirectory(k4libs)
