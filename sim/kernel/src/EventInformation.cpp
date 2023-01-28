@@ -41,8 +41,8 @@ namespace megat {
       } );
       edmParticle.setTime( aSecondary->GetGlobalTime() * sim::g42edm::length );
 
-      size_t motherID   = aSecondary->GetParentID();
-      auto   g4StartPos = aSecondary->GetVertexPosition();
+      // size_t motherID   = aSecondary->GetParentID();
+      auto g4StartPos = aSecondary->GetVertexPosition();
       edmParticle.setVertex( {
           g4StartPos.x() * sim::g42edm::length,
           g4StartPos.y() * sim::g42edm::length,

@@ -40,6 +40,6 @@ namespace megat {
     // GFlashSamplingShowerParameterisation(
     //     nist->FindOrBuildMaterial("G4_lAr"),  nist->FindOrBuildMaterial("G4_Pb"), 6, 2));
 
-    return std::move( parametrisation );
+    return parametrisation;
   }
 } // namespace megat
