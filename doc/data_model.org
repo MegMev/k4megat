@@ -1,0 +1,3 @@
+* Data Model (a.k.a EDM4hep)
+  The design of EDM4hep is well described in the official documentation of [[https://github.com/AIDASoft/podio][podio]].
+  Here is some summary information and practical guide of how to use it in the context of *k4megat*.

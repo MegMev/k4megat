@@ -1,0 +1,9 @@
+* Software Management
+** Spack-based dependence management
+** Continuous integration
+
+* Simulation
+** TPC digi implementation
+
+* Analysis
+** Spark & RDataFrame mini-framework

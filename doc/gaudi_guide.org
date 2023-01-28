@@ -1,0 +1,6 @@
+* Gaudi guide
+** Basic concepts
+*** The plugin system (a.k.a Component)
+*** Service, Algorithm, Tool
+*** Transient Event Store (TES)
+*** Job options

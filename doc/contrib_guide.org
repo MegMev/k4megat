@@ -10,3 +10,11 @@
 *** Plugin/Component sources and headers should locate in the same directory
 
 ** Naming
+*** all sources should be put into *megat* namespace, with the exception of Component sources.
+*** packages may have its own namespace under *megat* e.g. *megat::sim* for the simulation package.
+*** Sources and headers should be named after the major class defined in them, with first letter capitalized of each word
+*** Component name is better prefixed with /MegatXXX/ to avoid potential name conflicts
+*** However, class names defined in libraries should not be prefixed with /Megat/ to keep simplicity. Namespace *megat::* should be used instead.
+
+** Coding style
+*** File ~.clang-format~ is used to force a consistent style. 
