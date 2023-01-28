@@ -10,7 +10,7 @@
 #include "G4VSensitiveDetector.hh"
 
 // megat
-#include "SimKernel/Geant4PreDigiTrackHit.h"
+#include "SimG4Common/Geant4PreDigiTrackHit.h"
 
 /*
  *
@@ -42,7 +42,7 @@ public:
 
 private:
   /// Collection of tracker hits
-  G4THitsCollection<Geant4PreDigiTrackHit>* m_driftChamberCollection;
+  G4THitsCollection<k4::Geant4PreDigiTrackHit>* m_driftChamberCollection;
   /// Segmentation of the detector used to retrieve the cell Ids
   dd4hep::Segmentation m_seg;
 

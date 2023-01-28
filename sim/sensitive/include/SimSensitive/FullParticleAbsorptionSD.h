@@ -10,7 +10,7 @@
 #include "G4VSensitiveDetector.hh"
 
 // megat
-#include "SimKernel/Geant4CaloHit.h"
+#include "SimG4Common/Geant4CaloHit.h"
 
 /** FullParticleAbsD DetectorDescription/SimSensitive/src/FullParticleAbsSD.h
  * FullParticleAbsSD.h
@@ -54,7 +54,7 @@ public:
 
 private:
   /// Collection of calorimeter hits
-  G4THitsCollection<Geant4CaloHit>* m_calorimeterCollection;
+  G4THitsCollection<k4::Geant4CaloHit>* m_calorimeterCollection;
   /// Segmentation of the detector used to retrieve the cell Ids
   dd4hep::Segmentation m_seg;
 };

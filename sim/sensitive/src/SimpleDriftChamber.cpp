@@ -14,53 +14,50 @@
 #include "G4SDManager.hh"
 
 namespace megat {
-namespace sim {
+  namespace sim {
 
-SimpleDriftChamber::SimpleDriftChamber(const std::string& aDetectorName,
-                                       const std::string& aReadoutName,
-                                       const dd4hep::Segmentation& aSeg)
-    : G4VSensitiveDetector(aDetectorName), m_driftChamberCollection(nullptr), m_seg(aSeg) {
-  // name of the collection of hits is determined byt the readout name (from XML)
-  collectionName.insert(aReadoutName);
-}
+    SimpleDriftChamber::SimpleDriftChamber( const std::string& aDetectorName, const std::string& aReadoutName,
+                                            const dd4hep::Segmentation& aSeg )
+        : G4VSensitiveDetector( aDetectorName ), m_driftChamberCollection( nullptr ), m_seg( aSeg ) {
+      // name of the collection of hits is determined byt the readout name (from XML)
+      collectionName.insert( aReadoutName );
+    }
 
-SimpleDriftChamber::~SimpleDriftChamber() {}
+    SimpleDriftChamber::~SimpleDriftChamber() {}
 
-void SimpleDriftChamber::Initialize(G4HCofThisEvent* aHitsCollections) {
-  // create a collection of hits and add it to G4HCofThisEvent
-  // deleted in ~G4Event
-  m_driftChamberCollection =
-      new G4THitsCollection<Geant4PreDigiTrackHit>(SensitiveDetectorName, collectionName[0]);
-  aHitsCollections->AddHitsCollection(G4SDManager::GetSDMpointer()->GetCollectionID(m_driftChamberCollection),
-                                      m_driftChamberCollection);
-}
+    void SimpleDriftChamber::Initialize( G4HCofThisEvent* aHitsCollections ) {
+      // create a collection of hits and add it to G4HCofThisEvent
+      // deleted in ~G4Event
+      m_driftChamberCollection =
+          new G4THitsCollection<k4::Geant4PreDigiTrackHit>( SensitiveDetectorName, collectionName[0] );
+      aHitsCollections->AddHitsCollection( G4SDManager::GetSDMpointer()->GetCollectionID( m_driftChamberCollection ),
+                                           m_driftChamberCollection );
+    }
 
-bool SimpleDriftChamber::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
-  // check if energy was deposited
-  G4double edep = aStep->GetTotalEnergyDeposit();
-  G4double stepLength = aStep->GetStepLength();
+    bool SimpleDriftChamber::ProcessHits( G4Step* aStep, G4TouchableHistory* ) {
+      // check if energy was deposited
+      G4double edep       = aStep->GetTotalEnergyDeposit();
+      G4double stepLength = aStep->GetStepLength();
 
-  // cuts on the Edep and the G4 step length 
-  if (edep < m_edepCut || stepLength < m_stepLengthCut) {
-    return false;
-  }
+      // cuts on the Edep and the G4 step length
+      if ( edep < m_edepCut || stepLength < m_stepLengthCut ) { return false; }
 
-  // get track
-  const G4Track* track = aStep->GetTrack();
+      // get track
+      const G4Track* track = aStep->GetTrack();
 
-  CLHEP::Hep3Vector prePos = aStep->GetPreStepPoint()->GetPosition();
-  CLHEP::Hep3Vector postPos = aStep->GetPostStepPoint()->GetPosition();
+      CLHEP::Hep3Vector prePos  = aStep->GetPreStepPoint()->GetPosition();
+      CLHEP::Hep3Vector postPos = aStep->GetPostStepPoint()->GetPosition();
 
-  auto hit = new Geant4PreDigiTrackHit(
-      track->GetTrackID(), track->GetDefinition()->GetPDGEncoding(), edep, track->GetGlobalTime());
+      auto hit = new k4::Geant4PreDigiTrackHit( track->GetTrackID(), track->GetDefinition()->GetPDGEncoding(), edep,
+                                                track->GetGlobalTime() );
 
-  hit->cellID = utils::cellID(m_seg, *aStep, false);
-  hit->energyDeposit = edep;
-  hit->prePos = prePos;
-  hit->postPos = postPos;
-  m_driftChamberCollection->insert(hit);
-  return true;
-}
+      hit->cellID        = utils::cellID( m_seg, *aStep, false );
+      hit->energyDeposit = edep;
+      hit->prePos        = prePos;
+      hit->postPos       = postPos;
+      m_driftChamberCollection->insert( hit );
+      return true;
+    }
 
-} // namespace sim
+  } // namespace sim
 } // namespace megat

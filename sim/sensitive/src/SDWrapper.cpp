@@ -26,26 +26,12 @@ namespace megat {
       return new SimpleCalorimeterSD( aDetectorName, readoutName,
                                       aLcdd.sensitiveDetector( aDetectorName ).readout().segmentation() );
     }
-    // Factory method to create an instance of SimpleCalorimeterSD with Birks law
-    static G4VSensitiveDetector* create_birks_law_calorimeter_sd( const std::string& aDetectorName,
-                                                                  dd4hep::Detector&  aLcdd ) {
-      std::string readoutName = aLcdd.sensitiveDetector( aDetectorName ).readout().name();
-      return new BirksLawCalorimeterSD( aDetectorName, readoutName,
-                                        aLcdd.sensitiveDetector( aDetectorName ).readout().segmentation() );
-    }
     // Factory method to create an instance of AggregateCalorimeterSD
     static G4VSensitiveDetector* create_aggregate_calorimeter_sd( const std::string& aDetectorName,
                                                                   dd4hep::Detector&  aLcdd ) {
       std::string readoutName = aLcdd.sensitiveDetector( aDetectorName ).readout().name();
       return new AggregateCalorimeterSD( aDetectorName, readoutName,
                                          aLcdd.sensitiveDetector( aDetectorName ).readout().segmentation() );
-    }
-    // Factory method to create an instance of GflashCalorimeterSD
-    static G4VSensitiveDetector* create_gflash_calorimeter_sd( const std::string& aDetectorName,
-                                                               dd4hep::Detector&  aLcdd ) {
-      std::string readoutName = aLcdd.sensitiveDetector( aDetectorName ).readout().name();
-      return new GflashCalorimeterSD( aDetectorName, readoutName,
-                                      aLcdd.sensitiveDetector( aDetectorName ).readout().segmentation() );
     }
     // Factory method to create an instance of FullParticleAbsorptionSD
     static G4VSensitiveDetector* create_full_particle_absorbtion_sd( const std::string& aDetectorName,
@@ -67,9 +53,7 @@ namespace megat {
 
 DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR( MegatSimpleTrackerSD, megat::sim::create_simple_tracker_sd )
 DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR( MegatSimpleCalorimeterSD, megat::sim::create_simple_calorimeter_sd )
-DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR( MegatBirksLawCalorimeterSD, megat::sim::create_birks_law_calorimeter_sd )
 DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR( MegatAggregateCalorimeterSD, megat::sim::create_aggregate_calorimeter_sd )
-DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR( MegatGflashCalorimeterSD, megat::sim::create_gflash_calorimeter_sd )
 DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR( MegatFullParticleAbsorptionSD,
                                           megat::sim::create_full_particle_absorbtion_sd )
 DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR( MegatSimpleDriftChamber, megat::sim::create_simple_driftchamber )

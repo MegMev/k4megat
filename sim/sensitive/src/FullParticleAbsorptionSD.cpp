@@ -2,7 +2,7 @@
 
 // FCCSW
 #include "SimSensitive/Utils.h"
-#include "SimKernel/Geant4CaloHit.h"
+#include "SimG4Common/Geant4CaloHit.h"
 
 // DD4hep
 #include "DDG4/Geant4Mapping.h"
@@ -30,7 +30,7 @@ FullParticleAbsorptionSD::~FullParticleAbsorptionSD() {}
 void FullParticleAbsorptionSD::Initialize(G4HCofThisEvent* aHitsCollections) {
   // create a collection of hits and add it to G4HCofThisEvent
   // deleted in ~G4Event
-  m_calorimeterCollection = new G4THitsCollection<Geant4CaloHit>(SensitiveDetectorName, collectionName[0]);
+  m_calorimeterCollection = new G4THitsCollection<k4::Geant4CaloHit>(SensitiveDetectorName, collectionName[0]);
   aHitsCollections->AddHitsCollection(G4SDManager::GetSDMpointer()->GetCollectionID(m_calorimeterCollection),
                                       m_calorimeterCollection);
 }
@@ -38,7 +38,7 @@ void FullParticleAbsorptionSD::Initialize(G4HCofThisEvent* aHitsCollections) {
 bool FullParticleAbsorptionSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   G4Track* aTrack = aStep->GetTrack();
   G4double kineticEnergy = aTrack->GetKineticEnergy();
-  auto hit = new Geant4CaloHit(
+  auto hit = new k4::Geant4CaloHit(
       aTrack->GetTrackID(), aTrack->GetDefinition()->GetPDGEncoding(), kineticEnergy, aTrack->GetGlobalTime());
   hit->cellID = utils::cellID(m_seg, *aStep, false);
   CLHEP::Hep3Vector prePos = aStep->GetPreStepPoint()->GetPosition();
