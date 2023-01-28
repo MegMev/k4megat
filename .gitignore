@@ -1,1 +1,15 @@
 *.root
+build
+install
+storage
+tags
+.idea
+.vs*
+Debug
+*.pyc
+*.tmp
+*.zip
+*.tgz
+*.tar.gz
+.DS_Store
+.cache
