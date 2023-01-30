@@ -4,6 +4,12 @@ project(k4megat)
 
 
 #---------------------------------------------------------------
+OPTION(BUILD_DOCS "Build documentation" ON)
+if(BUILD_DOCS)
+  add_subdirectory(doc)
+endif()
+
+#---------------------------------------------------------------
 # external dependencies
 # Load macros and functions for Gaudi-based projects
 find_package(Gaudi)
