@@ -8,6 +8,7 @@ tags
 Debug
 *.pyc
 *.tmp
+*.temp
 *.zip
 *.tgz
 *.tar.gz

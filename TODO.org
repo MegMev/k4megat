@@ -4,19 +4,16 @@
 
 * Simulation
 ** TPC digi implementation
+*** try to migrate REST implementation
+**** consider append extra metadata about tpc readout structure as dd4hep data extension
+- see /home/yong/src/physics/key4hep/lcgeo/detector/tracker/TPC10_geo.cpp for adding the info
+- see /home/yong/src/physics/key4hep/DD4hep/DDRec/src/gear/createGearForILD.cpp for receivint the info
 
-* Analysis
-** Spark & RDataFrame mini-framework
+** Generator
 
-* Software Management
-** Spack-based dependence management
-** Continuous integration
-
-* Detector
-** Consider a geometry service with no dependency on Geant4
-
-* Simulation
-** TPC digi implementation
+** CAD model error in USTC key4hep stack
+- Disable VecGeom support may solve the issue.
+- need a new spack environment
 
 * Analysis
 ** Spark & RDataFrame mini-framework
