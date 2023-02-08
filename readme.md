@@ -59,6 +59,7 @@ k4run test_sim.py
 ```
 There will be no _ERROR_ message and a ROOT file named "megat.gaudi.root" will be created if the installation is successful.
 
+The event number can be configured with parameter `EvtMax` in the script. The default value is `1`.
 
 Development
 ===
