@@ -13,8 +13,8 @@ DECLARE_COMPONENT(MgTut_EDMIO)
 
 MgTut_EDMIO::MgTut_EDMIO(const std::string& aName, ISvcLocator* aSvcLoc)
     : GaudiAlgorithm(aName, aSvcLoc) {
-  declareProperty("CaloSimHits", m_caloHits,
-                  "Simulated Hit Collection of Calorimeter");
+  declareProperty("CaloSimHits", m_caloHits, "Simulated Hit Collection of Calorimeter");
+  declareProperty("OffsetCaloSimHits", m_offsetCaloHits, "Offset Hit Collection of Calorimeter");
 }
 MgTut_EDMIO::~MgTut_EDMIO() {}
 
@@ -29,16 +29,10 @@ StatusCode MgTut_EDMIO::initialize() {
     return StatusCode::FAILURE;
   }
 
-  // m_randSvc = service("RndmGenSvc");
-  // if (!m_randSvc) {
-  //   error() << "Unable to locate RndmGen Service" << endmsg;
-  //   return StatusCode::FAILURE;
-  // }
-
   /// histograms
-  std::unique_ptr<TH1F> h1 = std::make_unique<TH1F>("hCaloEdep", "Cell Eenergy Deposit (MeV)", 300, 0, 30);
-  if (m_histSvc->regHist("/tutorial/hCaloEdep", std::move(h1)).isFailure()) {
-    error() << "Couldn't register histogram hCaloEdep" << endmsg;
+  std::unique_ptr<TH1F> h1 = std::make_unique<TH1F>("hOffsetCaloEdep", "Cell Eenergy Deposit + Offset (MeV)", 300, 0, 30+m_offset);
+  if (m_histSvc->regHist("/tutorial/hOffsetCaloEdep", std::move(h1)).isFailure()) {
+    error() << "Couldn't register histogram hOffsetCaloEdep" << endmsg;
   }
 
   return StatusCode::SUCCESS;
@@ -47,14 +41,29 @@ StatusCode MgTut_EDMIO::initialize() {
 StatusCode MgTut_EDMIO::execute() {
   /// fetch the histogram
   TH1* h( nullptr );
-  if ( !m_histSvc->getHist( "/tutorial/hCaloEdep", h ).isSuccess() ) {
-    error() << "Couldn't retrieve hCaloEdep" << endmsg;
+  if ( !m_histSvc->getHist( "/tutorial/hOffsetCaloEdep", h ).isSuccess() ) {
+    error() << "Couldn't retrieve hOffsetCaloEdep" << endmsg;
   }
 
-  /// fetch the hit collection
+  /// fetch the hit collection and fill
+  auto offset_hits    = m_offsetCaloHits.createAndPut();
   const auto calo_hits = m_caloHits.get();
   for (const auto& hit : *calo_hits) {
-    h->Fill(1000*hit.getEnergy());
+    // CAVEAT: the following code is incorrect; HINT: Ownership design & Value Semantics of edm4hep
+    {
+      // auto new_hit = offset_hits->create(); // new_hit is owned by offset_hits when created
+      // new_hit = hit.clone();                // it points to a cloned (temporary) hit object after assignment
+      // new_hit.setEnergy(m_offset*0.001 + hit.getEnergy()); // the temporary hit object gets the new value
+    }
+    // the hit object owned by offset_hits keep the same value, i.e., the default value
+
+    // the correct way: start life as standalone, then pushed to the owning collection
+    auto new_hit = hit.clone();
+    new_hit.setEnergy(m_offset*0.001 + hit.getEnergy());
+    offset_hits->push_back(new_hit); // offset_hits now owns the new_hit
+
+    // fill the hist
+    h->Fill(m_offset + 1000 * hit.getEnergy());
   }
 
   return StatusCode::SUCCESS;
