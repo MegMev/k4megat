@@ -9,8 +9,10 @@
 
 /** @class MgTut_EDMIO
  *
- * A template for Gaudi algorithm. Copy the source and header file and replace "MgTut_EDMIO" with
- * real algorithm name.
+ * This algorithm demo shows how to fetch a existing collection object from TES, add an custom offset
+ * to the energy value, create and write to a new collection object in TES.
+ *
+ * See tut_edmio.py for usage.
  *
  *  @author Yong Zhou
  */
@@ -47,14 +49,12 @@ public:
 private:
   /// Pointer to the interface of histogram service
   SmartIF<ITHistSvc> m_histSvc;
-  /// Pointer to the random numbers service
-  // SmartIF<IRndmGenSvc> m_randSvc;
 
   /// Handle to EDM collection
   DataHandle<edm4hep::SimCalorimeterHitCollection> m_caloHits{"CztHits", Gaudi::DataHandle::Reader, this};
+  DataHandle<edm4hep::SimCalorimeterHitCollection> m_offsetCaloHits{"OffsetCztHits", Gaudi::DataHandle::Writer, this};
 
   /// Properties
-  // Gaudi::Property<float> m_sigma{this, "Sigma", 1.0, "Sigma of Gaussian distribution"};
-  // Gaudi::Property<std::string> m_name{this, "Name", "hRndGauss", "Name of the histogram"};
+  Gaudi::Property<float> m_offset{this, "Offset", 5.0, "An arbitrary offest added to energy value"};
 };
 #endif /* MEGAT_MgTut_EDMIO_H */

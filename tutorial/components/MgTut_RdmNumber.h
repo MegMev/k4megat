@@ -9,10 +9,11 @@
 
 /** @class MgTut_RdmNumber
  *
- *  It takes ParticleCollection (\b'smearedParticles') as the input.
- *  Demonstrate how to use the Gaudi random service and histogram service.
- *  Initialize a random distribution and fill into a histogram.
+ *  This algorithm demo shows how to use the Gaudi random service and histogram service.
+ *  It uses a gaussian random generator to fill a histogram.
  *  The dist parameters and hist entries are configured using Gaudi property.
+ *
+ *  See tut_rndm.py for usage.
  *
  *  @author Yong Zhou
  */
