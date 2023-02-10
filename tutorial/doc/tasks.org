@@ -1,0 +1,2 @@
+* Verify the offset collection output of MgTut_EDMIO is correct
+Hint: get the difference distribution of the original and the offset hit
