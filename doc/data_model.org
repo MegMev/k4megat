@@ -2,7 +2,28 @@
   The design of EDM4hep is well described in the official documentation of [[https://github.com/AIDASoft/podio][podio]].
   Here is some summary information and practical guide of how to use it in the context of *k4megat*.
 
-* Further development
+** Plain-Old-Data
+
+** Ownership Model
+*** Two life management
+- Independent self-management of underlying POD data
+- collection-management of underlying POD data
+
+Be cautious not to mix the two management together.
+
+** Seperate IO Management from Memory Representation
+
+** Architecture Reference
+*** Programming Idioms Used
+| use case             | idiom                   | note |
+|----------------------+-------------------------+------|
+| Ownership Management | copy-swap & copy-elison |      |
+|                      | RAAI (resource handle)  |      |
+|                      | reference-counting      |      |
+
+*** Class Diagram
+
+** Further development
 Two limitations exist in current k4FWCore implementation of EventStore:
 1. Multi-Thread : is needed when all algorithm (including simulation) are MTed. Before that, we can leave
    it alone and focus on algorithm development.
@@ -13,3 +34,16 @@ Two limitations exist in current k4FWCore implementation of EventStore:
 Some reference implementations exist:
 ** EICEventStore in EICrecon (MT, not Frame-based)
 - subclass of ICollectionProvider interface defined in PODIO
+** Others
+*** Hit
+- it's resource handle with value semantics (needless to use new/delete)
+- manage its own life and resources with shared ownership if created by its own
+- if created by a collection or pushed into a collection, it acts as a raw pointer
+  with value semantics. It does not manage the life of the underlying resource.
+- two variants: Mutable vs Normal
+- clone() returns a mutable deep-copy without collection tracking by default
+  
+*** Collection
+- it's a Container type [TODO: add fine-detailed type]
+- owner of the tracked Hit and the data of this Hit
+- has its own iterator, push_back(), begin() and end()
