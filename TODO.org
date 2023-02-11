@@ -1,6 +1,9 @@
 * Software Management
 ** Spack-based dependence management
 ** Continuous integration
+** A seperate wiki/repo for documentation
+** Version mechanism
+Semantic Versioning: [[https://semver.org/]]
 
 * Simulation
 ** TPC digi implementation

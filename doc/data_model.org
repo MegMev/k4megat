@@ -1,3 +1,15 @@
 * Data Model (a.k.a EDM4hep)
   The design of EDM4hep is well described in the official documentation of [[https://github.com/AIDASoft/podio][podio]].
   Here is some summary information and practical guide of how to use it in the context of *k4megat*.
+
+* Further development
+Two limitations exist in current k4FWCore implementation of EventStore:
+1. Multi-Thread : is needed when all algorithm (including simulation) are MTed. Before that, we can leave
+   it alone and focus on algorithm development.
+2. not Frame-based : is madatory for triggerless acquisition but also suitable for conventional trigger
+   based event stream. More importantly, Frame-based IO will be the official IO mechanism in the future
+   development of PODIO. So, better keep an eye on its development.
+
+Some reference implementations exist:
+** EICEventStore in EICrecon (MT, not Frame-based)
+- subclass of ICollectionProvider interface defined in PODIO
