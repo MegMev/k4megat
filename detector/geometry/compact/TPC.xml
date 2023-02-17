@@ -81,6 +81,7 @@
     <!-- Readout/Segmentation/HitCollection Configuration-->
     <readouts>
         <readout name="TpcHits">
+            <!-- <segmentation type="NoSegmentation"/> -->
             <id>system:6</id>
         </readout>
     </readouts>
