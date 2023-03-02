@@ -14,7 +14,7 @@
         <constant name="Czt_X" value="fiducial_x*2+1*mm" />
         <constant name="Czt_Y" value="fiducial_y*2+1*mm" />
         <constant name="Czt_Z" value="fiducial_z*2+1*mm" />
-        <constant name="Czt_Thickness" value="30*mm" />
+        <constant name="Czt_Crystal_Z" value="30*mm" />
     </define>
 
     <detectors>
@@ -24,7 +24,7 @@
 
             <!-- The smallest detector unit (one crystal) -->
             <module name="Module" x="Czt_X" y="Czt_Y">
-                <component name="Crystal" thickness="Czt_Thickness" material="CdZnTe" vis="CztCrystalVis" sensitive="true" />
+                <component name="Crystal" thickness="Czt_Crystal_Z" material="CdZnTe" vis="CztCrystalVis" sensitive="true" />
             </module>
 
             <!-- Each section matches one side of the detector -->

@@ -67,8 +67,6 @@ StatusCode TpcTestDigi::initialize() {
 StatusCode TpcTestDigi::execute() {
   /// fetch the hit collection and fill
   const auto in_hits = m_inHits.get();
-  // const auto                            cellIDstr = m_inHits.getCollMetadataCellID( in_hits->getID() );
-  // dd4hep::DDSegmentation::BitFieldCoder decoder( cellIDstr );
 
   auto out_hits = m_outHits.createAndPut();
   for ( const auto& hit : *in_hits ) {
@@ -79,22 +77,31 @@ StatusCode TpcTestDigi::execute() {
     if ( is_multiSeg ) {
       m_segmentation.decoder()->set( volId, m_xyField, 0 );
       auto newCellId = m_segmentation.cellID( pos, pos, volId );
+      auto strip_pos = m_segmentation.position( newCellId );
       auto x_hit     = hit.clone();
       x_hit.setCellID( newCellId );
+      x_hit.setPosition( { strip_pos.x(), strip_pos.y(), strip_pos.z() } );
       out_hits->push_back( x_hit );
 
       m_segmentation.decoder()->set( volId, m_xyField, 1 );
       newCellId  = m_segmentation.cellID( pos, pos, volId );
+      strip_pos  = m_segmentation.position( newCellId );
       auto y_hit = hit.clone();
       y_hit.setCellID( newCellId );
+      y_hit.setPosition( { strip_pos.x(), strip_pos.y(), strip_pos.z() } );
       out_hits->push_back( y_hit );
     } else {
       auto newCellId = m_segmentation.cellID( pos, pos, volId );
+      auto pixel_pos = m_segmentation.position( newCellId );
       auto new_hit   = hit.clone();
       new_hit.setCellID( newCellId );
+      new_hit.setPosition( { pixel_pos.x(), pixel_pos.y(), pixel_pos.z() } );
       out_hits->push_back( new_hit );
     }
   }
+
+  auto& collmd = m_podioDataSvc->getProvider().getCollectionMetaData( out_hits->getID() );
+  collmd.setValue( "CellIDEncodingString", m_segmentation->fieldDescription() );
 
   return StatusCode::SUCCESS;
 }

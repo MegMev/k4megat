@@ -1,11 +1,19 @@
 * Software Management
 ** Spack-based dependence management
 ** Continuous integration
-** A seperate wiki/repo for documentation
 ** Version mechanism
 Semantic Versioning: [[https://semver.org/]]
+** DONE Documentation
+CLOSED: [2023-02-27 一 21:47]
+- online publish
+- cross-reference:
+  - edm4hep
+  - dd4hep
+  - Gaudi
+  - k4megat
 
 * Simulation
+** DDG4 as the back-end
 ** TPC digi implementation
 *** try to migrate REST implementation
 **** consider append extra metadata about tpc readout structure as dd4hep data extension
@@ -13,10 +21,51 @@ Semantic Versioning: [[https://semver.org/]]
 - see /home/yong/src/physics/key4hep/DD4hep/DDRec/src/gear/createGearForILD.cpp for receivint the info
 
 ** Generator
+** Garfield integration
+[[https://garfieldpp.web.cern.ch/garfieldpp/examples/geant4-interface/][the most sophisticated solution]]
 
+[[https://github.com/nimanthaperera/GEANT4_garfield_integration][a examlpe]]
+
+** Physics list checking
+*** Compton scattering
+**** Doppler broadening
+- [[/home/yong/src/physics/geant4/examples/extended/electromagnetic/TestEm14/src/PhysListEmPenelope.cc][check this example in G4]] :: G4PenelopeComptonModel
+- G4LowEnergyCompton :: [[https://www.ge.infn.it/geant4/talks/nss2008/merged_mg.pdf]]
+- [[https://hal.science/hal-03481082/file/manuscrit.pdf][Influence of Doppler broadening model accuracy in Compton camera list-mode MLEM reconstruction]]
+  
 ** CAD model error in USTC key4hep stack
 - Disable VecGeom support may solve the issue.
 - need a new spack environment
 
 * Analysis
 ** Spark & RDataFrame mini-framework
+
+* Geometry model
+** General
+*** Check whether alignment can be applied on assembly volume
+
+** CZT calo
+*** add DetElement to module sensor
+see [[file:~/src/physics/eic/NPDet/src/detectors/trackers/src/GenericSiliconTrackerBarrel_geo.cpp::module_sense_DE.setPlacement( sensitive_pv );][EIC's NPDet impl]], in which sensor is daughter of module, and the module is placed in layered array.
+A DetElement is created for both the module and the sensor at each module placement.
+While module_DE's placement is the individual placement, all module_sensor_DE's placement share the same
+placement (which is created once [[file:~/src/physics/eic/NPDet/src/detectors/trackers/src/GenericSiliconTrackerBarrel_geo.cpp::PlacedVolume sensitive_pv = module_vol.placeVolume( sense_vol );][before at this line]]).
+This configuration is exactly what CZT calo needed.
+
+* Visualization
+** a demo site
+[[https://linev.github.io/]]
+
+** Choose a technology direction
+from easy to difficult:
+1. TEVE
+2. EVE-7
+3. PHOENIX
+4. game engines
+   - Unreal
+   - Unity
+   - Godbot
+5. Qt3D
+
+** TODO adapt geoWebDisplay to show more nodes by default
+- REveGeomViewer::SetLimits :: DDEve/root7/WebDisplay.cpp:81

@@ -37,9 +37,11 @@
 
 
     <detectors>
-        <detector id="2" name="Calorimeter" type="Megat_PlanarAssembly" readout="CztHits" region="Calo_Region">
-            <!-- region="Czt_Region" limits="Czt_LimitSet"> -->
-            <!-- in TPC gas -->
+        <detector id="2" name="Calorimeter" type="Megat_PlanarAssembly"
+                  vis="CztDefaultVis"
+                  readout="CztHits"
+                  region="Calo_Region">
+
             <material name="TPC_gas" comment="Default fill material"/>
 
             <!-- The smallest detector unit (one crystal) -->
@@ -107,4 +109,5 @@
             <id>system:6,section:6,layer:6,row:32:8,column:8,x:8,y:8</id>
         </readout>
     </readouts>
+
 </lccdd>

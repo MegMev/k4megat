@@ -12,7 +12,11 @@
      #==========================================================================
     -->
 
-    <info name="Megat_v0.1" title="Megat Detector (design model)" author="Yong Zhou" url="https://github.com/MegMev" status="development" version="0.1">
+    <info name="Megat_v0.1"
+          title="Megat Detector (design model)"
+          author="Yong Zhou" url="https://github.com/MegMev"
+          status="development"
+          version="0.1">
         <comment>The compact format for the Megat Detector - design model </comment>
     </info>
 
@@ -24,16 +28,20 @@
 
     <!-- Visual setting -->
     <display>
+        <vis name="InvisibleNoDaughters"      showDaughters="false" visible="false"/>
+        <vis name="InvisibleWithDaughters"    showDaughters="true" visible="false"/>
+
         <vis name="VesselVis" alpha="0.0" r="0.83" g="0.84" b="0.86" showDaughters="true" visible="true" />
 
-        <!-- CZT vis -->
-        <vis name="CztCrystalVis" alpha="0.0" r="0.0" g="0.4" b="0.8" showDaughters="true" visible="true" />
-        <vis name="CztPcbVis" alpha="0.9" r="0.18" g="0.8" b="0.44" showDaughters="true" visible="true" />
+        <vis name="TpcCageVis"  alpha="0.4" r="0.8"  g="0.9"  b="1"  showDaughters="false" visible="false"/>
+        <vis name="TpcGasVis"          alpha="0.8" r="1"    g="0.1"  b="0.1" showDaughters="true" visible="true"/>
+        <vis name="TpcPcbVis" alpha="0.4" r="0.2" g="0.8" b="0.2" showDaughters="false" visible="true" />
 
-        <!-- TPC vis -->
-        <vis name="TpcReadoutVis" alpha="0.0" r="1.0" g="0.0" b="0.4" showDaughters="true" visible="true" />
-        <vis name="TpcCageVis" alpha="0.0" r="0.8" g="0.8" b="0.8" showDaughters="true" visible="true" />
-        <vis name="TpcFiducialVis" alpha="0" r="0.2" g="1.0" b="1.0" showDaughters="true" visible="true" />
+
+        <vis name="CztDefaultVis" showDaughters="true" visible="false" />
+        <vis name="CztCrystalVis" alpha="0.4" r="0.8" g="0.9" b="1" drawingStyle="solid" showDaughters="false" visible="true"/>
+        <vis name="CztPcbVis" alpha="0.05" r="0.1" g="0.9" b="0.1" showDaughters="false" visible="false" />
+
     </display>
 
     <!-- General dimensions -->
@@ -43,9 +51,19 @@
         <constant name="world_y" value="world_side/2" />
         <constant name="world_z" value="world_side/2" />
 
+        <!-- TPC's fiducial volume -->
         <constant name="fiducial_x" value="50*cm/2" />
         <constant name="fiducial_y" value="50*cm/2" />
         <constant name="fiducial_z" value="50*cm/2" />
+
+        <!-- TPC's vessel chamber  -->
+        <constant name="Vessel_Body_Rmin" value="410*mm" />
+        <constant name="Vessel_Body_Rmax" value="420*mm" />
+        <constant name="Vessel_Body_Z" value="600*mm" />
+
+        <constant name="Vessel_Endcap_Thickness" value="10*mm" />
+        <constant name="Vessel_Endcap_Rmax" value="Vessel_Body_Rmax*2/sqrt(3)" />
+        <constant name="Vessel_Endcap_Rmin" value="Vessel_Endcap_Rmax-Vessel_Endcap_Thickness" />
     </define>
 
     <!-- Calorimeter Variates -->
@@ -55,7 +73,8 @@
     <!-- <include ref="CZT_layer.xml" /> -->
 
     <!-- TPC -->
-    <include ref="TPC.xml" />
+    <!-- <include ref="TPC.xml" /> -->
+    <include ref="TPC_v1.xml" />
 
     <!-- Passive components -->
     <!-- <include ref="Passives.xml" /> -->
@@ -72,4 +91,17 @@
 	     inner_radius="SolenoidalFieldRadius"
 	     outer_radius="world_side" />
        </fields>  -->
+
+    <plugins>
+        <plugin name="DD4hep_GenericSurfaceInstallerPlugin">
+            <argument value="Calorimeter"/>
+            <argument value="dimension=2"/>
+            <argument value="u_x=1."/>
+            <argument value="v_y=1."/>
+            <argument value="n_z=1."/>
+            <argument value="o_z=Czt_Crystal_Z/2"/>
+        </plugin>
+
+        <plugin name="InstallSurfaceManager"/>
+    </plugins>
 </lccdd>

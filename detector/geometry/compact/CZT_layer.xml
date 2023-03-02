@@ -15,7 +15,7 @@
         <constant name="Czt_Y" value="fiducial_y*2+1*mm" />
         <constant name="Czt_Z" value="fiducial_z*2+1*mm" />
         <constant name="Czt_Pcb_Z" value="2*mm" />
-        <constant name="Czt_Thickness" value="10*mm" />
+        <constant name="Czt_Crystal_Z" value="10*mm" />
         <constant name="Czt_Layer_N" value="3" />
         <constant name="Czt_Layer_Gap" value="1*mm" />
     </define>
@@ -28,7 +28,7 @@
 
             <!-- The smallest detector unit (one crystal) -->
             <module name="Module" x="Czt_X" y="Czt_Y">
-                <component name="Crystal" thickness="Czt_Thickness" material="CdZnTe" vis="CztCrystalVis" sensitive="true" />
+                <component name="Crystal" thickness="Czt_Crystal_Z" material="CdZnTe" vis="CztCrystalVis" sensitive="true" />
                 <component name="Pcb" thickness="Czt_Pcb_Z" material="PCB" vis="CztPcbVis" />
             </module>
 

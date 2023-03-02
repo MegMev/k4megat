@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+    <!-- Limits -->
+    <limits>
+        <limitset name="Tpc_LimitSet">
+            <limit name="step_length_max" particles="*" value="2.0" unit="mm" />
+            <!-- <limit name="track_length_max" particles="*" value="5.0" unit="mm" /> -->
+            <!-- <limit name="time_max" particles="*" value="5.0" unit="ns" /> -->
+            <!-- <limit name="ekin_min" particles="*" value="0.01" unit="MeV" /> -->
+            <limit name="range_min" particles="*" value="5.0" unit="mm" />
+            <!-- <cut particles="e+" value="2.0" unit="mm" />
+                 <cut particles="e-" value="2.0" unit="mm" />
+                 <cut particles="gamma" value="5.0" unit="mm" /> -->
+        </limitset>
+    </limits>
+
+    <!-- Region  -->
+    <regions>
+        <!-- <region name="Tpc_Region" eunit="MeV" lunit="mm" cut="500" threshold="0.6"> -->
+        <region name="Tpc_Region" lunit="mm" cut="0.1">
+            <!-- <region name="Tpc_Region" eunit="MeV" threshold="0.6"> -->
+            <limitsetref name="Tpc_LimitSet" />
+        </region>
+    </regions>
+
+    <!-- Dimensions -->
+    <define>
+        <!-- Tpc Reaout PCB's placement offset (exclude fiducial dimension) to fiducial Volume center -->
+        <constant name="Tpc_Pcb_X" value="fiducial_x*2+10*mm" />
+        <constant name="Tpc_Pcb_Y" value="fiducial_y*2+10*mm" />
+        <constant name="Tpc_Pcb_Z" value="5*mm" />
+        <constant name="Tpc_Pcb_Offset" value="5*mm" />
+
+        <constant name="Tpc_Cage_Thickness" value="0.05*mm" />
+        <constant name="Tpc_Cage_X" value="fiducial_x*2+Tpc_Cage_Thickness*2" />
+        <constant name="Tpc_Cage_Y" value="fiducial_y*2+Tpc_Cage_Thickness*2" />
+        <constant name="Tpc_Cage_Z" value="fiducial_z*2+Tpc_Pcb_Offset+Tpc_Cage_Thickness" />
+        <!-- Filde cage's placement offset to fiducial Volume center -->
+        <constant name="Tpc_Cage_Offset" value="(Tpc_Pcb_Offset-Tpc_Cage_Thickness)/2" />
+
+        <constant name="Tpc_Drift_X" value="fiducial_x*2" />
+        <constant name="Tpc_Drift_Y" value="fiducial_y*2" />
+        <constant name="Tpc_Drift_Z" value="fiducial_z*2+Tpc_Pcb_Offset" />
+        <!-- Filde cage's placement offset to fiducial Volume center -->
+        <constant name="Tpc_Drift_Offset" value="Tpc_Pcb_Offset/2" />
+    </define>
+
+
+    <detectors>
+        <comment>
+            The drift related volumes are supposed to be the reference of coordinate system
+            of other components in TPC. Thus, there no need to align the gas and field cage
+            volumes in the local coordinate systeme of this subdetector.
+            The subdector as whole may need alignment with respect to the world coordinate
+            systeme though.
+        </comment>
+        <detector id="1" name="TPC" type="Megat_SimpleTpc"
+                  readout="TpcHits" sensitive="tracker">
+           <!-- region="Tpc_Region"> -->
+
+            <!-- subdetector envelope -->
+            <envelope>
+                <!-- dimension from Megat.xml, [todo: do we really need top and bottom?] -->
+                <shape type="Tube"
+                       material="TPC_gas"
+                       rmax="Vessel_Body_Rmin-0.5*mm" dz="Vessel_Body_Z/2"/>
+
+                <!-- <position x="10" y="200" z="0"/>
+                     <rotation x="100" y="80" z="90" /> -->
+            </envelope>
+
+            <!-- drift volume (customized parsing) -->
+            <driftvol name="Gas"
+                      material="TPC_gas"
+                      vis="TpcGasVis"
+                      limits="Tpc_LimitSet">
+
+                <!-- in principle, any shape is supported -->
+                <shape type="Box" dx="Tpc_Drift_X/2" dy="Tpc_Drift_Y/2" dz="Tpc_Drift_Z/2"/>
+                <position x="0" y="0" z="Tpc_Drift_Offset"/>
+                <!-- <rotation x="0" y="0" z="0" /> -->
+
+                <!-- the key is to sepecify the anode surface -->
+                <anode_surface>
+                    <!-- origin point and surface normal unit direction -->
+                    <origin x="0" y="0" z="Tpc_Drift_Z/2"/>
+                    <!-- normal direction should parallel to drift direction -->
+                    <normal x="0" y="0" z="1"/>
+                </anode_surface>
+
+                <comment>
+                    The anode surface is of 'Helper' type, not 'Sensitive' type.
+                    The shortest distance between hit point and the anode surface
+                    is the drift distance. This simplification is of course only
+                    valid in parameterized simulation. Realistic drift process
+                    simulation should be took out under Garfield with a FEM field
+                    calculation. In that case, the anode surface defined here is
+                    not used. Instead, the readout surface associated with the PCB
+                    is used, while the drift is driven by the field and destinatein
+                    determined by the readout surface.
+                </comment>
+            </driftvol>
+
+            <!-- other components (batch parsed by VolumeBuilder) -->
+            <volume name="Pcb"
+                    material="PCB"
+                    vis="TpcPcbVis">
+                <shape type="Box" dx="Tpc_Pcb_X/2" dy="Tpc_Pcb_Y/2" dz="Tpc_Pcb_Z/2"/>
+            </volume>
+
+            <shape name="FieldCage_Solid" type="BooleanShape" operation="Subtraction">
+                <shape type="Box" dx="Tpc_Cage_X/2" dy="Tpc_Cage_Y/2" dz="Tpc_Cage_Z/2" />
+                <shape type="Box" dx="fiducial_x" dy="fiducial_y" dz="Tpc_Cage_Z/2" />
+                <position x="0" y="0" z="Tpc_Cage_Thickness"/>
+            </shape>
+            <volume name="FieldCage"
+                    shape="FieldCage_Solid"
+                    material="Kapton"
+                    vis="TpcCageVis"
+            />
+
+            <physvol name="Cage"
+                     volume="FieldCage">
+                <position x="0" y="0" z="Tpc_Cage_Offset"/>
+            </physvol>
+            <physvol name="Pcb"
+                     element="Pcb"
+                     volume="Pcb">
+                <position x="0" y="0" z="Tpc_Drift_Z/2+Tpc_Drift_Offset+Tpc_Pcb_Z/2"/>
+            </physvol>
+
+            <comment>
+                Make sure every solid and volume to be built by VolumeBuilder is used,
+                since VolumeBuilder does not do cleanup. Memory leak maight happen if
+                the created objects are not inside geometry tree.
+            </comment>
+        </detector>
+    </detectors>
+
+    <!-- Readout/Segmentation/HitCollection Configuration-->
+    <readouts>
+        <readout name="TpcHits">
+            <!-- <segmentation type="NoSegmentation"/> -->
+            <id>system:6</id>
+        </readout>
+    </readouts>
+</lccdd>

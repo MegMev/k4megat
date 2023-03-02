@@ -1,0 +1,39 @@
+* REST reference
+** Diffusion
+- TRestDetectorElectronDiffusionProcess
+  - gas property
+  - parameterized
+- TRestDetectorGarfieldDriftProcess
+  - use Garfield mc process
+
+** Energy smearing
+- TRestDetectorHitsSmearingProcess : ?
+- TRestDetectorAvalancheProcess : same as smearing?
+
+** Hit to Signal
+- TRestDetectorHitsToSignalProcess : use drift velocity and z to get time
+
+** Others
+- fiducialization : TRestDetectorFiducializationProcess
+  - filter hits outside fidudial volume
+- hit reduction : TRestDetectorHitsReductionProcess
+  - merge hits that are very close
+
+* k4megat
+** Alg1 : Drift
+1. electron generation
+2. calculate nominal drift distance
+3. calculate diffusion (mean + gaussian rdm)
+4. tranversal diffusion added to (x, y) directly
+5. longitudinal diffusion + z -> drift time
+6. energy smearing?
+
+Input:
+Hits from sim output:
+
+Output:
+Hits on anode surface with smeared timestamp, (x,y), dE
+
+** Alg2 : Segmentation
+Prerequiset:
+1. Customized PCB volume with a smaller sensitive surface

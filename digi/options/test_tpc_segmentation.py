@@ -23,9 +23,13 @@ inp.collections = ["TpcHits"]
 # Add algorithm
 from Configurables import TpcTestDigi
 tpcpixelseg = TpcTestDigi("TpcPixelSeg")
-# tpcpixelseg.inHits.Path = "TpcHits"
-# tpcpixelseg.outHits.Path = "TpcPixelHitsTest"
-# tpcpixelseg.readoutName = "TpcStripHits"
+tpcpixelseg.inHits.Path = "TpcHits"
+tpcpixelseg.readoutName = "TpcPixelHits"
+
+tpcstripseg = TpcTestDigi("TpcStripSeg")
+tpcstripseg.inHits.Path = "TpcHits"
+tpcstripseg.readoutName = "TpcStripHits"
+
 # THistSvc().Output = ["tutorial DATAFILE='test_tpcseg.root' TYP='ROOT' OPT='RECREATE'"]
 # THistSvc().PrintAll=True
 # THistSvc().AutoSave=True
@@ -42,7 +46,7 @@ out.outputCommands = ['keep *']
 
 # ApplicationMgr
 from Configurables import ApplicationMgr
-ApplicationMgr( TopAlg = [inp, tpcpixelseg, out],
+ApplicationMgr( TopAlg = [inp, tpcpixelseg, tpcstripseg, out],
                 EvtSel = 'NONE',
                 EvtMax   = -1,
                 ExtSvc = [datasvc],

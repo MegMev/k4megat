@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lccdd>
-    <!-- Dimensions -->
-    <define>
-        <constant name="Vessel_Body_Rmin" value="410*mm" />
-        <constant name="Vessel_Body_Rmax" value="420*mm" />
-        <constant name="Vessel_Body_Z" value="600*mm" />
-
-        <constant name="Vessel_Endcap_Thickness" value="10*mm" />
-        <constant name="Vessel_Endcap_Rmax" value="Vessel_Body_Rmax*2/sqrt(3)" />
-        <constant name="Vessel_Endcap_Rmin" value="Vessel_Endcap_Rmax-Vessel_Endcap_Thickness" />
-    </define>
-
+    <!-- Dimensions defined in Megat.xml -->
     <detectors>
         <detector id="10" name="Vessel" type="Megat_MonoAssembly">
             <!-- Envelop assembly -->

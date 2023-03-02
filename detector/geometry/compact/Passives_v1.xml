@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+    <detectors>
+        <detector id="10" name="Passives" type="DD4hep_VolumeAssembly">
+            <!-- Envelop assembly -->
+            <envelope name="Passives" type="Assembly" />
+
+            <!-- Solids -->
+            <shape name="Vessel_Solid" type="BooleanShape" operation="union">
+                <shape type="BooleanShape" operation="union">
+                    <shape type="Tube" rmin="Vessel_Body_Rmin" rmax="Vessel_Body_Rmax"
+                           dz="Vessel_Body_Z/2"/>
+                    <shape type="Sphere" rmin="Vessel_Endcap_Rmin" rmax="Vessel_Endcap_Rmax"
+                           theta="0*rad" deltatheta="pi/2*rad"/>
+                    <position x="0" y="0" z="Vessel_Body_Z/2" />
+                </shape>
+                <shape type="Sphere" rmin="Vessel_Endcap_Rmin" rmax="Vessel_Endcap_Rmax"
+                       theta="pi/2*rad" deltatheta="pi*rad"/>
+                <position x="0" y="0" z="-Vessel_Body_Z/2" />
+            </shape>
+
+            <!-- Volume -->
+            <volume name="Vessel" shape="Vessel_Solid"
+                    material="stainless_steel" vis="VesselVis"/>
+
+            <!-- placement -->
+            <physvol volume="Vessel">
+                <position x="0" y="0" z="0" />
+            </physvol>
+        </detector>
+    </detectors>
+</lccdd>
