@@ -43,6 +43,11 @@
         <constant name="Tpc_Drift_Z" value="fiducial_z*2+Tpc_Pcb_Offset" />
         <!-- Filde cage's placement offset to fiducial Volume center -->
         <constant name="Tpc_Drift_Offset" value="Tpc_Pcb_Offset/2" />
+
+        <constant name="Tpc_Pcb_Nx" value="1" />
+        <constant name="Tpc_Pcb_Ny" value="1" />
+        <constant name="Tpc_Pcb_RowGap" value="0.1*mm" />
+        <constant name="Tpc_Pcb_ColGap" value="10*mm" />
     </define>
 
 
@@ -54,7 +59,7 @@
             The subdector as whole may need alignment with respect to the world coordinate
             systeme though.
         </comment>
-        <detector id="1" name="TPC" type="Megat_SimpleTpc"
+        <detector id="1" name="TPC" type="Megat_OneSideTpc"
                   readout="TpcHits" sensitive="tracker">
            <!-- region="Tpc_Region"> -->
 
@@ -81,7 +86,9 @@
                 <!-- <rotation x="0" y="0" z="0" /> -->
 
                 <!-- the key is to sepecify the anode surface -->
-                <anode_surface>
+                <anode_surface sensitive="false">
+                    <!-- optional for segmeentation usage: <anode_surface sensitive="true"> -->
+
                     <!-- origin point and surface normal unit direction -->
                     <origin x="0" y="0" z="Tpc_Drift_Z/2"/>
                     <!-- normal direction should parallel to drift direction -->
@@ -101,12 +108,51 @@
                 </comment>
             </driftvol>
 
-            <!-- other components (batch parsed by VolumeBuilder) -->
-            <volume name="Pcb"
-                    material="PCB"
-                    vis="TpcPcbVis">
-                <shape type="Box" dx="Tpc_Pcb_X/2" dy="Tpc_Pcb_Y/2" dz="Tpc_Pcb_Z/2"/>
-            </volume>
+            <!-- Readout PCBs: surfaces of type Sensitive are attached and to used for segmentation -->
+            <readout_pcbs name="Pcb"
+                          material="PCB"
+                          vis="TpcPcbVis">
+                <!-- shape [todo: only box suported] -->
+                <shape type="Box" dx="Tpc_Pcb_X/Tpc_Pcb_Nx/2" dy="Tpc_Pcb_Y/Tpc_Pcb_Ny/2" dz="Tpc_Pcb_Z/2"/>
+
+                <!-- surface -->
+                <surface dim_u="fiducial_x*2" dim_v="fiducial_y*2">
+                    <u_direction x="1." y="0." z="0."/>
+                    <v_direction x="0." y="1." z="0."/>
+                    <normal x="0." y="0." z="1."/>
+                    <origin x="0." y="0." z="-Tpc_Pcb_Z/2"/>
+                </surface>
+
+                <!-- Row and column number: if not specified, a mono PCB is defined -->
+                <row nmodules="Tpc_Pcb_Nx" gap="Tpc_Pcb_RowGap" />
+                <column nmodules="Tpc_Pcb_Ny" gap="Tpc_Pcb_ColGap" />
+
+                <!-- PCB envelop placement relative to subdector envelop -->
+                <position x="0" y="0" z="Tpc_Drift_Z/2+Tpc_Drift_Offset+Tpc_Pcb_Z/2"/>
+                <!-- <rotation x="100" y="80" z="90" /> -->
+
+                <comment>
+                    PCBs defined under this tag are automatically attached a sensitive type surface.
+                    These surfaces are aimed for later segmentation usage.
+                    Multiple PCBs in matrix arrangement are supported as well.
+                    A index from 0 is assigned to each PCB and may later be used for segmentation
+                    as well.
+                    Multi-PCBs are needed for pixel readout setup.
+                </comment>
+            </readout_pcbs>
+
+            <!-- other components e.g. passive PCBs and field cage (batch parsed by VolumeBuilder) -->
+            <!-- <volume name="Pcb"
+                 material="PCB"
+                 vis="TpcPcbVis">
+                 <shape type="Box" dx="Tpc_Pcb_X/2" dy="Tpc_Pcb_Y/2" dz="Tpc_Pcb_Z/2"/>
+                 </volume>
+                 
+                 <physvol name="Pcb"
+                 element="Pcb"
+                 volume="Pcb">
+                 <position x="0" y="0" z="Tpc_Drift_Z/2+Tpc_Drift_Offset+Tpc_Pcb_Z/2"/>
+                 </physvol> -->
 
             <shape name="FieldCage_Solid" type="BooleanShape" operation="Subtraction">
                 <shape type="Box" dx="Tpc_Cage_X/2" dy="Tpc_Cage_Y/2" dz="Tpc_Cage_Z/2" />
@@ -118,17 +164,10 @@
                     material="Kapton"
                     vis="TpcCageVis"
             />
-
             <physvol name="Cage"
                      volume="FieldCage">
                 <position x="0" y="0" z="Tpc_Cage_Offset"/>
             </physvol>
-            <physvol name="Pcb"
-                     element="Pcb"
-                     volume="Pcb">
-                <position x="0" y="0" z="Tpc_Drift_Z/2+Tpc_Drift_Offset+Tpc_Pcb_Z/2"/>
-            </physvol>
-
             <comment>
                 Make sure every solid and volume to be built by VolumeBuilder is used,
                 since VolumeBuilder does not do cleanup. Memory leak maight happen if
