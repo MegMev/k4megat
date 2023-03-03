@@ -17,6 +17,7 @@ gaudi_add_module(SimComponents
                       Gaudi::GaudiKernel
                       DD4hep::DDCore
                       DD4hep::DDG4
+                      DD4hep::DDRec
                       ROOT::Core
                       ROOT::Hist
                       ${Geant4_LIBRARIES}

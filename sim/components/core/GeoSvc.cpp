@@ -5,6 +5,8 @@
 #include "TGeoManager.h"
 
 #include "DD4hep/Printout.h"
+#include "DDRec/SurfaceHelper.h"
+#include <DDRec/Surface.h>
 
 namespace megat {
   using namespace Gaudi;
@@ -53,6 +55,7 @@ namespace megat {
       m_dd4hepgeo->fromCompact( filename );
     }
     if ( not m_dd4hepgeo->volumeManager().isValid() ) { m_dd4hepgeo->apply( "DD4hepVolumeManager", 0, 0 ); }
+    m_volMgr = m_dd4hepgeo->volumeManager();
 
     return StatusCode::SUCCESS;
   }
@@ -72,4 +75,37 @@ namespace megat {
 
   G4VUserDetectorConstruction* GeoSvc::getGeant4Geo() { return ( m_geant4geo.get() ); }
 
+  dd4hep::rec::SurfaceList GeoSvc::getSensitiveSurfList( dd4hep::VolumeID volumeID ) {
+    auto it = m_sensitiveSurfList.find( volumeID );
+    if ( it != m_sensitiveSurfList.end() ) { return m_sensitiveSurfList[volumeID]; }
+
+    auto sub_volmgr = m_volMgr.subdetector( volumeID );
+    auto sub_de     = sub_volmgr.detector();
+    if ( sub_de.isValid() ) {
+      dd4hep::rec::SurfaceHelper surfMan( sub_de );
+      const auto&                sL = surfMan.surfaceList();
+      for ( auto& surf : sL ) {
+        auto type = surf->type();
+        if ( type.isSensitive() ) m_sensitiveSurfList[volumeID].push_back( surf );
+      }
+    }
+    return m_sensitiveSurfList[volumeID];
+  }
+
+  dd4hep::rec::SurfaceList GeoSvc::getHelperSurfList( dd4hep::VolumeID volumeID ) {
+    auto it = m_helperSurfList.find( volumeID );
+    if ( it != m_helperSurfList.end() ) { return m_helperSurfList[volumeID]; }
+
+    auto sub_volmgr = m_volMgr.subdetector( volumeID );
+    auto sub_de     = sub_volmgr.detector();
+    if ( sub_de.isValid() ) {
+      dd4hep::rec::SurfaceHelper surfMan( sub_de );
+      const auto&                sL = surfMan.surfaceList();
+      for ( auto& surf : sL ) {
+        auto type = surf->type();
+        if ( type.isHelper() ) m_helperSurfList[volumeID].push_back( surf );
+      }
+    }
+    return m_helperSurfList[volumeID];
+  }
 } // namespace megat
