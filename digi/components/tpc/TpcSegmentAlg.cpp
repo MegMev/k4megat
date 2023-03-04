@@ -18,7 +18,9 @@
 #include <DD4hep/Objects.h>
 #include <DDSegmentation/BitFieldCoder.h>
 #include <GaudiKernel/MsgStream.h>
+#include <GaudiKernel/StatusCode.h>
 #include <Parsers/Primitives.h>
+#include <cerrno>
 #include <edm4hep/MutableTrackerHit.h>
 #include <edm4hep/SimTrackerHit.h>
 #include <edm4hep/Vector3d.h>
@@ -141,6 +143,11 @@ StatusCode TpcSegmentAlg::execute() {
 
     // [todo: key_value from xml]
     if ( is_stripSeg ) {
+      if ( sL.size() > 1 ) {
+        error() << "Can't segment multi PCBs with strip readout" << endmsg;
+        return StatusCode::FAILURE;
+      }
+
       const auto& pcb = sL.front();
       // x-layer
       m_segmentation.decoder()->set( volId, m_newField, 0 );
