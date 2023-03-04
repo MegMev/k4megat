@@ -28,6 +28,7 @@
 #include "XML/Utilities.h"
 #include "XML/VolumeBuilder.h"
 #include "XML/XML.h"
+#include <DD4hep/BuildType.h>
 
 using namespace std;
 using namespace dd4hep;
@@ -68,7 +69,7 @@ namespace {
              std::abs( uvVec[1] ) < v_length / 2.;
     }
 
-    /// create outer bounding lines for the given symmetry of the polyhedron
+    // create outer bounding lines for the given symmetry of the polyhedron
     virtual std::vector<std::pair<Vector3D, Vector3D>> getLines( unsigned ) {
 
       std::vector<std::pair<Vector3D, Vector3D>> lines;
@@ -95,12 +96,18 @@ namespace {
     string                    det_name = x_det.nameStr();
     xml::tools::VolumeBuilder builder( description, e, sens );
     DetElement                sdet( builder.detector );
+    DetectorBuildType         build_type = description.buildType();
+    SensitiveDetector         sd         = sens;
 
     // --- set type of detector ---------------------
     if ( x_det.hasAttr( _U( sensitive ) ) )
       sens.setType( x_det.attr<string>( _U( sensitive ) ) );
     else
       sdet.setType( "compound" );
+
+    // --- check segmentation type ---------------------
+    bool is_stripSeg = false;
+    if ( sd.readout().segmentation().type() == "MultiSegmentation" ) { is_stripSeg = true; }
 
     // --- create an envelope volume and position it into the world ---------------------
     Volume envelope = xml::createPlacedEnvelope( description, e, sdet );
@@ -110,7 +117,7 @@ namespace {
     // --- create the drift volume and anode surface ---------------------
     xml_comp_t x_driftvol = x_det.child( _Unicode( driftvol ) );
     Volume     drift_vol  = xml::createStdVolume( description, x_driftvol );
-    drift_vol.setSensitiveDetector( sens );
+    if ( build_type == DetectorBuildType::BUILD_SIMU ) drift_vol.setSensitiveDetector( sd );
 
     bool        drift_useRot = false;
     bool        drift_usePos = false;
@@ -166,6 +173,7 @@ namespace {
       xml_comp_t x_pcbs   = x_det.child( _Unicode( readout_pcbs ) );
       string     pcb_name = x_pcbs.nameStr();
       Volume     pcb_vol  = xml::createStdVolume( description, x_pcbs );
+      if ( build_type == DetectorBuildType::BUILD_RECO ) { pcb_vol.setSensitiveDetector( sd ); }
 
       int    nrow = 1;
       int    ncol = 1;
@@ -241,6 +249,9 @@ namespace {
         DetElement   de( sdet, x_pcbs.nameStr(), det_id );
         de.setPlacement( pv );
         attach_pcb_surf( de );
+      } else if ( is_stripSeg ) {
+        printout( FATAL, "Megat_OnesideTpc", "+++ Do not support strip readout with multiple PCBs" );
+        throw std::runtime_error( "+++ Failed to create one-side TPC: " + det_name );
       } else {
         Assembly   pcb_env( pcb_name + "_assembly" );
         DetElement pcb_env_de( sdet, pcb_env.name(), det_id );
@@ -252,12 +263,15 @@ namespace {
         double yoffset = -( yunit * nrow + row_gap * ( nrow - 1 ) ) / 2 + yunit / 2;
         for ( int r_id = 0; r_id < nrow; r_id++ ) {
           for ( int c_id = 0; c_id < ncol; c_id++ ) {
+            int          pcb_id = r_id * ncol + c_id;
             PlacedVolume pcb_pv = pcb_env.placeVolume(
                 pcb_vol, Position( xoffset + c_id * ( xunit + col_gap ), yoffset + r_id * ( yunit + row_gap ), 0 ) );
-            DetElement pcb_de( pcb_env_de, pcb_pv.name(), r_id * ncol + c_id );
+            pcb_pv.addPhysVolID( "pcb", pcb_id );
+
+            DetElement pcb_de( pcb_env_de, pcb_pv.name(), pcb_id );
             pcb_de.setPlacement( pcb_pv );
             auto surf = attach_pcb_surf( pcb_de );
-            surf->setID( r_id * ncol + c_id );
+            surf->setID( pcb_id );
           }
         }
         PlacedVolume pv = place_pcb( pcb_env );

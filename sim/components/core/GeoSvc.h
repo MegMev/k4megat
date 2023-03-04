@@ -1,5 +1,4 @@
-#ifndef GEOSVC_H
-#define GEOSVC_H
+#pragma once
 
 // Interface
 #include "SimInterface/IGeoSvc.h"
@@ -11,16 +10,20 @@
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/ServiceHandle.h"
+#include <Gaudi/Property.h>
 
 // DD4Hep
+#include "DD4hep/BuildType.h"
 #include "DD4hep/Detector.h"
+#include <DD4hep/VolumeManager.h>
+#include <DDRec/Surface.h>
 
 // Geant4
 #include "G4RunManager.hh"
 #include "G4VUserDetectorConstruction.hh"
-#include <DD4hep/VolumeManager.h>
-#include <DDRec/Surface.h>
+#include <GaudiKernel/StatusCode.h>
 #include <Parsers/Primitives.h>
+#include <string>
 
 namespace megat {
 
@@ -63,6 +66,10 @@ namespace megat {
     std::map<dd4hep::VolumeID, dd4hep::rec::SurfaceList> m_sensitiveSurfList;
     std::map<dd4hep::VolumeID, dd4hep::rec::SurfaceList> m_helperSurfList;
 
+    /// geometry build type: sim, rec, env, dis
+    Gaudi::Property<std::string> m_build_typeString{
+        this, "buildType", "BUILD_RECO", "Geometry build type: BUILD_SIMU, BUILD_RECO, BUILD_DISPLAY, BUILD_ENVELOPE" };
+
     /// XML-files with the detector description
     Gaudi::Property<std::vector<std::string>> m_xmlFileNames{
         this, "detectors", {}, "Detector descriptions XML-files" };
@@ -74,5 +81,3 @@ namespace megat {
   };
 
 } // namespace megat
-
-#endif // GEOSVC_H

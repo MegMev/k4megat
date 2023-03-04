@@ -6,6 +6,7 @@
 
 #include "DD4hep/Printout.h"
 #include "DDRec/SurfaceHelper.h"
+#include <DD4hep/BuildType.h>
 #include <DDRec/Surface.h>
 
 namespace megat {
@@ -25,10 +26,13 @@ namespace megat {
   StatusCode GeoSvc::initialize() {
     StatusCode sc = Service::initialize();
     if ( !sc.isSuccess() ) return sc;
+
     // Turn off TGeo printouts if appropriate for the msg level
     if ( msgLevel() >= MSG::INFO ) { TGeoManager::SetVerboseLevel( 0 ); }
+
     uint printoutLevel = msgLevel();
     dd4hep::setPrintLevel( dd4hep::PrintLevel( printoutLevel ) );
+
     if ( buildDD4HepGeo().isFailure() )
       error() << "Could not build DD4Hep geometry" << endmsg;
     else
@@ -38,6 +42,7 @@ namespace megat {
       error() << "Could not build Geant4 geometry" << endmsg;
     else
       info() << "Geant4 geometry SUCCESSFULLY built" << endmsg;
+
     // TODO: return failure
     return StatusCode::SUCCESS;
   }
@@ -49,10 +54,13 @@ namespace megat {
     m_dd4hepgeo = &( dd4hep::Detector::getInstance() );
     m_dd4hepgeo->addExtension<IGeoSvc>( this );
 
+    // determine build type
+    auto type = dd4hep::buildType( m_build_typeString );
+
     // load geometry
     for ( auto& filename : m_xmlFileNames ) {
       info() << "loading geometry from file:  '" << filename << "'" << endmsg;
-      m_dd4hepgeo->fromCompact( filename );
+      m_dd4hepgeo->fromCompact( filename, type );
     }
     if ( not m_dd4hepgeo->volumeManager().isValid() ) { m_dd4hepgeo->apply( "DD4hepVolumeManager", 0, 0 ); }
     m_volMgr = m_dd4hepgeo->volumeManager();
