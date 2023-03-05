@@ -13,6 +13,7 @@
 
 //
 #include "edm4hep/MutableTrackerHit.h"
+#include <DD4hep/Objects.h>
 #include <Parsers/Primitives.h>
 #include <edm4hep/SimTrackerHit.h>
 #include <edm4hep/Vector3d.h>
@@ -58,7 +59,7 @@ public:
   virtual StatusCode finalize() final;
 
 private:
-  void add_hit( edm4hep::SimTrackerHit hit, dd4hep::rec::ISurface* pcb, edm4hep::Vector3d gpos,
+  void add_hit( edm4hep::SimTrackerHit hit, dd4hep::rec::ISurface* pcb, dd4hep::Position gpos,
                 dd4hep::DDSegmentation::CellID volId );
 
 private:
@@ -73,6 +74,7 @@ private:
     edm4hep::MutableTrackerHit hit;
     float                      energy;
     float                      time;
+    dd4hep::Position           position;
   };
   std::map<dd4hep::DDSegmentation::CellID, HitCache> m_hitCache;
 
@@ -90,7 +92,7 @@ private:
       "name "
       "should match the id specification in compact xml." };
   DataHandle<edm4hep::SimTrackerHitCollection> m_inHits{ "TpcDriftHits", Gaudi::DataHandle::Reader, this };
-  DataHandle<edm4hep::TrackerHitCollection>    m_outHits{ "TpcStripHits", Gaudi::DataHandle::Writer, this };
+  DataHandle<edm4hep::TrackerHitCollection>    m_outHits{ "", Gaudi::DataHandle::Writer, this };
 
   /// Properties
   Gaudi::Property<std::string> m_readoutName{ this, "readoutName", "TpcPixelHits",

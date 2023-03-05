@@ -179,8 +179,9 @@
     <!-- Readout/Segmentation/HitCollection Configuration-->
     <readouts>
         <readout name="TpcHits">
-            <!-- <segmentation type="NoSegmentation"/> -->
+            <segmentation type="NoSegmentation"/>
             <id>system:6</id>
+            <!-- <id>system:6,pcb:6</id> -->
         </readout>
     </readouts>
 </lccdd>

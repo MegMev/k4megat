@@ -16,10 +16,12 @@ CLOSED: [2023-02-27 一 21:47]
 ** DDG4 as the back-end
 ** TPC digi implementation
 *** try to migrate REST implementation
-**** consider append extra metadata about tpc readout structure as dd4hep data extension
+**** DONE consider append extra metadata about tpc readout structure as dd4hep data extension
+CLOSED: [2023-03-04 六 09:15]
 - see /home/yong/src/physics/key4hep/lcgeo/detector/tracker/TPC10_geo.cpp for adding the info
 - see /home/yong/src/physics/key4hep/DD4hep/DDRec/src/gear/createGearForILD.cpp for receivint the info
-**** customize a volume surface for TPC readout PCB
+**** DONE customize a volume surface for TPC readout PCB
+CLOSED: [2023-03-04 六 09:15]
 
 ** Generator
 ** Garfield integration

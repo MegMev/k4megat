@@ -2,10 +2,10 @@
 <lccdd>
     <!-- Configure TPC segmentation -->
     <define>
-        <constant name="tpc_pixel_x" value="2*mm" />
-        <constant name="tpc_pixel_y" value="2*mm" />
-        <constant name="tpc_strip_x" value="2*mm" />
-        <constant name="tpc_strip_y" value="2*mm" />
+        <constant name="tpc_pixel_x" value="1*mm" />
+        <constant name="tpc_pixel_y" value="1*mm" />
+        <constant name="tpc_strip_x" value="1*mm" />
+        <constant name="tpc_strip_y" value="1*mm" />
     </define>
 
     <!-- pixel readout -->

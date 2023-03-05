@@ -71,7 +71,7 @@ StatusCode TpcSegmentAlg::initialize() {
   if ( m_segmentation.type() == "MultiSegmentation" ) is_stripSeg = true;
   info() << is_stripSeg << ", " << m_segmentation.type() << ", " << m_segmentation->fieldDescription() << endmsg;
 
-  // // [todo: optional] seperate hit collection for sub-segmentation
+  // // [optional todo] seperate hit collection for sub-segmentation
   // auto& hit_cols = m_geoSvc->lcdd()->readout( m_readoutName )->hits;
   // for ( const auto& col : hit_cols ) {
   //   info() << col.name << ",  " << col.key << ", " << col.key_min << ", " << col.key_max << endmsg;
@@ -90,25 +90,25 @@ StatusCode TpcSegmentAlg::initialize() {
   // }
 
   // method2: using volumeid (most general)
-  DDSegmentation::BitFieldCoder bc( "system:6,pcb:6,strip:16:48" );
-  long64                        tracker_id{ 222135545665454 };
-  bc.set( tracker_id, "system", 1 );
-  bc.set( tracker_id, "pcb", 3 );
-  bc.set( tracker_id, "strip", 10 );
-  // get top-level detector
-  auto track_mgr = m_volMgr.subdetector( tracker_id );
-  // auto tpc_de    = track_mgr.detector();
-  info() << track_mgr << endmsg;
+  // DDSegmentation::BitFieldCoder bc( "system:6,pcb:6,strip:16:48" );
+  // long64                        tracker_id{ 222135545665454 };
+  // bc.set( tracker_id, "system", 1 );
+  // bc.set( tracker_id, "pcb", 3 );
+  // bc.set( tracker_id, "strip", 10 );
+  // // get top-level detector
+  // auto track_mgr = m_volMgr.subdetector( tracker_id );
+  // // auto tpc_de    = track_mgr.detector();
+  // info() << track_mgr << endmsg;
 
-  // lower-level volumes
-  auto vcon = m_volMgr.lookupContext( tracker_id );
-  auto de   = vcon->element;
-  auto vpv  = vcon->volumePlacement();
-  auto epv  = vcon->elementPlacement();
+  // // lower-level volumes
+  // auto vcon = m_volMgr.lookupContext( tracker_id );
+  // auto de   = vcon->element;
+  // auto vpv  = vcon->volumePlacement();
+  // auto epv  = vcon->elementPlacement();
 
-  if ( vcon ) {
-    info() << "find " << vcon->identifier << " vpv: " << vpv.toString() << " epv: " << epv.toString() << endmsg;
-  }
+  // if ( vcon ) {
+  //   info() << "find " << vcon->identifier << " vpv: " << vpv.toString() << " epv: " << epv.toString() << endmsg;
+  // }
 
   // if ( tpc_de.isValid() ) {
   //   SurfaceHelper surfMan( tpc_de );
@@ -139,17 +139,21 @@ StatusCode TpcSegmentAlg::execute() {
   for ( const auto& hit : *in_hits ) {
     DDSegmentation::CellID volId = hit.getCellID(); // cellid is volumeID for TPC sim hits
     auto                   sL    = m_geoSvc->getSensitiveSurfList( volId );
-    auto                   gpos  = hit.getPosition();
+    auto                   _gpos = hit.getPosition();
+    // [todo: better vector access]
+    // three vector implementation here: edm4hep::Vector3d, dd4hep::rec::Vector3D and dd4hep::Position
+    // Position has rich interface
+    dd4hep::Position gpos{ _gpos.x, _gpos.y, _gpos.z };
 
-    // [todo: key_value from xml]
+    // [optional todo: key_value from xml?]
     if ( is_stripSeg ) {
       if ( sL.size() > 1 ) {
         error() << "Can't segment multi PCBs with strip readout" << endmsg;
         return StatusCode::FAILURE;
       }
-
       const auto& pcb = sL.front();
-      // x-layer
+
+      // x-layer (layer Nr hardcoded)
       m_segmentation.decoder()->set( volId, m_newField, 0 );
       add_hit( hit, pcb, gpos, volId );
 
@@ -161,7 +165,7 @@ StatusCode TpcSegmentAlg::execute() {
       add_hit( hit, pcb, gpos, volId );
     } else {
       for ( auto pcb : sL ) {
-        if ( pcb->insideBounds( { gpos.x, gpos.y, gpos.z }, 9999 ) ) { // do not care about on surface or not
+        if ( pcb->insideBounds( { gpos.x(), gpos.y(), gpos.z() }, 9999 ) ) { // do not care about on surface or not
           m_segmentation.decoder()->set( volId, m_newField, pcb->id() );
           add_hit( hit, pcb, gpos, volId );
         }
@@ -169,15 +173,17 @@ StatusCode TpcSegmentAlg::execute() {
     }
   }
 
-  // update the sum edep and arrive time
+  // update the sum edep, earliest arrive time and e-weighted truth position
   for ( auto& [key, value] : m_hitCache ) {
     value.hit.setEDep( value.energy );
     value.hit.setTime( value.time );
+    auto _hit_pos = value.position / value.energy;
+    value.hit.setPosition( { _hit_pos.x(), _hit_pos.y(), _hit_pos.z() } );
     out_hits->push_back( value.hit );
   }
   m_hitCache.clear();
 
-  // update the id specification string
+  // update the id specification string of output collection
   auto& collmd = m_podioDataSvc->getProvider().getCollectionMetaData( out_hits->getID() );
   collmd.setValue( "CellIDEncodingString", m_segmentation->fieldDescription() );
 
@@ -186,23 +192,24 @@ StatusCode TpcSegmentAlg::execute() {
 
 StatusCode TpcSegmentAlg::finalize() { return GaudiAlgorithm::finalize(); }
 
-inline void TpcSegmentAlg::add_hit( edm4hep::SimTrackerHit hit, ISurface* pcb, edm4hep::Vector3d gpos,
+inline void TpcSegmentAlg::add_hit( edm4hep::SimTrackerHit hit, ISurface* pcb, dd4hep::Position gpos,
                                     DDSegmentation::CellID volId ) {
-  auto lpos      = pcb->globalToLocal( { gpos.x, gpos.y, gpos.z } );
+  auto lpos      = pcb->globalToLocal( { gpos.x(), gpos.y(), gpos.z() } );
   auto newCellId = m_segmentation.cellID( { lpos.u(), lpos.v(), 0 }, {}, volId );
 
   if ( auto it = m_hitCache.find( newCellId ); it != m_hitCache.end() ) {
     auto& cache = it->second;
     cache.hit.addToRawHits( hit.getObjectID() );
     cache.energy += hit.getEDep();
+    cache.position += hit.getEDep() * gpos;
     if ( cache.time > hit.getTime() ) cache.time = hit.getTime();
   }
 
   auto& new_hit = m_hitCache[newCellId];
   new_hit.hit.setCellID( newCellId );
-  new_hit.hit.setTime( hit.getTime() );
-  new_hit.hit.setEDep( hit.getEDep() );
-  auto strip_pos = m_segmentation.position( newCellId );
-  // [todo: we need global cell position]
-  new_hit.hit.setPosition( { strip_pos.x(), strip_pos.y(), strip_pos.z() } );
+  new_hit.hit.addToRawHits( hit.getObjectID() );
+  new_hit.energy = hit.getEDep();
+  new_hit.time   = hit.getTime();
+  // pseudo truth position
+  new_hit.position = hit.getEDep() * gpos;
 }
