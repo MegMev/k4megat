@@ -1,4 +1,7 @@
 * REST reference
+** Gas properties
+- TRestDetectorGas
+
 ** Diffusion
 - TRestDetectorElectronDiffusionProcess
   - gas property
@@ -20,6 +23,8 @@
   - merge hits that are very close
 
 * k4megat
+** Gas property service
+
 ** Alg1 : Drift
 1. electron generation
 2. calculate nominal drift distance
@@ -37,3 +42,10 @@ Hits on anode surface with smeared timestamp, (x,y), dE
 ** Alg2 : Segmentation
 Prerequiset:
 1. Customized PCB volume with a smaller sensitive surface
+
+* Ref
+** gas properties
+
+[[file:drift_v1.png]]
+
+[[file:diff_const.png]]
