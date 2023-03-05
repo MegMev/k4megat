@@ -159,11 +159,8 @@ namespace {
     Vector3D n{ x_an.x(), x_an.y(), x_an.z() };
     Vector3D o{ x_ao.x(), x_ao.y(), x_ao.z() };
     Type     asurf_type( Type::Plane );
-    if ( x_anode.isSensitive() ) {
-      asurf_type.setProperty( Type::Sensitive, true );
-    } else {
-      asurf_type.setProperty( Type::Helper, true );
-    }
+    asurf_type.setProperty( Type::Helper, true );
+    if ( x_anode.isSensitive() ) { asurf_type.setProperty( Type::Sensitive, true ); }
 
     VolPlane anode_surf( drift_vol, asurf_type, inner_thickness, outer_thickness, u, v, n, o );
     volSurfaceList( drift_de )->push_back( anode_surf );
