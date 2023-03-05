@@ -65,13 +65,12 @@
 
             <!-- subdetector envelope -->
             <envelope>
-                <!-- dimension from Megat.xml, [todo: do we really need top and bottom?] -->
-                <shape type="Tube"
-                       material="TPC_gas"
-                       rmax="Vessel_Body_Rmin-0.5*mm" dz="Vessel_Body_Z/2"/>
-
+                <shape type="Assembly"/>
                 <!-- <position x="10" y="200" z="0"/>
                      <rotation x="100" y="80" z="90" /> -->
+                <comment>
+                    Have to use Assembly as envelope in Megat, since TPC is almost embed in Calorimeter.
+                </comment>
             </envelope>
 
             <!-- drift volume (customized parsing) -->
