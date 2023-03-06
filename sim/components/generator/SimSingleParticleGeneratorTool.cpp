@@ -99,20 +99,20 @@ namespace megat {
     edm4hep::MCParticleCollection* particles = new edm4hep::MCParticleCollection();
     auto                           particle  = particles->create();
     particle.setVertex( {
-        aVertex->GetX0() * sim::g42edm::length,
-        aVertex->GetY0() * sim::g42edm::length,
-        aVertex->GetZ0() * sim::g42edm::length,
+        aVertex->GetX0() * g42edm::length,
+        aVertex->GetY0() * g42edm::length,
+        aVertex->GetZ0() * g42edm::length,
     } );
-    particle.setTime( aVertex->GetT0() * Gaudi::Units::c_light * sim::g42edm::length );
+    particle.setTime( aVertex->GetT0() * Gaudi::Units::c_light * g42edm::length );
 
     particle.setPDG( aParticle->GetPDGcode() );
     particle.setGeneratorStatus( 1 );
     particle.setMomentum( {
-        (float)( aParticle->GetPx() * sim::g42edm::energy ),
-        (float)( aParticle->GetPy() * sim::g42edm::energy ),
-        (float)( aParticle->GetPz() * sim::g42edm::energy ),
+        (float)( aParticle->GetPx() * g42edm::energy ),
+        (float)( aParticle->GetPy() * g42edm::energy ),
+        (float)( aParticle->GetPz() * g42edm::energy ),
     } );
-    particle.setMass( aParticle->GetMass() * sim::g42edm::energy );
+    particle.setMass( aParticle->GetMass() * g42edm::energy );
 
     m_genParticlesHandle.put( particles );
     return StatusCode::SUCCESS;

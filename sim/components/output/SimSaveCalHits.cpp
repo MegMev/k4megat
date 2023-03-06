@@ -61,8 +61,8 @@ namespace megat {
   StatusCode SimSaveCalHits::finalize() { return GaudiTool::finalize(); }
 
   StatusCode SimSaveCalHits::saveOutput( const G4Event& aEvent ) {
-    G4HCofThisEvent*      collections = aEvent.GetHCofThisEvent();
-    G4VHitsCollection*    collect;
+    G4HCofThisEvent*    collections = aEvent.GetHCofThisEvent();
+    G4VHitsCollection*  collect;
     sim::Geant4CaloHit* hit;
     if ( collections != nullptr ) {
       auto edmHits = m_caloHits.createAndPut();
@@ -86,11 +86,11 @@ namespace megat {
             edmHit.setCellID( hit->cellID );
             // todo
             // edmHitCore.bits = hit->trackId;
-            edmHit.setEnergy( hit->energyDeposit * sim::g42edm::energy );
+            edmHit.setEnergy( hit->energyDeposit * g42edm::energy );
             edmHit.setPosition( {
-                (float)hit->position.x() * (float)sim::g42edm::length,
-                (float)hit->position.y() * (float)sim::g42edm::length,
-                (float)hit->position.z() * (float)sim::g42edm::length,
+                (float)hit->position.x() * (float)g42edm::length,
+                (float)hit->position.y() * (float)g42edm::length,
+                (float)hit->position.z() * (float)g42edm::length,
             } );
           }
         }

@@ -49,15 +49,15 @@ namespace megat {
           association.setSim( MCparticle );
           particle.setCharge( g4particle->GetCharge() );
           particle.setMomentum( {
-              (float)( info->endMomentum().x() * sim::g42edm::energy ),
-              (float)( info->endMomentum().y() * sim::g42edm::energy ),
-              (float)( info->endMomentum().z() * sim::g42edm::energy ),
+              (float)( info->endMomentum().x() * g42edm::energy ),
+              (float)( info->endMomentum().y() * g42edm::energy ),
+              (float)( info->endMomentum().z() * g42edm::energy ),
           } );
-          particle.setMass( g4particle->GetMass() * sim::g42edm::energy );
+          particle.setMass( g4particle->GetMass() * g42edm::energy );
           particle.setReferencePoint( {
-              (float)( info->vertexPosition().x() * sim::g42edm::length ),
-              (float)( info->vertexPosition().y() * sim::g42edm::length ),
-              (float)( info->vertexPosition().z() * sim::g42edm::length ),
+              (float)( info->vertexPosition().x() * g42edm::length ),
+              (float)( info->vertexPosition().y() * g42edm::length ),
+              (float)( info->vertexPosition().z() * g42edm::length ),
           } );
           n_part++;
         }

@@ -1,44 +1,46 @@
-#ifndef SIMG4COMMON_UNITS_H
-#define SIMG4COMMON_UNITS_H
+#pragma once
 
-// Geant4
+#include "DD4hep/DD4hepUnits.h"
 #include "G4SystemOfUnits.hh"
+#include <CLHEP/Units/SystemOfUnits.h>
 
 /** Conversion between units.
  *
- *  Contains conversions between default units used by EDM and by Geant.
- *  Default units in FCC-EDM are (as initially discussed on FCCSoftware Meeting on 14/10/15) GeV and mm.
- *  Geant4 default units are MeV and mm.
+ *  Contains conversions between default units used by EDM, by Geant and by DD4hep
+ *  CLHEP/Geant4 default units are MeV, mm, ns
+ *  DD4hep default are MeV, cm, s (can be changed to G4 units by build option DD4HEP_USE_GEANT4_UNITS)
+ *  Currently, Megat's EDM defaults are GeV, mm, ns
  *
- *  @author Anna Zaborowska
+ *  This header define the conversion factors by using CLHEP's system.
+ *
+ *  [todo] change default to MeV, mm and us when refactoring sim engine?
+ *
+ *  @author Yong Zhou
  */
 namespace megat {
-  namespace sim {
-    namespace edmdefault {
-      // FIXME: these should be a constexpr, but CLHEP is only const
-      const double length = CLHEP::mm;
-      const double energy = CLHEP::GeV;
-    } // namespace edmdefault
-    namespace edm2g4 {
-      // FIXME: these should be a constexpr, but CLHEP is only const
-      const double length = edmdefault::length / CLHEP::mm;
-      const double energy = edmdefault::energy / CLHEP::MeV;
-    } // namespace edm2g4
-    namespace g42edm {
-      // FIXME: these should be a constexpr, but CLHEP is only const
-      const double length = CLHEP::mm / edmdefault::length;
-      const double energy = CLHEP::MeV / edmdefault::energy;
-    } // namespace g42edm
-    namespace papas2edm {
-      // FIXME: these should be a constexpr, but CLHEP is only const
-      const double length = CLHEP::m / edmdefault::length;
-      const double energy = CLHEP::GeV / edmdefault::energy;
-    } // namespace papas2edm
-    namespace edm2papas {
-      // FIXME: these should be a constexpr, but CLHEP is only const
-      const double length = edmdefault::length / CLHEP::m;
-      const double energy = edmdefault::energy / CLHEP::GeV;
-    } // namespace edm2papas
-  }   // namespace sim
+  namespace edmdefault {
+    constexpr double length = CLHEP::mm;
+    constexpr double energy = CLHEP::GeV;
+    constexpr double time   = CLHEP::ns;
+  } // namespace edmdefault
+  namespace edm2g4 {
+    constexpr double length = edmdefault::length / CLHEP::mm;
+    constexpr double energy = edmdefault::energy / CLHEP::MeV;
+    constexpr double time   = edmdefault::time / CLHEP::ns;
+  } // namespace edm2g4
+  namespace g42edm {
+    constexpr double length = CLHEP::mm / edmdefault::length;
+    constexpr double energy = CLHEP::MeV / edmdefault::energy;
+    constexpr double time   = CLHEP::ns / edmdefault::time;
+  } // namespace g42edm
+  namespace dd2edm {
+    constexpr double length = dd4hep::mm / edmdefault::length;
+    constexpr double energy = dd4hep::GeV / edmdefault::energy;
+    constexpr double time   = dd4hep::ns / edmdefault::time;
+  } // namespace dd2edm
+  namespace edm2dd {
+    constexpr double length = edmdefault::length / CLHEP::mm;
+    constexpr double energy = edmdefault::energy / CLHEP::GeV;
+    constexpr double time   = edmdefault::time / CLHEP::ns;
+  } // namespace edm2dd
 } // namespace megat
-#endif /* SIMG4COMMON_UNITS_H */

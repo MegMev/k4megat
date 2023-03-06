@@ -21,4 +21,5 @@ gaudi_add_module(DigiComponents
                       EDM4HEP::edm4hep
                       k4FWCore::k4FWCore
                       SimInterface
+                      SimKernel
                     )

@@ -61,8 +61,8 @@ namespace megat {
   StatusCode SimSaveTrackerHits::finalize() { return GaudiTool::finalize(); }
 
   StatusCode SimSaveTrackerHits::saveOutput( const G4Event& aEvent ) {
-    G4HCofThisEvent*              collections = aEvent.GetHCofThisEvent();
-    G4VHitsCollection*            collect;
+    G4HCofThisEvent*            collections = aEvent.GetHCofThisEvent();
+    G4VHitsCollection*          collect;
     sim::Geant4PreDigiTrackHit* hit;
     if ( collections != nullptr ) {
       edm4hep::SimTrackerHitCollection* edmHits = m_trackHits.createAndPut();
@@ -85,20 +85,20 @@ namespace megat {
             hit         = dynamic_cast<sim::Geant4PreDigiTrackHit*>( collect->GetHit( iter_hit ) );
             auto edmHit = edmHits->create();
             edmHit.setCellID( hit->cellID );
-            edmHit.setEDep( hit->energyDeposit * sim::g42edm::energy );
+            edmHit.setEDep( hit->energyDeposit * g42edm::energy );
             /// workaround, store trackid in an unrelated field
             edmHit.setQuality( hit->trackId );
             edmHit.setTime( hit->time );
             edmHit.setPosition( {
-                hit->prePos.x() * sim::g42edm::length,
-                hit->prePos.y() * sim::g42edm::length,
-                hit->prePos.z() * sim::g42edm::length,
+                hit->prePos.x() * g42edm::length,
+                hit->prePos.y() * g42edm::length,
+                hit->prePos.z() * g42edm::length,
             } );
             CLHEP::Hep3Vector diff = hit->postPos - hit->prePos;
             edmHit.setMomentum( {
-                (float)( diff.x() * sim::g42edm::length ),
-                (float)( diff.y() * sim::g42edm::length ),
-                (float)( diff.z() * sim::g42edm::length ),
+                (float)( diff.x() * g42edm::length ),
+                (float)( diff.y() * g42edm::length ),
+                (float)( diff.z() * g42edm::length ),
             } );
             edmHit.setPathLength( diff.mag() );
           }

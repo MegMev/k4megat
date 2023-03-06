@@ -25,28 +25,28 @@ namespace megat {
       size_t g4ID       = aSecondary->GetTrackID();
 
       edmParticle.setMomentum( {
-          (float)g4mom.x() * (float)sim::g42edm::energy,
-          (float)g4mom.y() * (float)sim::g42edm::energy,
-          (float)g4mom.z() * (float)sim::g42edm::energy,
+          (float)g4mom.x() * (float)g42edm::energy,
+          (float)g4mom.y() * (float)g42edm::energy,
+          (float)g4mom.z() * (float)g42edm::energy,
       } );
-      edmParticle.setMass( mass * sim::g42edm::energy );
+      edmParticle.setMass( mass * g42edm::energy );
       edmParticle.setSimulatorStatus( g4ID );
       edmParticle.setPDG( aSecondary->GetDynamicParticle()->GetDefinition()->GetPDGEncoding() );
 
       auto g4EndPos = aSecondary->GetPosition();
       edmParticle.setEndpoint( {
-          g4EndPos.x() * sim::g42edm::length,
-          g4EndPos.y() * sim::g42edm::length,
-          g4EndPos.z() * sim::g42edm::length,
+          g4EndPos.x() * g42edm::length,
+          g4EndPos.y() * g42edm::length,
+          g4EndPos.z() * g42edm::length,
       } );
-      edmParticle.setTime( aSecondary->GetGlobalTime() * sim::g42edm::length );
+      edmParticle.setTime( aSecondary->GetGlobalTime() * g42edm::length );
 
       // size_t motherID   = aSecondary->GetParentID();
       auto g4StartPos = aSecondary->GetVertexPosition();
       edmParticle.setVertex( {
-          g4StartPos.x() * sim::g42edm::length,
-          g4StartPos.y() * sim::g42edm::length,
-          g4StartPos.z() * sim::g42edm::length,
+          g4StartPos.x() * g42edm::length,
+          g4StartPos.y() * g42edm::length,
+          g4StartPos.z() * g42edm::length,
       } );
       // todo: no time at endpoint
     }

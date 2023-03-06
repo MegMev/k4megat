@@ -43,9 +43,9 @@ namespace megat {
         edmHit.setEDep( 0 );
         edmHit.setTime( 0 );
         edmHit.setPosition( {
-            trajectoryPoint.x() * sim::g42edm::length,
-            trajectoryPoint.y() * sim::g42edm::length,
-            trajectoryPoint.z() * sim::g42edm::length,
+            trajectoryPoint.x() * g42edm::length,
+            trajectoryPoint.y() * g42edm::length,
+            trajectoryPoint.z() * g42edm::length,
         } );
       }
     }

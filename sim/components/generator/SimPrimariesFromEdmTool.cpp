@@ -34,12 +34,11 @@ namespace megat {
     const edm4hep::MCParticleCollection* mcparticles = m_genParticles.get();
     for ( auto mcparticle : *mcparticles ) {
       const edm4hep::Vector3d v = mcparticle.getVertex();
-      G4PrimaryVertex*        g4Vertex =
-          new G4PrimaryVertex( v.x * sim::edm2g4::length, v.y * sim::edm2g4::length, v.z * sim::edm2g4::length,
-                               mcparticle.getTime() / Gaudi::Units::c_light * sim::edm2g4::length );
+      G4PrimaryVertex* g4Vertex = new G4PrimaryVertex( v.x * edm2g4::length, v.y * edm2g4::length, v.z * edm2g4::length,
+                                                       mcparticle.getTime() / Gaudi::Units::c_light * edm2g4::length );
       const edm4hep::Vector3f mom        = mcparticle.getMomentum();
-      G4PrimaryParticle*      g4Particle = new G4PrimaryParticle( mcparticle.getPDG(), mom.x * sim::edm2g4::energy,
-                                                                  mom.y * sim::edm2g4::energy, mom.z * sim::edm2g4::energy );
+      G4PrimaryParticle*      g4Particle = new G4PrimaryParticle( mcparticle.getPDG(), mom.x * edm2g4::energy,
+                                                                  mom.y * edm2g4::energy, mom.z * edm2g4::energy );
       g4Particle->SetUserInformation( new sim::ParticleInformation( mcparticle ) );
       g4Vertex->SetPrimary( g4Particle );
       theEvent->AddPrimaryVertex( g4Vertex );

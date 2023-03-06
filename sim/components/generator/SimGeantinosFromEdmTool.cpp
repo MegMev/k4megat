@@ -41,11 +41,10 @@ namespace megat {
 
     const edm4hep::MCParticleCollection* mcparticles = m_genParticles.get();
     for ( auto mcparticle : *mcparticles ) {
-      auto             v = mcparticle.getVertex();
-      G4PrimaryVertex* g4Vertex =
-          new G4PrimaryVertex( v.x * sim::edm2g4::length, v.y * sim::edm2g4::length, v.z * sim::edm2g4::length,
-                               mcparticle.getTime() / Gaudi::Units::c_light * sim::edm2g4::length );
-      G4PrimaryParticle* part = nullptr;
+      auto             v        = mcparticle.getVertex();
+      G4PrimaryVertex* g4Vertex = new G4PrimaryVertex( v.x * edm2g4::length, v.y * edm2g4::length, v.z * edm2g4::length,
+                                                       mcparticle.getTime() / Gaudi::Units::c_light * edm2g4::length );
+      G4PrimaryParticle* part   = nullptr;
       if ( mcparticle.getCharge() > 0 ) {
         part = new G4PrimaryParticle( particleDefPos );
       } else if ( mcparticle.getCharge() < 0 ) {
@@ -57,9 +56,9 @@ namespace megat {
       part->SetMass( mcparticle.getMass() );
       part->SetCharge( mcparticle.getCharge() );
       auto   mom = mcparticle.getMomentum();
-      double pX  = mom.x * sim::edm2g4::energy;
-      double pY  = mom.y * sim::edm2g4::energy;
-      double pZ  = mom.z * sim::edm2g4::energy;
+      double pX  = mom.x * edm2g4::energy;
+      double pY  = mom.y * edm2g4::energy;
+      double pZ  = mom.z * edm2g4::energy;
       part->SetUserInformation( new sim::ParticleInformation( mcparticle ) );
       part->SetMomentum( pX, pY, pZ );
       g4Vertex->SetPrimary( part );
