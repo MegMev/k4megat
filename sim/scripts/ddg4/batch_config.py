@@ -41,7 +41,7 @@ SIM.runType = "batch"
 
 ## The compact XML file, or multiple compact files, if the last one is the closer.
 install_dir = os.environ['MEGAT_ROOT']
-SIM.compactFile = [str("file:" + install_dir + "/geometry/compact/Megat.xml")]
+SIM.compactFile = [str(install_dir + "/geometry/compact/Megat.xml")]
 ## Outputfile from the simulation: .slcio, edm4hep.root and .root output files are supported
 SIM.outputFile = "megat.edm4hep.root"
 
