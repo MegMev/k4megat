@@ -23,25 +23,37 @@
   - merge hits that are very close
 
 * k4megat
-** Gas property service
+** Svc: Gas property
+- [] new Gaudi service
 
-** Alg1 : Drift
-1. electron generation
-2. calculate nominal drift distance
-3. calculate diffusion (mean + gaussian rdm)
-4. tranversal diffusion added to (x, y) directly
-5. longitudinal diffusion + z -> drift time
-6. energy smearing?
+** Alg1 : Drift [7/9]
+- [X] electron generation
+- [X] calculate nominal drift distance
+- [X] calculate diffusion (mean + gaussian rdm)
+- [X] tranversal diffusion added to (x, y) directly
+- [X] longitudinal diffusion + z -> drift time
+- [X] electron attach
+- [X] max nr of electron
+- [ ] random seed setting
+- [ ] output nr of electrons as a tuple branch or hist?
 
 Input:
 Hits from sim output:
 
 Output:
-Hits on anode surface with smeared timestamp, (x,y), dE
+Eletron Hits on anode surface with:
+- avg energy based on generated electron number
+- throw elctrons diffuse out of volume or attached
 
-** Alg2 : Segmentation
-Prerequiset:
+** DONE Alg2 : Segmentation
+CLOSED: [2023-03-06 一 22:22]
 1. Customized PCB volume with a smaller sensitive surface
+
+** Alg3 : Smearing [/]
+- [] energy
+- [] time
+
+* Unit Test
 
 * Ref
 ** gas properties

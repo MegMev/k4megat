@@ -151,7 +151,7 @@ StatusCode TpcSegmentAlg::execute() {
         error() << "Can't segment multi PCBs with strip readout" << endmsg;
         return StatusCode::FAILURE;
       }
-      const auto& pcb = sL.front();
+      auto pcb = sL.front();
 
       // x-layer (layer Nr hardcoded)
       m_segmentation.decoder()->set( volId, m_newField, 0 );
@@ -161,11 +161,11 @@ StatusCode TpcSegmentAlg::execute() {
       m_segmentation.decoder()->set( volId, m_newField, 1 );
       add_hit( hit, pcb, gpos, volId );
     } else if ( sL.size() == 1 ) {
-      const auto& pcb = sL.front();
+      auto pcb = sL.front();
       add_hit( hit, pcb, gpos, volId );
     } else {
       for ( auto pcb : sL ) {
-        if ( pcb->insideBounds( { gpos.x(), gpos.y(), gpos.z() }, 9999 ) ) { // do not care about on surface or not
+        if ( pcb->insideBounds( { gpos.x(), gpos.y(), gpos.z() }, 99999 ) ) { // do not care about on surface or not
           m_segmentation.decoder()->set( volId, m_newField, pcb->id() );
           add_hit( hit, pcb, gpos, volId );
         }

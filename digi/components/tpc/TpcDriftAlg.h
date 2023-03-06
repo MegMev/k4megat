@@ -12,6 +12,10 @@
 #include <DD4hep/Volumes.h>
 #include <podio/GenericParameters.h>
 
+//
+#include "SimKernel/Units.h"
+#include <cmath>
+
 /** @class TpcDriftAlg
  *
  *  Simulate the whole process:
@@ -59,11 +63,6 @@ public:
 private:
   /// Pointer to the geometry service
   ServiceHandle<IGeoSvc> m_geoSvc;
-  /// Data service: needed to register objects and get collection IDs. Just an observing pointer.
-  PodioDataSvc* m_podioDataSvc;
-
-  /// volume manager
-  dd4hep::VolumeManager m_volMgr;
 
   /// Handle to EDM collection
   DataHandle<edm4hep::SimTrackerHitCollection> m_inHits{ "TpcHits", Gaudi::DataHandle::Reader, this };
@@ -71,15 +70,17 @@ private:
 
   /// Properties
   Gaudi::Property<int>  m_maxHits{ this, "maxHits", 1000, "Maxium number electron hits allowed" };
-  Gaudi::Property<bool> use_Poisson{ this, "use_poisson", true,
+  Gaudi::Property<bool> use_Poisson{ this, "usePoisson", true,
                                      "Use Poisson process to generate primary electrons; otherwise simple mean." };
+
   // default Gas properties from Ar/CO2 90/10 200 V/cm.atm
-  Gaudi::Property<float> m_wValue{ this, "wvalue", 25, "Mean activation energy in eV during primary ionization" };
-  Gaudi::Property<float> m_transDiffCnst{ this, "trans_diffusion_const", 200., "Transverse diffusion constant" };
+  Gaudi::Property<float> m_wValue{ this, "wvalue", 25, "[eV] Mean activation energy during primary ionization" };
+  Gaudi::Property<float> m_transDiffCnst{ this, "trans_diffusion_const", 200.,
+                                          "[um/sqrt(cm)] Transverse diffusion constant" };
   Gaudi::Property<float> m_longDiffCnst{ this, "long_diffusion_const", 250.,
-                                         "Longitudinal diffusion const in um/sqrt(cm)" };
+                                         "[um/sqrt(cm)] Longitudinal diffusion constant" };
   Gaudi::Property<float> m_driftVelocity{ this, "drift_velocity", 6.,
-                                          "Mean activation energy in um/us during primary ionization" };
+                                          "[cm/us] Mean activation energy in um/us during primary ionization" };
   Gaudi::Property<float> m_attachFactor{ this, "attach_factor", 0.0,
                                          "Electron attachement coefficient (dimensionless)" };
 
