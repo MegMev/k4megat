@@ -5,7 +5,6 @@ from Configurables import MegatGeoSvc as GeoSvc
 from os import environ, path
 detector_path = environ.get("MEGAT_ROOT", "")
 geoservice = GeoSvc("MegatGeoSvc",
-                    # buildType="BUILD_RECO",
                     buildType="BUILD_SIMU",
                     detectors=[path.join(detector_path, 'geometry/compact/Megat.xml'),
                                ],
@@ -31,7 +30,7 @@ tpcdriftalg.wvalue= 25
 tpcdriftalg.trans_diffusion_const = 200
 tpcdriftalg.long_diffusion_const = 250
 tpcdriftalg.drift_velocity = 6
-tpcdriftalg.attach_factor = 0.5
+# tpcdriftalg.attach_factor = 0.1
 tpcdriftalg.inHits.Path = "TpcHits"
 tpcdriftalg.outHits.Path = "TpcDriftHits"
 
