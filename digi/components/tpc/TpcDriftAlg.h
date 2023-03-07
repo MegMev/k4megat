@@ -2,6 +2,7 @@
 
 // GAUDI
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/RndmGenerators.h"
 
 // k4FWCore
 #include "k4FWCore/DataHandle.h"
@@ -63,6 +64,8 @@ public:
 private:
   /// Pointer to the geometry service
   ServiceHandle<IGeoSvc> m_geoSvc;
+
+  Rndm::Numbers m_flatGen;
 
   /// Handle to EDM collection
   DataHandle<edm4hep::SimTrackerHitCollection> m_inHits{ "TpcHits", Gaudi::DataHandle::Reader, this };

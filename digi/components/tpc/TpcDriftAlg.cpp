@@ -50,6 +50,10 @@ StatusCode TpcDriftAlg::initialize() {
     return StatusCode::FAILURE;
   }
 
+  /// flat rndm
+  auto sc = m_flatGen.initialize( randSvc(), Rndm::Flat( 0.0, 1.0 ) );
+  if ( !sc.isSuccess() ) { return StatusCode::FAILURE; }
+
   /// unit conversion
   static double unit_diffusion_coeff = CLHEP::um / std::sqrt( CLHEP::cm );
   static double unit_drift_velocity  = CLHEP::cm / CLHEP::us;
@@ -93,10 +97,9 @@ StatusCode TpcDriftAlg::execute() {
     auto lpos = anode_surf->globalToLocal( edm2dd::length * gpos );
 
     // 3.3 attach model [todo: what's the basics of this formula?]
-    Rndm::Numbers rndmflat( randSvc(), Rndm::Flat( 0., 1. ) );
-    auto          is_attached = [&]() -> bool {
+    auto is_attached = [&]() -> bool {
       if ( !m_attachFactor ) return false;
-      return rndmflat() > std::pow( 1. - m_attachFactor, drift_d / CLHEP::cm );
+      return m_flatGen() > std::pow( 1. - m_attachFactor, drift_d / CLHEP::cm );
     };
 
     // 4. -> electron number & kinetic energy

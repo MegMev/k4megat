@@ -31,7 +31,7 @@ tpcdriftalg.wvalue= 25
 tpcdriftalg.trans_diffusion_const = 200
 tpcdriftalg.long_diffusion_const = 250
 tpcdriftalg.drift_velocity = 6
-tpcdriftalg.attach_factor = 0.0
+tpcdriftalg.attach_factor = 0.5
 tpcdriftalg.inHits.Path = "TpcHits"
 tpcdriftalg.outHits.Path = "TpcDriftHits"
 
@@ -41,15 +41,27 @@ out = PodioOutput('out')
 out.filename = 'tpcdrift_megat_tut.root'
 out.outputCommands = ['keep *']
 
+# from Configurables import HepRndm__Engine_CLHEP__RanluxEngine_
+# rdmEngine = HepRndm__Engine_CLHEP__RanluxEngine_("RndmGenSvc.Engine") # The default engine in Gaudi
+from Configurables import HepRndm__Engine_CLHEP__HepJamesRandom_
+rdmEngine = HepRndm__Engine_CLHEP__HepJamesRandom_("RndmGenSvc.Engine") # The default engine in Geant4
+rdmEngine.SetSingleton = True
+rdmEngine.Seeds = [5685]
+
+from Configurables import RndmGenSvc
+rdmSvc = RndmGenSvc("RndmGenSvc")
+rdmSvc.Engine = rdmEngine.name()
+
+# or just change the engine type, but not other params like seeds
+# rdmSvc.Engine = "HepRndm::Engine<CLHEP::HepJamesRandom>"
+
 # ApplicationMgr
 from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg = [inp, tpcdriftalg, out],
                 EvtSel = 'NONE',
                 EvtMax   = -1,
-                ExtSvc = [datasvc],
+                ExtSvc = [datasvc, rdmEngine, rdmSvc],
                 OutputLevel=INFO
                )
 
-# rdmSvc=RndmGenSvc()
 
-# RndmGenSvc.Engine.Seeds = { 70, 71, 0 };
