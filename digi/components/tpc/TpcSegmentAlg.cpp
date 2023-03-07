@@ -3,6 +3,7 @@
 // Gaudi
 
 // edm4hep
+#include "SimKernel/Units.h"
 #include "TpcSegmentAlg.h"
 #include "edm4hep/SimTrackerHitCollection.h"
 #include "edm4hep/TrackerHitCollection.h"
@@ -25,6 +26,7 @@
 #include <edm4hep/SimTrackerHit.h>
 #include <edm4hep/Vector3d.h>
 
+using namespace megat;
 using namespace dd4hep;
 using namespace dd4hep::rec;
 
@@ -194,7 +196,8 @@ StatusCode TpcSegmentAlg::finalize() { return GaudiAlgorithm::finalize(); }
 
 inline void TpcSegmentAlg::add_hit( edm4hep::SimTrackerHit hit, ISurface* pcb, dd4hep::Position gpos,
                                     DDSegmentation::CellID volId ) {
-  auto lpos      = pcb->globalToLocal( { gpos.x(), gpos.y(), gpos.z() } );
+  auto gpos_dd   = gpos * edm2dd::length;
+  auto lpos      = pcb->globalToLocal( { gpos_dd.x(), gpos_dd.y(), gpos_dd.z() } );
   auto newCellId = m_segmentation.cellID( { lpos.u(), lpos.v(), 0 }, {}, volId );
 
   if ( auto it = m_hitCache.find( newCellId ); it != m_hitCache.end() ) {

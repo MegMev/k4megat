@@ -27,9 +27,6 @@ using namespace megat;
 using dd4hep::rec::Surface;
 using dd4hep::rec::Vector3D;
 
-// static const double unit_diffusion_coeff = CLHEP::um / std::sqrt( CLHEP::cm );
-// static const double unit_drift_velocity  = CLHEP::cm / CLHEP::us;
-
 DECLARE_COMPONENT( TpcDriftAlg )
 
 TpcDriftAlg::TpcDriftAlg( const std::string& aName, ISvcLocator* aSvcLoc )
@@ -55,12 +52,13 @@ StatusCode TpcDriftAlg::initialize() {
   if ( !sc.isSuccess() ) { return StatusCode::FAILURE; }
 
   /// unit conversion
-  static double unit_diffusion_coeff = CLHEP::um / std::sqrt( CLHEP::cm );
-  static double unit_drift_velocity  = CLHEP::cm / CLHEP::us;
-  m_wValue                           = m_wValue * CLHEP::eV;
-  m_driftVelocity                    = m_driftVelocity * unit_drift_velocity;
-  m_transDiffCnst                    = m_transDiffCnst * unit_diffusion_coeff;
-  m_longDiffCnst                     = m_longDiffCnst * unit_diffusion_coeff;
+  static const double unit_diffusion_coeff = CLHEP::um / std::sqrt( CLHEP::cm );
+  static const double unit_drift_velocity  = CLHEP::cm / CLHEP::us;
+
+  m_wValue        = m_wValue * CLHEP::eV;
+  m_driftVelocity = m_driftVelocity * unit_drift_velocity;
+  m_transDiffCnst = m_transDiffCnst * unit_diffusion_coeff;
+  m_longDiffCnst  = m_longDiffCnst * unit_diffusion_coeff;
 
   return StatusCode::SUCCESS;
 }
