@@ -16,17 +16,13 @@ from Configurables import TpcSimpleSmearAlg
 tpcpixelsmeared = TpcSimpleSmearAlg("TpcPixelSmear")
 tpcpixelsmeared.inHits.Path = "TpcPixelHits"
 tpcpixelsmeared.outHits.Path = "TpcPixelSmearedHits"
-tpcpixelsmeared.use_fano = False
-tpcpixelsmeared.fano_factor = 0.01
-tpcpixelsmeared.energy_sigma = 10
-tpcpixelsmeared.time_sigma = 100
+tpcpixelsmeared.energy_sigma = 10 # eV
+tpcpixelsmeared.time_sigma = 100 # ps
 
 
 tpcstripsmeared = TpcSimpleSmearAlg("TpcStripSmear")
 tpcstripsmeared.inHits.Path = "TpcStripHits"
 tpcstripsmeared.outHits.Path = "TpcStripSmearedHits"
-tpcstripsmeared.fano_factor = 0.2
-tpcstripsmeared.time_sigma = 200
 
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioOutput

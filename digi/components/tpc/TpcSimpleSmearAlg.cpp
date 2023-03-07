@@ -33,7 +33,7 @@ StatusCode TpcSimpleSmearAlg::initialize() {
     if ( !sc.isSuccess() ) { return StatusCode::FAILURE; }
   }
 
-  if ( !use_Fano && m_sigmaE ) {
+  if ( m_sigmaE ) {
     auto sc = m_sigmaGenE.initialize( randSvc(), Rndm::Gauss( 0.0, m_sigmaE ) );
     if ( !sc.isSuccess() ) { return StatusCode::FAILURE; }
   }
@@ -56,15 +56,7 @@ StatusCode TpcSimpleSmearAlg::execute() {
     if ( m_sigmaT ) { new_hit.setTime( m_sigmaGenT() + hit.getTime() ); }
 
     // smearing energy
-    auto old_e = hit.getEDep();
-    if ( use_Fano ) {
-      // convert to eV for correct behaviour
-      old_e = old_e * edmdefault::energy / CLHEP::eV;
-      Rndm::Numbers _gaus_gen( randSvc(), Rndm::Gauss( 0., std::sqrt( m_fano * old_e ) ) );
-      new_hit.setEDep( ( _gaus_gen() + old_e ) * CLHEP::eV / edmdefault::energy );
-    } else if ( m_sigmaE ) {
-      new_hit.setEDep( m_sigmaGenE() + old_e );
-    }
+    if ( m_sigmaE ) { new_hit.setEDep( m_sigmaGenE() + hit.getEDep() ); }
 
     // add new hit to output collection
     out_hits->push_back( new_hit );

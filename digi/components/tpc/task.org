@@ -1,32 +1,8 @@
-* REST reference
-** Gas properties
-- TRestDetectorGas
-
-** Diffusion
-- TRestDetectorElectronDiffusionProcess
-  - gas property
-  - parameterized
-- TRestDetectorGarfieldDriftProcess
-  - use Garfield mc process
-
-** Energy smearing
-- TRestDetectorHitsSmearingProcess : ?
-- TRestDetectorAvalancheProcess : same as smearing?
-
-** Hit to Signal
-- TRestDetectorHitsToSignalProcess : use drift velocity and z to get time
-
-** Others
-- fiducialization : TRestDetectorFiducializationProcess
-  - filter hits outside fidudial volume
-- hit reduction : TRestDetectorHitsReductionProcess
-  - merge hits that are very close
-
 * k4megat
 ** Svc: Gas property
 - [] new Gaudi service
 
-** Alg1 : Drift [7/9]
+** Alg1 : Drift [8/9]
 - [X] electron generation
 - [X] calculate nominal drift distance
 - [X] calculate diffusion (mean + gaussian rdm)
@@ -34,16 +10,17 @@
 - [X] longitudinal diffusion + z -> drift time
 - [X] electron attach
 - [X] max nr of electron
-- [ ] random seed setting
+- [X] random seed setting
+  - [[file:~/src/physics/eic/juggler/JugDigi/src/components/CalorimeterHitDigi.cpp:102]]
 - [ ] output nr of electrons as a tuple branch or hist?
 
 Input:
-Hits from sim output:
+Hits from sim output
 
 Output:
 Eletron Hits on anode surface with:
-- avg energy based on generated electron number
-- throw elctrons diffuse out of volume or attached
+1. avg energy based on generated electron number
+2. throw elctrons diffuse out of volume or attached
 
 ** DONE Alg2 : Segmentation
 CLOSED: [2023-03-06 一 22:22]
@@ -53,9 +30,37 @@ CLOSED: [2023-03-06 一 22:22]
 - [] energy
 - [] time
 
+** NTuple & Histogram
+*** NTuple
+- [[file:~/src/physics/key4hep/Gaudi/GaudiAlg/src/lib/GaudiAlgorithm.cpp::SmartIF<INTupleSvc>& GaudiAlgorithm::evtColSvc() const {]]
+
 * Unit Test
 
 * Ref
+** REST reference
+*** Gas properties
+- TRestDetectorGas
+
+*** Diffusion
+- TRestDetectorElectronDiffusionProcess
+  - gas property
+  - parameterized
+- TRestDetectorGarfieldDriftProcess
+  - use Garfield mc process
+
+*** Energy smearing
+- TRestDetectorHitsSmearingProcess : ?
+- TRestDetectorAvalancheProcess : same as smearing?
+
+*** Hit to Signal
+- TRestDetectorHitsToSignalProcess : use drift velocity and z to get time
+
+*** Others
+- fiducialization : TRestDetectorFiducializationProcess
+  - filter hits outside fidudial volume
+- hit reduction : TRestDetectorHitsReductionProcess
+  - merge hits that are very close
+
 ** gas properties
 
 [[file:drift_v1.png]]

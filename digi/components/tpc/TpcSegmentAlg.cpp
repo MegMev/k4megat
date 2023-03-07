@@ -30,6 +30,8 @@ using namespace megat;
 using namespace dd4hep;
 using namespace dd4hep::rec;
 
+static constexpr double max_boundary = std::numeric_limits<double>::max();
+
 DECLARE_COMPONENT( TpcSegmentAlg )
 
 TpcSegmentAlg::TpcSegmentAlg( const std::string& aName, ISvcLocator* aSvcLoc )
@@ -167,7 +169,8 @@ StatusCode TpcSegmentAlg::execute() {
       add_hit( hit, pcb, gpos, volId );
     } else {
       for ( auto pcb : sL ) {
-        if ( pcb->insideBounds( { gpos.x(), gpos.y(), gpos.z() }, 99999 ) ) { // do not care about on surface or not
+        if ( pcb->insideBounds( { gpos.x(), gpos.y(), gpos.z() }, max_boundary ) ) { // do not care about on surface or
+                                                                                     // not
           m_segmentation.decoder()->set( volId, m_newField, pcb->id() );
           add_hit( hit, pcb, gpos, volId );
         }

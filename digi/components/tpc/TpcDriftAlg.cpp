@@ -19,6 +19,7 @@
 #include <GaudiKernel/IRndmEngine.h>
 #include <GaudiKernel/RndmGenerators.h>
 #include <boost/iterator/iterator_categories.hpp>
+#include <cfloat>
 #include <cmath>
 #include <complex>
 #include <numeric>
@@ -28,6 +29,8 @@ using dd4hep::rec::Surface;
 using dd4hep::rec::Vector3D;
 
 DECLARE_COMPONENT( TpcDriftAlg )
+
+static constexpr double max_boundary = std::numeric_limits<double>::max();
 
 TpcDriftAlg::TpcDriftAlg( const std::string& aName, ISvcLocator* aSvcLoc )
     : GaudiAlgorithm( aName, aSvcLoc ), m_geoSvc( "MegatGeoSvc", aName ) {
@@ -124,7 +127,7 @@ StatusCode TpcDriftAlg::execute() {
         auto ydiff = lpos.v() + trans_diff_gen() * edm2dd::length;
 
         // ? still inside drift volume
-        if ( !anode_volSurf.insideBounds( { xdiff, ydiff, 0 }, 99999 ) ) { continue; }
+        if ( !anode_volSurf.insideBounds( { xdiff, ydiff, 0 }, max_boundary ) ) { continue; }
 
         // 6.2 -> new global pos on anode surface [edm unit]
         auto new_gpos = dd2edm::length * anode_surf->localToGlobal( { xdiff, ydiff } );
