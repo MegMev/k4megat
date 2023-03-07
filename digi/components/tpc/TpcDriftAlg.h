@@ -11,6 +11,7 @@
 #include "DD4hep/Segmentations.h"
 #include <DD4hep/VolumeManager.h>
 #include <DD4hep/Volumes.h>
+#include <GaudiKernel/DataHandle.h>
 #include <podio/GenericParameters.h>
 
 //
@@ -70,6 +71,11 @@ private:
   /// Handle to EDM collection
   DataHandle<edm4hep::SimTrackerHitCollection> m_inHits{ "TpcHits", Gaudi::DataHandle::Reader, this };
   DataHandle<edm4hep::SimTrackerHitCollection> m_outHits{ "TpcDriftHits", Gaudi::DataHandle::Writer, this };
+
+  /// Handle to other data types
+  DataHandle<int> m_nrElectronGen{ "NrElctronTotal", Gaudi::DataHandle::Writer, this };
+  DataHandle<int> m_nrElectronIn{ "NrElctronInside", Gaudi::DataHandle::Writer, this };
+  DataHandle<int> m_nrElectronEsc{ "NrElctronEscape", Gaudi::DataHandle::Writer, this };
 
   /// Properties
   Gaudi::Property<int>  m_maxHits{ this, "maxHits", 1000, "Maxium number electron hits allowed" };

@@ -78,6 +78,7 @@ StatusCode TpcDriftAlg::execute() {
 
   /// output
   auto out_hits = m_outHits.createAndPut();
+  int  nr_in_e{ 0 }, nr_tot_e{ 0 };
 
   // 2. loop input hits
   for ( const auto& hit : *in_hits ) {
@@ -115,6 +116,7 @@ StatusCode TpcDriftAlg::execute() {
 
     // kinetic energy of each electron for output
     auto e_kin = hit.getEDep() / cur_eno;
+    nr_tot_e += cur_eno;
 
     // 5. loop electrons
     while ( cur_eno > 0 ) {
@@ -128,6 +130,7 @@ StatusCode TpcDriftAlg::execute() {
 
         // ? still inside drift volume
         if ( !anode_volSurf.insideBounds( { xdiff, ydiff, 0 }, max_boundary ) ) { continue; }
+        nr_in_e++;
 
         // 6.2 -> new global pos on anode surface [edm unit]
         auto new_gpos = dd2edm::length * anode_surf->localToGlobal( { xdiff, ydiff } );
@@ -144,6 +147,9 @@ StatusCode TpcDriftAlg::execute() {
       }
     }
   }
+  m_nrElectronGen.put( new int{ nr_tot_e } );
+  m_nrElectronIn.put( new int{ nr_in_e } );
+  m_nrElectronEsc.put( new int{ nr_tot_e - nr_in_e } );
 
   return StatusCode::SUCCESS;
 }
