@@ -106,7 +106,7 @@ StatusCode TpcDriftAlg::execute() {
 
     // 4. -> electron number & kinetic energy
     int cur_eno = hit.getEDep() * edmdefault::energy / m_wValue;
-    if ( use_Poisson ) {
+    if ( m_usePoisson ) {
       Rndm::Numbers poisson( randSvc(), Rndm::Poisson( cur_eno ) );
       cur_eno = std::round( poisson() / eno_cor_ratio );
     } else {

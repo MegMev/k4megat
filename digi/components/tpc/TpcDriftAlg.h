@@ -79,8 +79,8 @@ private:
 
   /// Properties
   Gaudi::Property<int>  m_maxHits{ this, "maxHits", 1000, "Maxium number electron hits allowed" };
-  Gaudi::Property<bool> use_Poisson{ this, "usePoisson", true,
-                                     "Use Poisson process to generate primary electrons; otherwise simple mean." };
+  Gaudi::Property<bool> m_usePoisson{ this, "usePoisson", true,
+                                      "Use Poisson process to generate primary electrons; otherwise simple mean." };
 
   // default Gas properties from Ar/CO2 90/10 200 V/cm.atm
   Gaudi::Property<float> m_wValue{ this, "wvalue", 25, "[eV] Mean activation energy during primary ionization" };
