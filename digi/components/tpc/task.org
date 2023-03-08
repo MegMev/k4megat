@@ -54,6 +54,7 @@ CLOSED: [2023-03-06 一 22:22]
 
 *** Hit to Signal
 - TRestDetectorHitsToSignalProcess : use drift velocity and z to get time
+- TRestDetectorSignalToRawSignalProcess : add shape sampling
 
 *** Others
 - fiducialization : TRestDetectorFiducializationProcess

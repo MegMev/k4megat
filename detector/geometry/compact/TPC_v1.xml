@@ -141,18 +141,6 @@
             </readout_pcbs>
 
             <!-- other components e.g. passive PCBs and field cage (batch parsed by VolumeBuilder) -->
-            <!-- <volume name="Pcb"
-                 material="PCB"
-                 vis="TpcPcbVis">
-                 <shape type="Box" dx="Tpc_Pcb_X/2" dy="Tpc_Pcb_Y/2" dz="Tpc_Pcb_Z/2"/>
-                 </volume>
-                 
-                 <physvol name="Pcb"
-                 element="Pcb"
-                 volume="Pcb">
-                 <position x="0" y="0" z="Tpc_Drift_Z/2+Tpc_Drift_Offset+Tpc_Pcb_Z/2"/>
-                 </physvol> -->
-
             <shape name="FieldCage_Solid" type="BooleanShape" operation="Subtraction">
                 <shape type="Box" dx="Tpc_Cage_X/2" dy="Tpc_Cage_Y/2" dz="Tpc_Cage_Z/2" />
                 <shape type="Box" dx="fiducial_x" dy="fiducial_y" dz="Tpc_Cage_Z/2" />

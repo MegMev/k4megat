@@ -1,7 +1,5 @@
 #include "SimInterface/IGeoSvc.h"
 
-// Gaudi
-
 // edm4hep
 #include "SimKernel/Units.h"
 #include "TpcSegmentAlg.h"
@@ -75,7 +73,7 @@ StatusCode TpcSegmentAlg::initialize() {
   if ( m_segmentation.type() == "MultiSegmentation" ) is_stripSeg = true;
   info() << is_stripSeg << ", " << m_segmentation.type() << ", " << m_segmentation->fieldDescription() << endmsg;
 
-  // // [optional todo] seperate hit collection for sub-segmentation
+  // // [optional todo:] seperate hit collection for sub-segmentation
   // auto& hit_cols = m_geoSvc->lcdd()->readout( m_readoutName )->hits;
   // for ( const auto& col : hit_cols ) {
   //   info() << col.name << ",  " << col.key << ", " << col.key_min << ", " << col.key_max << endmsg;
@@ -84,53 +82,6 @@ StatusCode TpcSegmentAlg::initialize() {
   // default out collection name is readoutName
   if ( m_outHits.objKey().empty() ) m_outHits.updateKey( m_readoutName );
 
-  // get the list of pcb surfaces of a subdetector
-  // method1: using type string (not suitable for multiple TPC subdetector)
-  // SurfaceManager&   surfMan = *m_geoSvc->lcdd()->extension<SurfaceManager>();
-  // const SurfaceMap& surfMap = *surfMan.map( "tracker" );
-  // for ( auto& surf : surfMap ) {
-  //   auto type = surf.second->type();
-  //   if ( type.isSensitive() ) info() << surf.first << "\t" << *( surf.second ) << endmsg;
-  // }
-
-  // method2: using volumeid (most general)
-  // DDSegmentation::BitFieldCoder bc( "system:6,pcb:6,strip:16:48" );
-  // long64                        tracker_id{ 222135545665454 };
-  // bc.set( tracker_id, "system", 1 );
-  // bc.set( tracker_id, "pcb", 3 );
-  // bc.set( tracker_id, "strip", 10 );
-  // // get top-level detector
-  // auto track_mgr = m_volMgr.subdetector( tracker_id );
-  // // auto tpc_de    = track_mgr.detector();
-  // info() << track_mgr << endmsg;
-
-  // // lower-level volumes
-  // auto vcon = m_volMgr.lookupContext( tracker_id );
-  // auto de   = vcon->element;
-  // auto vpv  = vcon->volumePlacement();
-  // auto epv  = vcon->elementPlacement();
-
-  // if ( vcon ) {
-  //   info() << "find " << vcon->identifier << " vpv: " << vpv.toString() << " epv: " << epv.toString() << endmsg;
-  // }
-
-  // if ( tpc_de.isValid() ) {
-  //   SurfaceHelper surfMan( tpc_de );
-  //   const auto&   sL = surfMan.surfaceList();
-  //   for ( auto& surf : sL ) {
-  //     auto type = surf->type();
-  //     if ( type.isSensitive() ) info() << *( surf ) << endmsg;
-  //   }
-  // }
-
-  // method3: using geosvc
-  // auto sL = m_geoSvc->getSensitiveSurfList( tracker_id );
-  // // auto sL = m_geoSvc->getHelperSurfList( tracker_id );
-  // for ( auto& surf : sL ) {
-  //   auto type = surf->type();
-  //   info() << *( surf ) << endmsg;
-  // }
-
   return StatusCode::SUCCESS;
 }
 
@@ -138,15 +89,16 @@ StatusCode TpcSegmentAlg::execute() {
   // get input hits
   const auto in_hits = m_inHits.get();
 
-  // create segmented hits: dE is accumulated, drift hits are collected
+  // segmented hits: dE is accumulated, drift hits are collected
   auto out_hits = m_outHits.createAndPut();
   for ( const auto& hit : *in_hits ) {
-    DDSegmentation::CellID volId = hit.getCellID(); // cellid is volumeID for TPC sim hits
+    // cellid is volumeID for TPC sim hits
+    DDSegmentation::CellID volId = hit.getCellID();
     auto                   sL    = m_geoSvc->getSensitiveSurfList( volId );
     auto                   _gpos = hit.getPosition();
-    // [todo: better vector access]
+    // [todo: better vector access needed]
     // three vector implementation here: edm4hep::Vector3d, dd4hep::rec::Vector3D and dd4hep::Position
-    // Position has rich interface
+    // dd4hep::Position has rich interface
     dd4hep::Position gpos{ _gpos.x, _gpos.y, _gpos.z };
 
     // [optional todo: key_value from xml?]
@@ -169,8 +121,7 @@ StatusCode TpcSegmentAlg::execute() {
       add_hit( hit, pcb, gpos, volId );
     } else {
       for ( auto pcb : sL ) {
-        if ( pcb->insideBounds( { gpos.x(), gpos.y(), gpos.z() }, max_boundary ) ) { // do not care about on surface or
-                                                                                     // not
+        if ( pcb->insideBounds( { gpos.x(), gpos.y(), gpos.z() }, max_boundary ) ) {
           m_segmentation.decoder()->set( volId, m_newField, pcb->id() );
           add_hit( hit, pcb, gpos, volId );
         }
@@ -178,7 +129,7 @@ StatusCode TpcSegmentAlg::execute() {
     }
   }
 
-  // update the sum edep, earliest arrive time and e-weighted truth position
+  // update: summed edep, earliest arrival time and edep-weighted truth position
   for ( auto& [key, value] : m_hitCache ) {
     value.hit.setEDep( value.energy );
     value.hit.setTime( value.time );
@@ -188,7 +139,7 @@ StatusCode TpcSegmentAlg::execute() {
   }
   m_hitCache.clear();
 
-  // update the id specification string of output collection
+  // update: id specification string of output collection
   auto& collmd = m_podioDataSvc->getProvider().getCollectionMetaData( out_hits->getID() );
   collmd.setValue( "CellIDEncodingString", m_segmentation->fieldDescription() );
 

@@ -44,7 +44,7 @@ appMgr.ExtSvc += [rdmEngine, rdmSvc]
 # Fetch the collection into TES
 from Configurables import PodioInput
 inputAlg = PodioInput()
-inputAlg.collections = ["TpcSimHits"]
+inputAlg.collections = ["TpcSimHits", "CaloSimHits"]
 appMgr.TopAlg += [inputAlg]
 
 # 1. Electron drift to anode surface
@@ -107,12 +107,24 @@ pixelSamplingAlg.simHits.Path = "TpcDriftHits"
 pixelSamplingAlg.outHits.Path = "TpcPixelHits"
 appMgr.TopAlg += [pixelSamplingAlg, stripSamplingAlg]
 
+# 5. CZT calo smearing (fixed-with gassian to edep)
+from Configurables import CaloSimpleSmearAlg
+caloSmearAlg = CaloSimpleSmearAlg("CaloSmear")
+caloSmearAlg.inHits.Path = "CaloSimHits"
+caloSmearAlg.outHits.Path = "CaloHits"
+caloSmearAlg.energy_sigma = 60 # keV
+appMgr.TopAlg += [caloSmearAlg]
+
 ################################# Output ########################################
 
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioOutput
 outAlg = PodioOutput('outAlg')
-outAlg.filename = 'tpcdigi_megat.root'
-outAlg.outputCommands = ['drop *', 'keep TpcPixelHits', 'keep TpcStripHits']
+outAlg.filename = 'digi_megat.root'
+outAlg.outputCommands = ['drop *',
+                         'keep TpcPixelHits',
+                         'keep TpcStripHits',
+                         'keep CaloHits'
+                         ]
 appMgr.TopAlg += [outAlg]
 

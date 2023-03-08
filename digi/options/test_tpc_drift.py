@@ -13,13 +13,13 @@ geoservice = GeoSvc("MegatGeoSvc",
 # Data service
 from Configurables import k4DataSvc
 datasvc = k4DataSvc("EventDataSvc")
-datasvc.input = "megat_tut.root"
+datasvc.input = "megat.gaudi.root"
 # datasvc.ForceLeaves= True
 
 # Fetch the collection into TES
 from Configurables import PodioInput
 inp = PodioInput()
-inp.collections = ["TpcHits"]
+inp.collections = ["TpcSimHits"]
 
 # Add algorithm
 from Configurables import TpcDriftAlg
@@ -31,13 +31,13 @@ tpcdriftalg.trans_diffusion_const = 200
 tpcdriftalg.long_diffusion_const = 250
 tpcdriftalg.drift_velocity = 6
 # tpcdriftalg.attach_factor = 0.1
-tpcdriftalg.inHits.Path = "TpcHits"
+tpcdriftalg.inHits.Path = "TpcSimHits"
 tpcdriftalg.outHits.Path = "TpcDriftHits"
 
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioOutput
 out = PodioOutput('out')
-out.filename = 'tpcdrift_megat_tut.root'
+out.filename = 'tpcdrift_megat.root'
 out.outputCommands = ['keep *']
 
 # from Configurables import HepRndm__Engine_CLHEP__RanluxEngine_
