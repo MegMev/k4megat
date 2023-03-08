@@ -3,6 +3,10 @@
 ** Continuous integration
 ** Version mechanism
 Semantic Versioning: [[https://semver.org/]]
+
+*** save version id/sting as a  metadata tree branch.
+Needed for tracable data production.
+
 ** DONE Documentation
 CLOSED: [2023-02-27 一 21:47]
 - online publish
@@ -48,7 +52,8 @@ CLOSED: [2023-03-04 六 09:15]
 *** Check whether alignment can be applied on assembly volume
 
 ** CZT calo
-*** add DetElement to module sensor
+*** DONE add DetElement to module sensor
+CLOSED: [2023-03-08 三 17:54]
 see [[file:~/src/physics/eic/NPDet/src/detectors/trackers/src/GenericSiliconTrackerBarrel_geo.cpp::module_sense_DE.setPlacement( sensitive_pv );][EIC's NPDet impl]], in which sensor is daughter of module, and the module is placed in layered array.
 A DetElement is created for both the module and the sensor at each module placement.
 While module_DE's placement is the individual placement, all module_sensor_DE's placement share the same

@@ -26,7 +26,7 @@ tpcstripsmeared.outHits.Path = "TpcSmearStripHits"
 
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioOutput
-out = PodioOutput('out')
+out = PodioOutput()
 out.filename = 'tpcsmear_megat.root'
 out.outputCommands = ['keep *']
 

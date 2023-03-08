@@ -36,7 +36,7 @@ tpcstripseg.readoutName = "TpcStripHits"
 
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioOutput
-out = PodioOutput('out')
+out = PodioOutput()
 out.filename = 'tpcseg_megat.root'
 out.outputCommands = ['keep *']
 

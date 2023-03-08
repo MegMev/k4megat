@@ -36,7 +36,7 @@ tpcdriftalg.outHits.Path = "TpcDriftHits"
 
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioOutput
-out = PodioOutput('out')
+out = PodioOutput()
 out.filename = 'tpcdrift_megat.root'
 out.outputCommands = ['keep *']
 

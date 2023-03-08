@@ -20,7 +20,7 @@ calosmeared.energy_sigma = 100 # keV
 
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioOutput
-out = PodioOutput('out')
+out = PodioOutput()
 out.filename = 'calosmear_megat_tut.root'
 out.outputCommands = ['keep *']
 

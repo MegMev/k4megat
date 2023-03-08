@@ -8,12 +8,12 @@ datasvc.input = 'tpcseg_megat.root'
 # Fetch the collection into TES
 from Configurables import PodioInput
 inp = PodioInput()
-inp.collections = ["TpcSmearStripHits", "TpcSmearDriftHits"]
+inp.collections = ["TpcSegStripHits", "TpcDriftHits"]
 
 # Add algorithm
 from Configurables import TpcSamplingAlg
 tpcSamplingAlg = TpcSamplingAlg("TpcSampling")
-tpcSamplingAlg.inHits.Path = "TpcSmearStripHits"
+tpcSamplingAlg.inHits.Path = "TpcSegStripHits"
 tpcSamplingAlg.simHits.Path = "TpcDriftHits"
 tpcSamplingAlg.outHits.Path = "TpcStripHits"
 tpcSamplingAlg.sample_interval = 5 # ns
@@ -24,7 +24,7 @@ tpcSamplingAlg.amplitude_offset = 1000
 
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioOutput
-out = PodioOutput('out')
+out = PodioOutput()
 out.filename = 'tpcsample_megat.root'
 out.outputCommands = ['keep *']
 
