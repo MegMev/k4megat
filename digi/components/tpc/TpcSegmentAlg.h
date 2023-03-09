@@ -21,11 +21,10 @@
 
 /** @class TpcSegmentAlg
  *
- *  Simulate the primary ionization and electron diffusion process.
- *  The output is a collection of electrons with smeared [x, y, z]
- *  vertex caused by diffusion.
- *
- *  The algorithm is fully parameterized, no Garfield component needed.
+ *  Process:
+ *  1. specify the readout segmentation (from =compact= xml): pixel or strip
+ *  2. collect the drifted electrons to each readout cell
+ *  3. save sum energy and e-weighted position for each cell
  *
  *  Adapted from REST TRestDetectorElectronDiffusionProcess
  *
