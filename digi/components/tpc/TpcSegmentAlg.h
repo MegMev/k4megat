@@ -26,8 +26,6 @@
  *  2. collect the drifted electrons to each readout cell
  *  3. save sum energy and e-weighted position for each cell
  *
- *  Adapted from REST TRestDetectorElectronDiffusionProcess
- *
  *  @author Yong Zhou
  */
 
