@@ -1,3 +1,5 @@
+#+options: toc:nil
+
 * Code tree structure
 - kernel: the callback subclasses required by Geant4
 - interface: pure ABC classes as adapter between Gaudi and Geant4
@@ -42,5 +44,3 @@ An example job option is [[file:scripts/gaudi/test_sim.py]]
 #+begin_src shell
 k4run test_sim.py
 #+end_src
-
-* TODO Generators

@@ -1,0 +1,55 @@
+
+
+# Code tree structure
+
+-   kernel: the callback subclasses required by Geant4
+-   interface: pure ABC classes as adapter between Gaudi and Geant4
+-   components: interface implementations, geometry service, simulation engine algorithm etc.
+-   sensitive: g4 SDs, separated out from kernel cause they are dd4hep plugins
+    
+    A build target is defined for each of the abvoe directories:
+    
+    -   SimKernel
+    -   SimInterface
+    -   SimComponents
+    -   SimSensitive
+
+
+# Namespace and naming convention
+
+-   `SimInterface` is a header-only library defining interface classes in the global scope
+-   `SimKernel` is a library implementing Geant4 callback classes is `megat::sim` namespace
+-   `SimSensitive` is a library implementing Geant4 sensitive detectors. They are defined in
+    `megat::sim` namespace but exported as dd4hep plugins. The name of exported plugins are
+    prefixed with <span class="underline">Megat</span> to avoid potential name conflicts with other plugins in running env.
+-   `SimComponents` is a Gaudi component library defining services, tools and algorithms which
+    are directly accessed by the normal end user. They are defined in `megat` namespace and
+    exported with the class name as plugin name. If needed, <span class="underline">Megat</span> prefix may be added to
+    the plugin name in the future to avoid name conflicts ([see the wrapper](sensitive/src/SDWrapper.cpp))
+
+
+# Running the simulation
+
+Two simulation engines available: DDG4 and Gaudi.
+They both produces ROOT file with `edm4hep` collections.
+
+
+## DDG4
+
+`ddsim` is a simulation engine bundled with DD4hep. It's a standalone program with no dependence
+on Gaudi.
+
+The steering file is <scripts/ddg4/batch_config.py>
+
+    ddsim --steeringFile batch_config.py
+
+
+## SimAlg (a Gaudi algorithm)
+
+`SimAlg` is the simulation engine bundled in this `k4megat` software.
+The code is adapted from [k4SimGeant4](https://github.com/HEP-FCC/k4SimGeant4) and [FCCDetectors](https://github.com/HEP-FCC/FCCDetectors) intended to be customized for **Megat** project.
+
+An example job option is <scripts/gaudi/test_sim.py>
+
+    k4run test_sim.py
+

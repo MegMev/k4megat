@@ -1,3 +1,5 @@
+#+options: toc:nil
+
 * Why choosing KEY4hep as software build base
 Key4hep is a collection of packages/components, which together forms building base for experiment-specific software.
 Due to its component-oriented architecture, a prototype application can easily be built on top of it.
