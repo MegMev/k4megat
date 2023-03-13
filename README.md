@@ -24,6 +24,8 @@ Dependency
 
 Installation
 ===
+Currently, daily developments are pushed to _sim-dev_ branch.
+
 The official installation is based on [cvmfs](https://cernvm.cern.ch/fs) using the software stack of
 key4hep.
 This is the recommended way for average developers to quickly start his own development without worrying issues like package dependencies.
@@ -42,7 +44,6 @@ More details about key4hep software stack, check [key4hep official documentation
 
 Step 2: download the source
 ---
-Currently, all developments are pushed to _sim-dev_ branch.
 
 ```shell
 git clone https://github.com/MegMev/k4megat
