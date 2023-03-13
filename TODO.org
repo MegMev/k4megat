@@ -18,6 +18,9 @@ CLOSED: [2023-02-27 一 21:47]
   - Gaudi
   - k4megat
 
+* Event Store
+** auto-fetch collection metadata so that previous CellIDEncodingString is saved
+
 * Simulation
 ** DDG4 as the back-end
 ** TPC digi implementation
@@ -63,19 +66,14 @@ placement (which is created once [[file:~/src/physics/eic/NPDet/src/detectors/tr
 This configuration is exactly what CZT calo needed.
 
 * Visualization
-** a demo site
-[[https://linev.github.io/]]
-
-** Choose a technology direction
+** Choose a technology direction [1/3]
 from easy to difficult:
-1. TEVE
-2. EVE-7
-3. PHOENIX
-4. game engines
+1. [ ] EVE7
+2. [X] PHOENIX
+3. [ ] game engines
    - Unreal
    - Unity
    - Godbot
-5. Qt3D
 
 ** DONE adapt geoWebDisplay to show more nodes by default
 CLOSED: [2023-03-02 四 20:40]
