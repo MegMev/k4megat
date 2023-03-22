@@ -56,7 +56,7 @@ public:
   virtual StatusCode finalize() final;
 
 private:
-  void add_hit( edm4hep::SimTrackerHit hit, dd4hep::rec::ISurface* pcb, dd4hep::Position gpos,
+  void add_hit( edm4hep::SimTrackerHit hit, dd4hep::rec::ISurface* pcb, edm4hep::Vector3d gpos,
                 dd4hep::DDSegmentation::CellID volId );
 
 private:
@@ -71,7 +71,7 @@ private:
     edm4hep::MutableTrackerHit hit;
     float                      energy;
     float                      time;
-    dd4hep::Position           position;
+    edm4hep::Vector3d          position;
   };
   std::map<dd4hep::DDSegmentation::CellID, HitCache> m_hitCache;
 

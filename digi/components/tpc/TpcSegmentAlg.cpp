@@ -23,6 +23,7 @@
 #include <edm4hep/MutableTrackerHit.h>
 #include <edm4hep/SimTrackerHit.h>
 #include <edm4hep/Vector3d.h>
+#include <edm4hep/utils/vector_utils.h>
 
 using namespace megat;
 using namespace dd4hep;
@@ -95,11 +96,7 @@ StatusCode TpcSegmentAlg::execute() {
     // cellid is volumeID for TPC sim hits
     DDSegmentation::CellID volId = hit.getCellID();
     auto                   sL    = m_geoSvc->getSensitiveSurfList( volId );
-    auto                   _gpos = hit.getPosition();
-    // [todo: better vector access needed]
-    // three vector implementation here: edm4hep::Vector3d, dd4hep::rec::Vector3D and dd4hep::Position
-    // dd4hep::Position has rich interface
-    dd4hep::Position gpos{ _gpos.x, _gpos.y, _gpos.z };
+    auto                   gpos  = hit.getPosition();
 
     // [optional todo: key_value from xml?]
     if ( is_stripSeg ) {
@@ -121,7 +118,7 @@ StatusCode TpcSegmentAlg::execute() {
       add_hit( hit, pcb, gpos, volId );
     } else {
       for ( auto pcb : sL ) {
-        if ( pcb->insideBounds( { gpos.x(), gpos.y(), gpos.z() }, max_boundary ) ) {
+        if ( pcb->insideBounds( { gpos.x, gpos.y, gpos.z }, max_boundary ) ) {
           m_segmentation.decoder()->set( volId, m_newField, pcb->id() );
           add_hit( hit, pcb, gpos, volId );
         }
@@ -133,8 +130,7 @@ StatusCode TpcSegmentAlg::execute() {
   for ( auto& [key, value] : m_hitCache ) {
     value.hit.setEDep( value.energy );
     value.hit.setTime( value.time );
-    auto _hit_pos = value.position / value.energy;
-    value.hit.setPosition( { _hit_pos.x(), _hit_pos.y(), _hit_pos.z() } );
+    value.hit.setPosition( value.position / value.energy );
     out_hits->push_back( value.hit );
   }
   m_hitCache.clear();
@@ -148,17 +144,17 @@ StatusCode TpcSegmentAlg::execute() {
 
 StatusCode TpcSegmentAlg::finalize() { return GaudiAlgorithm::finalize(); }
 
-inline void TpcSegmentAlg::add_hit( edm4hep::SimTrackerHit hit, ISurface* pcb, dd4hep::Position gpos,
+inline void TpcSegmentAlg::add_hit( edm4hep::SimTrackerHit hit, ISurface* pcb, edm4hep::Vector3d gpos,
                                     DDSegmentation::CellID volId ) {
   auto gpos_dd   = gpos * edm2dd::length;
-  auto lpos      = pcb->globalToLocal( { gpos_dd.x(), gpos_dd.y(), gpos_dd.z() } );
+  auto lpos      = pcb->globalToLocal( { gpos_dd.x, gpos_dd.y, gpos_dd.z } );
   auto newCellId = m_segmentation.cellID( { lpos.u(), lpos.v(), 0 }, {}, volId );
 
   if ( auto it = m_hitCache.find( newCellId ); it != m_hitCache.end() ) {
     auto& cache = it->second;
     cache.hit.addToRawHits( hit.getObjectID() );
     cache.energy += hit.getEDep();
-    cache.position += hit.getEDep() * gpos;
+    cache.position = cache.position + hit.getEDep() * gpos;
     if ( cache.time > hit.getTime() ) cache.time = hit.getTime();
   }
 
