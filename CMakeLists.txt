@@ -66,6 +66,7 @@ add_subdirectory(k4libs)
 add_subdirectory(detector)
 add_subdirectory(sim)
 add_subdirectory(digi)
+add_subdirectory(analysis)
 
 #########################
 # Configure and install #
