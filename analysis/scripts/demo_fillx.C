@@ -7,14 +7,23 @@ void demo_fillx() {
 
   // real job
   ROOT::RDataFrame df( "events", "./data/megat.edm4hep.root" );
-  auto             df1 = df.Define( "x", "megat::utility::get_x<edm4hep::SimCalorimeterHitData>(CztHits)" )
+
+  // method 1
+  auto df1 = df.Define( "x", "megat::utility::get_x<edm4hep::SimCalorimeterHitData>(CztHits)" )
                  .Define( "y", "megat::utility::get_y<edm4hep::SimCalorimeterHitData>(CztHits)" )
                  .Define( "z", "megat::utility::get_z<edm4hep::SimCalorimeterHitData>(CztHits)" );
 
+  // method 2
   auto df2 = df.Define( "x", "megat::SimCalo::hit_x(CztHits)" )
                  .Define( "y", "megat::SimCalo::hit_y(CztHits)" )
                  .Define( "z", "megat::SimCalo::hit_z(CztHits)" );
 
+  // method 3
+  using namespace megat::SimCalo;
+  auto df3 =
+      df.Define( "x", hit_x, { "CztHits" } ).Define( "y", hit_y, { "CztHits" } ).Define( "z", hit_z, { "CztHits" } );
+
+  // draw & print
   auto h1 = df2.Histo1D( "x" );
   auto h2 = df2.Histo1D( "y" );
   auto h3 = df2.Histo1D( "z" );
