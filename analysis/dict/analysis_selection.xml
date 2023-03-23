@@ -6,6 +6,4 @@
     <class name="ROOT::VecOps::RVec<edm4hep::SimCalorimeterHitData>"/>
 
     <!-- functors -->
-    <class name="megat::SimCalo::HitX"/>
-    <function name="megat::SimCalo::getHit_x"/>
 </lcgdict>

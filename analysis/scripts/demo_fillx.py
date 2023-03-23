@@ -16,10 +16,11 @@ df2=(
     df.Define("x1","SimCalo::hit_x(CztHits)")
     .Define("x2","utility::get_x(CztHits)")
     .Define("dx", "x1-x2")
+    .Define("e","SimCalo::hit_e(CztHits)")
    )
 
 h1=df2.Histo1D("x1")
-h2=df2.Histo1D("dx")
+h2=df2.Histo1D("e")
 hrel = df2.Histo2D(('x1_vs_x2','x1 vs x2', 400,0,400,400,0,400),'x1','x2')
 
 # draw & print

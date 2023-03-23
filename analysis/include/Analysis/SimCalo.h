@@ -11,6 +11,10 @@ namespace megat {
     INST_GET_FLOAT_ITEM_FUNC( get_x, edm4hep::SimCalorimeterHitData );
     INST_GET_FLOAT_ITEM_FUNC( get_y, edm4hep::SimCalorimeterHitData );
     INST_GET_FLOAT_ITEM_FUNC( get_z, edm4hep::SimCalorimeterHitData );
+
+    INST_GET_FLOAT_ITEM_FUNC( get_energy, edm4hep::SimCalorimeterHitData );
+
+    INST_GET_UINT64_ITEM_FUNC( get_cellid, edm4hep::SimCalorimeterHitData );
   } // namespace utility
 
   //
@@ -24,6 +28,9 @@ namespace megat {
     RENAME_INST_FUNC_NS( megat::utility, get_x, hit_x, edm4hep::SimCalorimeterHitData );
     RENAME_INST_FUNC_NS( megat::utility, get_y, hit_y, edm4hep::SimCalorimeterHitData );
     RENAME_INST_FUNC_NS( megat::utility, get_z, hit_z, edm4hep::SimCalorimeterHitData );
+
+    RENAME_INST_FUNC_NS( megat::utility, get_energy, hit_e, edm4hep::SimCalorimeterHitData );
+    RENAME_INST_FUNC_NS( megat::utility, get_cellid, hit_id, edm4hep::SimCalorimeterHitData );
 
     // functors
 
