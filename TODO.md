@@ -1,71 +1,77 @@
 
 # Table of Contents
 
-1.  [Software Management](#org3e27fc1)
-    1.  [Spack-based dependence management](#org1fb0d3c)
-    2.  [Continuous integration](#org17bbab7)
-    3.  [Unit test framework](#org27f0186)
-    4.  [Version mechanism](#org7587054)
-        1.  [save version id/sting as a  metadata tree branch.](#org88a4dd6)
-    5.  [Documentation](#org24f59c8)
-2.  [Event Store](#orgcb7f268)
-    1.  [auto-fetch collection metadata so that previous CellIDEncodingString is saved](#org8d0f906)
-3.  [Simulation](#org76eaf46)
-    1.  [DDG4 as the back-end](#orgf8c6505)
-    2.  [TPC digi implementation](#orgeea192e)
-        1.  [try to migrate REST implementation](#org9ae7c86)
-    3.  [Generator](#orge8cda74)
-    4.  [Garfield integration](#org96ad3b1)
-    5.  [Physics list checking](#org9655849)
-        1.  [Compton scattering](#orga88d00b)
-    6.  [CAD model error in USTC key4hep stack](#org8b00ba6)
-4.  [Analysis](#org84a1e2e)
-    1.  [Spark & RDataFrame mini-framework](#orgeec5333)
-5.  [Geometry model](#org285882e)
-    1.  [General](#orgc4ffab1)
-        1.  [Check whether alignment can be applied on assembly volume](#org58578a1)
-    2.  [CZT calo](#org8f2e196)
-        1.  [add DetElement to module sensor](#orgeb28e82)
-6.  [Visualization](#org0518792)
-    1.  [Choose a technology direction <code>[1/3]</code>](#org7a23f17)
-    2.  [adapt geoWebDisplay to show more nodes by default](#org1737f5f)
+1.  [Software Management](#org4749eb0)
+    1.  [Spack-based dependence management](#org57f2e07)
+    2.  [Continuous integration](#org85e477e)
+    3.  [Unit test framework](#org56afbb3)
+    4.  [Version mechanism](#org81447d7)
+        1.  [save version id/sting as a  metadata tree branch.](#org3d9422e)
+    5.  [Fine-tune CMake Config file for downstream projects using](#orgd6cac79)
+    6.  [Documentation](#org6317785)
+2.  [Event Store](#orge06e750)
+    1.  [auto-fetch collection metadata so that previous CellIDEncodingString is saved](#org0f46f57)
+3.  [Simulation](#orgd594a6d)
+    1.  [DDG4 as the back-end](#org86909be)
+    2.  [TPC digi implementation](#org2548a78)
+        1.  [try to migrate REST implementation](#org1aef4a8)
+    3.  [Generator](#org45d37a5)
+    4.  [Garfield integration](#org2e8789f)
+    5.  [Physics list checking](#org9610883)
+        1.  [Compton scattering](#orgbfe6181)
+    6.  [CAD model error in USTC key4hep stack](#orge4a8540)
+4.  [Analysis](#org430cf70)
+    1.  [Spark & RDataFrame mini-framework](#org78b50a2)
+5.  [Geometry model](#orgc5d6a5f)
+    1.  [General](#orgf4a27d8)
+        1.  [Check whether alignment can be applied on assembly volume](#org9e092c2)
+    2.  [CZT calo](#orgf072065)
+        1.  [add DetElement to module sensor](#org63ef19a)
+6.  [Visualization](#org4760905)
+    1.  [Choose a technology direction <code>[1/3]</code>](#org91d18c0)
+    2.  [adapt geoWebDisplay to show more nodes by default](#orgaf81e81)
 
 
-<a id="org3e27fc1"></a>
+<a id="org4749eb0"></a>
 
 # Software Management
 
 
-<a id="org1fb0d3c"></a>
+<a id="org57f2e07"></a>
 
 ## Spack-based dependence management
 
 
-<a id="org17bbab7"></a>
+<a id="org85e477e"></a>
 
 ## Continuous integration
 
 
-<a id="org27f0186"></a>
+<a id="org56afbb3"></a>
 
 ## Unit test framework
 
 
-<a id="org7587054"></a>
+<a id="org81447d7"></a>
 
 ## Version mechanism
 
 Semantic Versioning: <https://semver.org/>
 
 
-<a id="org88a4dd6"></a>
+<a id="org3d9422e"></a>
 
 ### save version id/sting as a  metadata tree branch.
 
 Needed for tracable data production.
 
 
-<a id="org24f59c8"></a>
+<a id="orgd6cac79"></a>
+
+## Fine-tune CMake Config file for downstream projects using
+
+
+<a id="org6317785"></a>
 
 ## DONE Documentation
 
@@ -77,32 +83,32 @@ Needed for tracable data production.
     -   k4megat
 
 
-<a id="orgcb7f268"></a>
+<a id="orge06e750"></a>
 
 # Event Store
 
 
-<a id="org8d0f906"></a>
+<a id="org0f46f57"></a>
 
 ## auto-fetch collection metadata so that previous CellIDEncodingString is saved
 
 
-<a id="org76eaf46"></a>
+<a id="orgd594a6d"></a>
 
 # Simulation
 
 
-<a id="orgf8c6505"></a>
+<a id="org86909be"></a>
 
 ## DDG4 as the back-end
 
 
-<a id="orgeea192e"></a>
+<a id="org2548a78"></a>
 
 ## TPC digi implementation
 
 
-<a id="org9ae7c86"></a>
+<a id="org1aef4a8"></a>
 
 ### try to migrate REST implementation
 
@@ -114,12 +120,12 @@ Needed for tracable data production.
 2.  DONE customize a volume surface for TPC readout PCB
 
 
-<a id="orge8cda74"></a>
+<a id="org45d37a5"></a>
 
 ## Generator
 
 
-<a id="org96ad3b1"></a>
+<a id="org2e8789f"></a>
 
 ## Garfield integration
 
@@ -128,12 +134,12 @@ Needed for tracable data production.
 [a examlpe](https://github.com/nimanthaperera/GEANT4_garfield_integration)
 
 
-<a id="org9655849"></a>
+<a id="org9610883"></a>
 
 ## Physics list checking
 
 
-<a id="orga88d00b"></a>
+<a id="orgbfe6181"></a>
 
 ### Compton scattering
 
@@ -144,7 +150,7 @@ Needed for tracable data production.
     -   [Influence of Doppler broadening model accuracy in Compton camera list-mode MLEM reconstruction](https://hal.science/hal-03481082/file/manuscrit.pdf)
 
 
-<a id="org8b00ba6"></a>
+<a id="orge4a8540"></a>
 
 ## CAD model error in USTC key4hep stack
 
@@ -152,37 +158,37 @@ Needed for tracable data production.
 -   need a new spack environment
 
 
-<a id="org84a1e2e"></a>
+<a id="org430cf70"></a>
 
 # Analysis
 
 
-<a id="orgeec5333"></a>
+<a id="org78b50a2"></a>
 
 ## Spark & RDataFrame mini-framework
 
 
-<a id="org285882e"></a>
+<a id="orgc5d6a5f"></a>
 
 # Geometry model
 
 
-<a id="orgc4ffab1"></a>
+<a id="orgf4a27d8"></a>
 
 ## General
 
 
-<a id="org58578a1"></a>
+<a id="org9e092c2"></a>
 
 ### Check whether alignment can be applied on assembly volume
 
 
-<a id="org8f2e196"></a>
+<a id="orgf072065"></a>
 
 ## CZT calo
 
 
-<a id="orgeb28e82"></a>
+<a id="org63ef19a"></a>
 
 ### DONE add DetElement to module sensor
 
@@ -193,12 +199,12 @@ placement (which is created once [before at this line](file:///home/yong/src/phy
 This configuration is exactly what CZT calo needed.
 
 
-<a id="org0518792"></a>
+<a id="org4760905"></a>
 
 # Visualization
 
 
-<a id="org7a23f17"></a>
+<a id="org91d18c0"></a>
 
 ## Choose a technology direction <code>[1/3]</code>
 
@@ -212,7 +218,7 @@ from easy to difficult:
     -   Godbot
 
 
-<a id="org1737f5f"></a>
+<a id="orgaf81e81"></a>
 
 ## DONE adapt geoWebDisplay to show more nodes by default
 

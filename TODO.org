@@ -9,6 +9,8 @@ Semantic Versioning: [[https://semver.org/]]
 *** save version id/sting as a  metadata tree branch.
 Needed for tracable data production.
 
+** Fine-tune CMake Config file for downstream projects using
+
 ** DONE Documentation
 CLOSED: [2023-02-27 一 21:47]
 - online publish
