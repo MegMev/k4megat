@@ -77,13 +77,13 @@ configure_file(cmake/thismegat_only.sh       bin/thismegat_only.sh       @ONLY)
 install(FILES    ${CMAKE_BINARY_DIR}/bin/thismegat_only.sh DESTINATION bin )
 
 
-# install(EXPORT ${PROJECT_NAME}Targets
-#   NAMESPACE ${PROJECT_NAME}::
-#   FILE "${PROJECT_NAME}Targets.cmake"
-#   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/"
-#   )
+install(EXPORT ${PROJECT_NAME}
+  NAMESPACE ${PROJECT_NAME}::
+  FILE "${PROJECT_NAME}Targets.cmake"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/"
+  )
 
-# gaudi_install(CMAKE cmake/${PROJECT_NAME}Config.cmake)
+gaudi_install(CMAKE cmake/${PROJECT_NAME}Config.cmake)
 
 #########################
 # Test #

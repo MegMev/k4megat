@@ -11,17 +11,9 @@ namespace megat {
   using namespace ROOT::VecOps;
   using HitData = edm4hep::SimCalorimeterHitData;
 
-  // namespace utility {
-  //   template RVec<float> get_x( const RVec<HitData>& );
-  // }
   namespace SimCalo {
     //
     dd4hep::DDSegmentation::BitFieldCoder* m_decoder;
-
-    VecImp<float> HitX::operator()( const VecImp<edm4hep::SimCalorimeterHitData>& in ) {
-      auto get_x = []( const HitData& data ) { return data.position.x; };
-      return Map( in, get_x );
-    }
 
     void loadGeometry( std::string xmlGeometryPath, std::string readoutName ) {
       dd4hep::Detector* dd4hepgeo = &( dd4hep::Detector::getInstance() );
@@ -32,11 +24,6 @@ namespace megat {
     }
 
     // calo hit
-    VecImp<float> getHit_x( const VecImp<HitData>& in ) {
-      auto get_x = []( const HitData& data ) { return data.position.x; };
-      return Map( in, get_x );
-    }
-
     // RVec<float> getHit_y( const RVec<HitData>& in ) {
     //   RVec<float> result;
     //   for ( auto& p : in ) { result.push_back( p.position.y ); }
