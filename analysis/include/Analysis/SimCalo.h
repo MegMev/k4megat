@@ -22,8 +22,6 @@ namespace megat {
     template <typename T>
     using VecImp = ROOT::VecOps::RVec<T>;
 
-    void loadGeometry( std::string xmlGeometryPath, std::string readoutName );
-
     // some useful aliases to utility
     RENAME_INST_FUNC_NS( megat::utility, get_x, hit_x, edm4hep::SimCalorimeterHitData );
     RENAME_INST_FUNC_NS( megat::utility, get_y, hit_y, edm4hep::SimCalorimeterHitData );

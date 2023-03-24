@@ -8,6 +8,7 @@
 /* #include "edm4hep/TrackerHitPlaneData.h" */
 /* #include "edm4hep/VertexData.h" */
 
+#include "Analysis/GeoUtils.h"
 #include "Analysis/SimCalo.h"
 
 struct LoadMegat {};

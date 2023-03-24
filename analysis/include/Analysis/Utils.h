@@ -3,6 +3,8 @@
 
 #include "utility.hxx"
 #include <ROOT/RVec.hxx>
+#include <string>
+#include <tuple>
 
 namespace megat {
   namespace utility {
@@ -24,6 +26,10 @@ namespace megat {
     GET_FLOAT_ITEM_FUNC_TEMPLATE( get_y, position.y )
     GET_FLOAT_ITEM_FUNC_TEMPLATE( get_z, position.z )
 
+    GET_DOUBLE_ITEM_FUNC_TEMPLATE( get_x_d, position.x )
+    GET_DOUBLE_ITEM_FUNC_TEMPLATE( get_y_d, position.y )
+    GET_DOUBLE_ITEM_FUNC_TEMPLATE( get_z_d, position.z )
+
     GET_FLOAT_ITEM_FUNC_TEMPLATE( get_mom_x, momentum.x )
     GET_FLOAT_ITEM_FUNC_TEMPLATE( get_mom_y, momentum.y )
     GET_FLOAT_ITEM_FUNC_TEMPLATE( get_mom_z, momentum.z )
@@ -33,6 +39,7 @@ namespace megat {
     GET_FLOAT_ITEM_FUNC_TEMPLATE( get_EDep, EDep )
     GET_FLOAT_ITEM_FUNC_TEMPLATE( get_eDep, eDep )
     GET_FLOAT_ITEM_FUNC_TEMPLATE( get_energy, energy )
+
   }; // namespace utility
 } // namespace megat
 #endif

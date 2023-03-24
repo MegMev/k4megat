@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+    <!-- Configure TPC segmentation -->
+    <define>
+        <constant name="tpc_pixel_x" value="1*mm" />
+        <constant name="tpc_pixel_y" value="1*mm" />
+        <constant name="tpc_strip_x" value="1*mm" />
+        <constant name="tpc_strip_y" value="1*mm" />
+    </define>
+
+    <!-- pixel readout -->
+    <readouts>
+        <readout name="TpcPixelHits">
+            <segmentation type="CartesianGridXY" grid_size_x="tpc_pixel_x" grid_size_y="tpc_pixel_y"
+                          offset_x="-fiducial_x + tpc_pixel_x/2" offset_y="-fiducial_y + tpc_pixel_y/2" />
+            <id>system:6,x:16:24,y:24</id>
+        </readout>
+    </readouts>
+
+    <!-- strip readout -->
+    <readouts>
+        <readout name="TpcStripHits">
+            <segmentation   type="MultiSegmentation"  key="layer">
+                <segmentation name="XLayer" type="CartesianStripX" key_value="0"
+                              strip_size_x="tpc_strip_x" offset_x="-fiducial_x + tpc_strip_x/2" />
+                <segmentation name="YLayer" type="CartesianStripY" key_value="1"
+                              strip_size_x="tpc_strip_y" offset_x="-fiducial_y + tpc_strip_y/2" />
+            </segmentation>
+            <!-- <hits_collections>
+                 <hits_collection name="TpcStripHitsX"  key="layer" key_value="0"/>
+                 <hits_collection name="TpcStripHitsY"  key="layer" key_value="1"/>
+                 </hits_collections> -->
+            <id>system:6,layer:6,strip:16:48</id>
+        </readout>
+    </readouts>
+</lccdd>

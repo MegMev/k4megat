@@ -1,10 +1,4 @@
 #include "Analysis/SimCalo.h"
-// #include "Analysis/Utils.h"
-
-#include <ROOT/RVec.hxx>
-// #include <math.h>
-
-#include "DD4hep/Detector.h"
 
 namespace megat {
 
@@ -12,16 +6,6 @@ namespace megat {
   using HitData = edm4hep::SimCalorimeterHitData;
 
   namespace SimCalo {
-    //
-    dd4hep::DDSegmentation::BitFieldCoder* m_decoder;
-
-    void loadGeometry( std::string xmlGeometryPath, std::string readoutName ) {
-      dd4hep::Detector* dd4hepgeo = &( dd4hep::Detector::getInstance() );
-      dd4hepgeo->fromCompact( xmlGeometryPath );
-      dd4hepgeo->volumeManager();
-      dd4hepgeo->apply( "DD4hepVolumeManager", 0, 0 );
-      m_decoder = dd4hepgeo->readout( readoutName ).idSpec().decoder();
-    }
 
     // calo hit
     // RVec<float> getHit_y( const RVec<HitData>& in ) {
