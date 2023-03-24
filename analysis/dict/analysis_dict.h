@@ -9,6 +9,7 @@
 /* #include "edm4hep/VertexData.h" */
 
 #include "Analysis/GeoUtils.h"
+#include "Analysis/IdConverter.h"
 #include "Analysis/SimCalo.h"
 
 struct LoadMegat {};

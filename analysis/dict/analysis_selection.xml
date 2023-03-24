@@ -4,6 +4,7 @@
 
     <!-- data class -->
     <class name="ROOT::VecOps::RVec<edm4hep::SimCalorimeterHitData>"/>
+    <class name="megat::utility::IdConverter"/>
 
     <!-- functors -->
 </lcgdict>

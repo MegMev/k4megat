@@ -27,3 +27,4 @@ simcalo = import_item('SimCalo')
 
 # import utility
 import_ns_item('utility', 'loadGeometry')
+import_ns_item('utility', 'IdConverter')

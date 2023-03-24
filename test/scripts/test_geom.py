@@ -3,7 +3,7 @@ import sys
 
 import dd4hep
 from dd4hep import Detector, dd4hep_logger
-from megat import loadGeometry
+from megat import loadGeometry, IdConverter
 
 logger = dd4hep_logger('megat')
 logger.setPrintLevel(dd4hep.ERROR)
@@ -31,3 +31,10 @@ id1=get_idspec('strip')
 id2=get_idspec('pixel')
 print(f'det1-strip: {id1.toString()} {id1.fieldDescription()}')
 print(f'det2-pixel: {id2.toString()} {id2.fieldDescription()}')
+
+idcov1= IdConverter('strip')
+if idcov1.isStrip('TPC'):
+    print(idcov1)
+idcov2= IdConverter('pixel')
+if not idcov2.isStrip('TPC'):
+    print(idcov2)
