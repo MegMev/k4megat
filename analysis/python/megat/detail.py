@@ -24,6 +24,9 @@ def import_ns_item(ns, nam):
 # import each sub namespace
 core = gbl.megat
 simcalo = import_item('SimCalo')
+simtracker = import_item('SimTracker')
+tracker = import_item('Tracker')
+utility = import_item('utility')
 
 # import utility
 import_ns_item('utility', 'loadGeometry')

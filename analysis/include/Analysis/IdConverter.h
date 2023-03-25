@@ -34,9 +34,6 @@ namespace megat {
       IdConverter( std::string tag = "default" );
       virtual ~IdConverter(){};
 
-      IdConverter( const IdConverter& )    = delete;
-      void operator=( const IdConverter& ) = delete;
-
       /** Return the global position for a given cellID of a sensitive volume.
        *  Alignment corrections are applied (TO BE DONE).
        *  If no sensitive volume is found, (0,0,0) is returned.

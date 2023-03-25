@@ -11,5 +11,7 @@
 #include "Analysis/GeoUtils.h"
 #include "Analysis/IdConverter.h"
 #include "Analysis/SimCalo.h"
+#include "Analysis/SimTracker.h"
+#include "Analysis/Tracker.h"
 
 struct LoadMegat {};

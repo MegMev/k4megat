@@ -83,6 +83,11 @@ namespace megat {
     }
 
     //
+    const VolumeManagerContext* IdConverter::findContext( const CellID& cellID ) const {
+      return m_volumeManager.lookupContext( cellID );
+    }
+
+    //
     Readout IdConverter::findReadout( const DetElement& det ) const {
       // first check if top level is a sensitive detector
       if ( det.volume().isValid() and det.volume().isSensitive() ) {

@@ -1,28 +1,38 @@
-#define GET_ITEM_FUNC_TEMPLATE( RETTYPE, FUNC, ITEM )                                                                  \
-  template <typename T>                                                                                                \
-  inline ROOT::RVec<RETTYPE> FUNC( const ROOT::RVec<T>& in ) {                                                         \
-    auto _x = []( const T& data ) { return data.ITEM; };                                                               \
-    return ROOT::VecOps::Map( in, _x );                                                                                \
+#ifndef MEGAT_analysis_utility_H
+#define MEGAT_analysis_utility_H
+
+#include "edm4hep/utils/vector_utils.h"
+
+/**** get RVec<> ****/
+#define GET_ITEM_FUNC_TEMPLATE( FUNC, ITEM )                                                                           \
+  template <typename HitType>                                                                                          \
+  constexpr auto FUNC( const ROOT::RVec<HitType>& in ) {                                                               \
+    auto mapper = []( const HitType& data ) { return data.ITEM; };                                                     \
+    return ROOT::VecOps::Map( in, mapper );                                                                            \
   }
-#define INST_GET_ITEM_FUNC( RETTYPE, FUNC, DATATYPE ) template ROOT::RVec<RETTYPE> FUNC( const ROOT::RVec<DATATYPE>& )
-#define INST_GET_ITEM_FUNC_NS( RETTYPE, NS, FUNC, DATATYPE )                                                           \
-  template ROOT::RVec<RETTYPE> NS::FUNC( const ROOT::RVec<DATATYPE>& )
-#define RENAME_INST_FUNC( OLD, NEW, DATATYPE ) constexpr auto NEW = OLD<DATATYPE>
-#define RENAME_INST_FUNC_NS( NS, OLD, NEW, DATATYPE ) constexpr auto NEW = NS::OLD<DATATYPE>
 
-//
-#define GET_FLOAT_ITEM_FUNC_TEMPLATE( FUNC, ITEM ) GET_ITEM_FUNC_TEMPLATE( float, FUNC, ITEM )
-#define GET_DOUBLE_ITEM_FUNC_TEMPLATE( FUNC, ITEM ) GET_ITEM_FUNC_TEMPLATE( double, FUNC, ITEM )
-#define GET_INT32_ITEM_FUNC_TEMPLATE( FUNC, ITEM ) GET_ITEM_FUNC_TEMPLATE( int32_t, FUNC, ITEM )
-#define GET_UINT64_ITEM_FUNC_TEMPLATE( FUNC, ITEM ) GET_ITEM_FUNC_TEMPLATE( uint64_t, FUNC, ITEM )
+#if !__cpp_concepts
+#  include "utility_legacy.hxx"
+#else // use C++20 concept
 
-#define INST_GET_FLOAT_ITEM_FUNC( FUNC, DATATYPE ) INST_GET_ITEM_FUNC( float, FUNC, DATATYPE )
-#define INST_GET_DOUBLE_ITEM_FUNC( FUNC, DATATYPE ) INST_GET_ITEM_FUNC( float, FUNC, DATATYPE )
-#define INST_GET_INT32_ITEM_FUNC( FUNC, DATATYPE ) INST_GET_ITEM_FUNC( int32_t, FUNC, DATATYPE )
-#define INST_GET_UINT64_ITEM_FUNC( FUNC, DATATYPE ) INST_GET_ITEM_FUNC( uint64_t, FUNC, DATATYPE )
+/**** get RVec<RVec<>> ****/
+#  define GET_RVEC_FUNC_TEMPLATE( FUNC, ITEM )                                                                         \
+    template <typename HitType>                                                                                        \
+    requires edm4hep::Vector3D<decltype( HitType::ITEM )>                                                              \
+    constexpr auto FUNC( const ROOT::RVec<HitType>& in ) {                                                             \
+      using namespace edm4hep::utils;                                                                                  \
+      using VecType = decltype( HitType::ITEM );                                                                       \
+      using RetType = utils::ValueType<VecType>;                                                                       \
+      auto mapper   = []( const HitType& data ) {                                                                      \
+        ROOT::RVec<RetType>{ vector_x( data.ITEM ), vector_y( data.ITEM ), vector_z( data.ITEM ) };                  \
+      };                                                                                                               \
+      return ROOT::VecOps::Map( in, mapper );                                                                          \
+    }
+#endif
 
-//
-#define INST_GET_FLOAT_ITEM_FUNC_NS( NS, FUNC, DATATYPE ) INST_GET_ITEM_FUNC_NS( float, NS, FUNC, DATATYPE )
-#define INST_GET_DOUBLE_ITEM_FUNC_NS( NS, FUNC, DATATYPE ) INST_GET_ITEM_FUNC_NS( double, NS, FUNC, DATATYPE )
-#define INST_GET_INT32_ITEM_FUNC_NS( NS, FUNC, DATATYPE ) INST_GET_ITEM_FUNC_NS( int32_t, NS, FUNC, DATATYPE )
-#define INST_GET_UINT64_ITEM_FUNC_NS( NS, FUNC, DATATYPE ) INST_GET_ITEM_FUNC_NS( uint64_t, NS, FUNC, DATATYPE )
+#define INST_GET_FUNC( FUNC, DATATYPE ) template auto FUNC( const ROOT::RVec<DATATYPE>& )
+#define INST_GET_FUNC_NS( NS, FUNC, DATATYPE ) template auto NS::FUNC( const ROOT::RVec<DATATYPE>& )
+#define RENAME_GET_FUNC( OLD, NEW, DATATYPE ) constexpr auto NEW = OLD<DATATYPE>
+#define RENAME_GET_FUNC_NS( NS, OLD, NEW, DATATYPE ) constexpr auto NEW = NS::OLD<DATATYPE>
+
+#endif

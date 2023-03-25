@@ -20,25 +20,25 @@ namespace megat {
     };
 
     // common accessors
-    GET_UINT64_ITEM_FUNC_TEMPLATE( get_cellid, cellID )
+    GET_ITEM_FUNC_TEMPLATE( get_cellid, cellID )
 
-    GET_FLOAT_ITEM_FUNC_TEMPLATE( get_x, position.x )
-    GET_FLOAT_ITEM_FUNC_TEMPLATE( get_y, position.y )
-    GET_FLOAT_ITEM_FUNC_TEMPLATE( get_z, position.z )
+    GET_ITEM_FUNC_TEMPLATE( get_x, position.x )
+    GET_ITEM_FUNC_TEMPLATE( get_y, position.y )
+    GET_ITEM_FUNC_TEMPLATE( get_z, position.z )
 
-    GET_DOUBLE_ITEM_FUNC_TEMPLATE( get_x_d, position.x )
-    GET_DOUBLE_ITEM_FUNC_TEMPLATE( get_y_d, position.y )
-    GET_DOUBLE_ITEM_FUNC_TEMPLATE( get_z_d, position.z )
+    GET_ITEM_FUNC_TEMPLATE( get_mom_x, momentum.x )
+    GET_ITEM_FUNC_TEMPLATE( get_mom_y, momentum.y )
+    GET_ITEM_FUNC_TEMPLATE( get_mom_z, momentum.z )
 
-    GET_FLOAT_ITEM_FUNC_TEMPLATE( get_mom_x, momentum.x )
-    GET_FLOAT_ITEM_FUNC_TEMPLATE( get_mom_y, momentum.y )
-    GET_FLOAT_ITEM_FUNC_TEMPLATE( get_mom_z, momentum.z )
+    GET_ITEM_FUNC_TEMPLATE( get_time, time )
 
-    GET_FLOAT_ITEM_FUNC_TEMPLATE( get_time, time )
+    GET_ITEM_FUNC_TEMPLATE( get_EDep, EDep )
+    GET_ITEM_FUNC_TEMPLATE( get_eDep, eDep )
+    GET_ITEM_FUNC_TEMPLATE( get_energy, energy )
 
-    GET_FLOAT_ITEM_FUNC_TEMPLATE( get_EDep, EDep )
-    GET_FLOAT_ITEM_FUNC_TEMPLATE( get_eDep, eDep )
-    GET_FLOAT_ITEM_FUNC_TEMPLATE( get_energy, energy )
+    // vector accessors
+    GET_RVEC_FUNC_TEMPLATE( get_pos, position )
+    GET_RVEC_FUNC_TEMPLATE( get_mom, momentum )
 
   }; // namespace utility
 } // namespace megat

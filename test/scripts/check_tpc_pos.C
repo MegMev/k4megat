@@ -30,8 +30,8 @@ using ROOT::VecOps::RVec;
 #endif
 
 void check_tpc_pos( string infile = "./data/tpcseg_megat.root.bak", string outfile = "test.root", int idx = -1,
-                    string br_name = "TpcSegStripHits", string extra_xml = "../../digi/options/tpc_seg_test.xml",
-                    string ro_name = "TpcStripHits" ) {
+                    string br_name = "TpcSegPixelHits", string extra_xml = "../../digi/options/tpc_seg_test.xml",
+                    string ro_name = "TpcPixelHits" ) {
 
   string xmlGeometryPath = fmt::format( "{}/geometry/compact/Megat.xml", std::getenv( "MEGAT_ROOT" ) );
   auto&  detdesc         = Detector::getInstance();
@@ -52,16 +52,11 @@ void check_tpc_pos( string infile = "./data/tpcseg_megat.root.bak", string outfi
 
   //
   auto get_dPos = [&]( const RVec<edm4hep::TrackerHitData>& in ) {
-    // vector<dd4hep::Position> result;
     RVec<dd4hep::Position> result;
-    // using RPos = RVec<array<float, 3>>;
-    // RPos result;
-    // RVec<pos> result;
-    // RVec<double> result;
     for ( auto& hit : in ) {
       auto             cell_pos = idCov.position( hit.cellID );
       dd4hep::Position real_pos{ hit.position.x, hit.position.y, hit.position.z };
-      auto             delta = real_pos - cell_pos;
+      auto             delta = cell_pos - real_pos;
 
       if ( idx >= 0 ) {
         auto x_id = decoder->get( hit.cellID, "x" );
@@ -100,7 +95,7 @@ void check_tpc_pos( string infile = "./data/tpcseg_megat.root.bak", string outfi
     return Map( input, [&]( const edm4hep::TrackerHitData hit ) {
       auto             cell_pos = idCov.position( hit.cellID );
       dd4hep::Position real_pos{ hit.position.x, hit.position.y, hit.position.z };
-      auto             delta = real_pos - cell_pos;
+      auto             delta = cell_pos - real_pos;
 
       if ( is_strip ) {
         auto layer = decoder->get( hit.cellID, "layer" );
