@@ -29,9 +29,9 @@ using ROOT::VecOps::RVec;
 #  pragma link C++ class RVec < Position> + ;
 #endif
 
-void check_tpc_pos( string infile = "./data/tpcseg_megat.root.bak", string outfile = "test.root", int idx = -1,
-                    string br_name = "TpcSegStripHits", string extra_xml = "../../digi/options/tpc_seg_test.xml",
-                    string ro_name = "TpcStripHits" ) {
+void demo_tpc_pos_raw( string infile = "./data/tpcseg_megat.root.bak", string outfile = "test.root", int idx = -1,
+                       string br_name = "TpcSegStripHits", string extra_xml = "../../digi/options/tpc_seg_test.xml",
+                       string ro_name = "TpcStripHits" ) {
 
   string xmlGeometryPath = fmt::format( "{}/geometry/compact/Megat.xml", std::getenv( "MEGAT_ROOT" ) );
   auto&  detdesc         = Detector::getInstance();

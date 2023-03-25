@@ -1,6 +1,7 @@
 #ifndef MEGAT_Analysis_SimTracker_H
 #define MEGAT_Analysis_SimTracker_H
 
+#include "GeoUtils.h"
 #include "ROOT/RVec.hxx"
 #include "Utils.h"
 #include "edm4hep/SimTrackerHitData.h"
@@ -43,6 +44,7 @@ namespace megat {
     RENAME_GET_FUNC_NS( megat::utility, get_mom, hit_mom, edm4hep::SimTrackerHitData );
 
     // functors
+    RENAME_FUNCTOR_NS( megat::utility, CellPosition, cell_pos, edm4hep::SimTrackerHitData );
 
   } // namespace SimTracker
 } // namespace megat

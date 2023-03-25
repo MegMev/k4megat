@@ -2,7 +2,7 @@
 
 namespace megat {
   namespace utility {
-    using edm4hep::Vector3f;
+    using edm4hep::Vector3d;
 
     IdConverter::IdConverter( std::string tag ) {
       auto& detector = Detector::getInstance( tag );
@@ -14,7 +14,7 @@ namespace megat {
     }
 
     //
-    Vector3f IdConverter::position( const CellID& cell ) const {
+    Vector3d IdConverter::position( const CellID& cell ) const {
       double l[3], e[3], g[3];
 
       const VolumeManagerContext* context = findContext( cell );
@@ -33,7 +33,8 @@ namespace megat {
       elementToGlobal.LocalToMaster( e, g );
 
       // it's ugly, but can't find better alt
-      return { static_cast<float>( g[0] ), static_cast<float>( g[1] ), static_cast<float>( g[2] ) };
+      // return { static_cast<float>( g[0] ), static_cast<float>( g[1] ), static_cast<float>( g[2] ) };
+      return { g[0], g[1], g[2] };
     }
 
     //
@@ -46,7 +47,7 @@ namespace megat {
     }
 
     //
-    CellID IdConverter::cellID( const Vector3f& global ) const {
+    CellID IdConverter::cellID( const Vector3d& global ) const {
       CellID result( 0 );
 
       TGeoManager* geoManager = m_description->world().volume()->GetGeoManager();

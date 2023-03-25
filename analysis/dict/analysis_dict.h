@@ -13,5 +13,6 @@
 #include "Analysis/SimCalo.h"
 #include "Analysis/SimTracker.h"
 #include "Analysis/Tracker.h"
+#include "Analysis/Utils.h"
 
 struct LoadMegat {};

@@ -1,6 +1,7 @@
 #ifndef MEGAT_Analysis_Tracker_H
 #define MEGAT_Analysis_Tracker_H
 
+#include "GeoUtils.h"
 #include "ROOT/RVec.hxx"
 #include "Utils.h"
 #include "edm4hep/TrackerHitData.h"
@@ -41,6 +42,7 @@ namespace megat {
     RENAME_GET_FUNC_NS( megat::utility, get_pos, hit_pos, edm4hep::TrackerHitData );
 
     // functors
+    RENAME_FUNCTOR_NS( megat::utility, CellPosition, cell_pos, edm4hep::TrackerHitData );
 
   } // namespace Tracker
 } // namespace megat

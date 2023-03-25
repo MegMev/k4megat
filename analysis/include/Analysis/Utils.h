@@ -8,6 +8,8 @@
 
 namespace megat {
   namespace utility {
+    // [to be clarified] cellid is long long int in dd4hep, but uint64 in edm4hep
+    typedef std::uint64_t CellId;
     using ROOT::RVec;
 
     template <typename T>
@@ -17,6 +19,20 @@ namespace megat {
     template <typename T>
     inline RVec<RVec<T>> as_vector( const RVec<T>& in ) {
       return RVec<RVec<T>>( 1, in );
+    };
+
+    template <typename T>
+    class VecAt {
+    public:
+      VecAt( size_t pos ) : m_pos( pos ) {}
+
+      auto operator()( const RVec<RVec<T>>& in ) {
+        auto mapper = [this]( const RVec<T>& hit ) { return hit.at( m_pos ); };
+        return Map( in, mapper );
+      }
+
+    private:
+      size_t m_pos;
     };
 
     // common accessors

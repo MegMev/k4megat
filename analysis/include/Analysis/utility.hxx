@@ -32,7 +32,13 @@
 
 #define INST_GET_FUNC( FUNC, DATATYPE ) template auto FUNC( const ROOT::RVec<DATATYPE>& )
 #define INST_GET_FUNC_NS( NS, FUNC, DATATYPE ) template auto NS::FUNC( const ROOT::RVec<DATATYPE>& )
+#define INST_FUNCTOR( CLASS, DATATYPE ) template class CLASS<DATATYPE>
+#define INST_FUNCTOR_NS( NS, CLASS, DATATYPE ) template class NS::CLASS<DATATYPE>
+
 #define RENAME_GET_FUNC( OLD, NEW, DATATYPE ) constexpr auto NEW = OLD<DATATYPE>
 #define RENAME_GET_FUNC_NS( NS, OLD, NEW, DATATYPE ) constexpr auto NEW = NS::OLD<DATATYPE>
+
+#define RENAME_FUNCTOR( OLD, NEW, DATATYPE ) using NEW = OLD<DATATYPE>
+#define RENAME_FUNCTOR_NS( NS, OLD, NEW, DATATYPE ) using NEW = NS::OLD<DATATYPE>
 
 #endif

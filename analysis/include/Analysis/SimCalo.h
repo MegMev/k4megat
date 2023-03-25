@@ -1,6 +1,7 @@
 #ifndef MEGAT_Analysis_SimCalo_H
 #define MEGAT_Analysis_SimCalo_H
 
+#include "GeoUtils.h"
 #include "ROOT/RVec.hxx"
 #include "Utils.h"
 #include "edm4hep/SimCalorimeterHitData.h"
@@ -30,9 +31,9 @@ namespace megat {
     RENAME_GET_FUNC_NS( megat::utility, get_cellid, hit_id, edm4hep::SimCalorimeterHitData );
 
     // functors
+    RENAME_FUNCTOR_NS( megat::utility, CellPosition, cell_pos, edm4hep::SimCalorimeterHitData );
 
     // calo hits (single cells)
-    // VecImp<float> getHit_x( const VecImp<edm4hep::SimCalorimeterHitData>& in );
     // ROOT::VecOps::RVec<int>      getHit_layer( const ROOT::VecOps::RVec<edm4hep::SimCalorimeterHitData>& in );
     // ROOT::VecOps::RVec<float>    getHit_energy( const ROOT::VecOps::RVec<edm4hep::SimCalorimeterHitData>& in );
     // );

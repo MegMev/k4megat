@@ -19,7 +19,7 @@
 #include <DD4hep/Volumes.h>
 #include <DDSegmentation/BitFieldCoder.h>
 #include <Parsers/Primitives.h>
-#include <edm4hep/Vector3f.h>
+#include <edm4hep/Vector3d.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -38,13 +38,13 @@ namespace megat {
        *  Alignment corrections are applied (TO BE DONE).
        *  If no sensitive volume is found, (0,0,0) is returned.
        */
-      edm4hep::Vector3f position( const CellID& cellID ) const;
+      edm4hep::Vector3d position( const CellID& cellID ) const;
 
       /** Return the global cellID for the given global position.
        *  Note: this call is rather slow - only use it when really needed !
        *
        */
-      CellID cellID( const edm4hep::Vector3f& global ) const;
+      CellID cellID( const edm4hep::Vector3d& global ) const;
 
       /** Returns the segmentation.cellDimensions.
        *
