@@ -14,10 +14,12 @@ ROOT.EnableImplicitMT()
 df=ROOT.RDataFrame("events", "./data/megat.edm4hep.root")
 df2=(
     df.Define("x1","SimCalo::hit_x(CztHits)")
-    .Define("x2","utility::get_x(CztHits)")
+    .Define("x2","CztHits.position.x")
     .Define("dx", "x1-x2")
-    .Define("e","SimCalo::hit_e(CztHits)")
+    .Define("e","CztHits.energy")
+    .Define("pos", "CztHits.position.z")
    )
+
 
 h1=df2.Histo1D("x1")
 h2=df2.Histo1D("e")
@@ -33,3 +35,8 @@ h2.Draw()
 c.cd(3)
 hrel.Draw('colz')
 c.SaveAs('demo_fillx.png')
+
+df2.Describe()
+
+from ROOT import gSystem
+gSystem.Exec('open demo_fillx.png')

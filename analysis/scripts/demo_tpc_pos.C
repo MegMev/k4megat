@@ -37,8 +37,10 @@ void demo_tpc_pos( string infile = "./data/tpcseg_megat.root.bak", string outfil
   auto             dfout = df.Define( "id", megat::Tracker::hit_id, { br_name } )
                    .Define( "cell_pos", cell_pos, { br_name } )
                    .Define( "sim_pos", megat::Tracker::hit_pos, { br_name } )
-                   .Define( "delta_pos_original", "cell_pos-sim_pos" )
-                   .Define( "delta_pos", norm_pos, { "delta_pos_original", "id" } )
+                   // .Define( "delta_pos_original", "cell_pos-sim_pos" )
+                   // .Define( "delta_pos", norm_pos, { "delta_pos_original", "id" } )
+                   .Define( "delta_pos", "cell_pos-sim_pos" )
+                   .Redefine( "delta_pos", norm_pos, { "delta_pos", "id" } )
                    .Define( "dx", VecAt<double>( 0 ), { "delta_pos" } )
                    .Define( "dy", VecAt<double>( 1 ), { "delta_pos" } )
                    .Define( "dz", VecAt<double>( 2 ), { "delta_pos" } );

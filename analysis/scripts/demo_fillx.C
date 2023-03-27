@@ -27,15 +27,15 @@ void demo_fillx() {
   // method 3
   using namespace megat::SimCalo;
 
-  auto df3 = df.Define( "x", hit_x, { "CztHits" } )
-                 .Define( "y", hit_y, { "CztHits" } )
-                 .Define( "z", hit_z, { "CztHits" } )
-                 .Define( "e", hit_e, { "CztHits" } );
+  auto df3 = df.Define( "x", "CztHits.position.x" )
+                 .Define( "y", "CztHits.position.y" )
+                 .Define( "z", "CztHits.position.z" )
+                 .Define( "e", "CztHits.energy" );
 
   // draw & print
-  auto h1 = df2.Histo1D( "x" );
-  auto h2 = df2.Histo1D( "y" );
-  auto h3 = df2.Histo1D( "e" );
+  auto h1 = df3.Histo1D( "x" );
+  auto h2 = df3.Histo1D( "y" );
+  auto h3 = df3.Histo1D( "e" );
 
   auto c = new TCanvas( "c", "c", 1200, 500 );
   c->Divide( 3, 1 );
