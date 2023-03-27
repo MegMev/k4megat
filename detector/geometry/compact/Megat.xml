@@ -93,7 +93,7 @@
        </fields>  -->
 
     <plugins>
-        <plugin name="DD4hep_GenericSurfaceInstallerPlugin">
+        <plugin name="Megat_GenericSurfaceInstallerPlugin">
             <argument value="Calorimeter"/>
             <argument value="dimension=2"/>
             <argument value="u_x=1."/>
