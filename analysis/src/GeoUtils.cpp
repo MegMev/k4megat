@@ -1,5 +1,6 @@
 #include "Analysis/GeoUtils.h"
-#include "Analysis/SimpleLogger.h"
+#include "spdlog/spdlog.h"
+#include <Parsers/Printout.h>
 #include <stdexcept>
 
 namespace megat {
@@ -15,11 +16,13 @@ namespace megat {
      * @return the loaded detector description
      */
     dd4hep::Detector& loadGeometry( std::vector<std::string> xmlList, std::string tpc_readout_name, std::string tag,
-                                    std::string tpc_name ) {
+                                    std::string tpc_name, dd4hep::PrintLevel level ) {
       using namespace dd4hep;
 
+      setGeomLogLevel( level );
+
       if ( tpc_readout_name.empty() ) {
-        if ( !tag.empty() ) LOG_WARN( "No tag for geometry when using default TPC readout" );
+        if ( !tag.empty() ) spdlog::warn( "Tag is not used for geometry when using default TPC readout" );
 
         tag = "default";
       } else if ( tag.empty() ) {

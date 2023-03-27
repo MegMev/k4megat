@@ -1,5 +1,3 @@
-#include <fmt/core.h>
-
 void demo_tpc_pos( string infile = "./data/tpcseg_megat.root.bak", string outfile = "test.root", int idx = -1,
                    string br_name = "TpcSegStripHits", string ro_name = "TpcStripHits" ) {
 

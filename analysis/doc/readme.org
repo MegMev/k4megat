@@ -1,0 +1,9 @@
+* fmt
+hard intergration, for ROOT macro usage
+- version: 9.1.0
+- add to dict
+
+* spdlog
+hard integration, for internal usage, not exposed to analysis user
+
+- version: 1.11.0
