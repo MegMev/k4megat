@@ -24,5 +24,4 @@ gaudi_add_dictionary(${_pkg_name}Dict
 
 # Install python modules
 gaudi_install(PYTHON)
-# Install other scripts
-# gaudi_install(SCRIPTS)
+gaudi_install(SCRIPTS bin/)
