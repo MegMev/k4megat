@@ -22,7 +22,7 @@ def main():
         from mgana.ana_init import init_analysis
         init_analysis(parser)
     elif args.command == 'run' or args.command == 'final' or args.command == 'plots':
-        from mgana.FCCAnalysisRun import run
+        from mgana.ana_run import run
         run(parser)
 
 
