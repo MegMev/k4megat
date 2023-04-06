@@ -48,6 +48,7 @@ def replace_all(input: str, repl) -> str:
         output = output.replace(a, b)
     return output
 
+
 def expand_absolute_directory(path: str) -> str:
     '''
     Expand path for absolute one. Append to current directory for relative one.
@@ -63,6 +64,10 @@ def get_absolute_directory(dir_name: str,
     if os.path.abspath(dir_name) != dir_name:
         abs_dir = os.path.join(top_dir,dir_name)
     return abs_dir
+
+def is_absolute_path(path: str) -> bool:
+    abs_path = expand_absolute_directory(path)
+    return True if abs_path == os.path.expanduser(path) else False
 
 def execute(command: list[str],
             working_dir=None,
@@ -144,3 +149,23 @@ def setup_megat():
         current package config: {new_root}
         This may cause a potential conflict!
         ''')
+
+def megat_geometry_path() -> str:
+    pkg_dir = current_mgana_path()
+    envs = parse_meta(get_absolute_directory('.mgana/env.json', pkg_dir))
+    return os.path.join(envs['megat'],'geometry/compact')
+
+def mgana_lib_path() -> str:
+    pkg_dir = current_mgana_path()
+    envs = parse_meta(get_absolute_directory('.mgana/env.json', pkg_dir))
+    return os.path.join(envs['install'],'lib')
+
+def mgana_script_path() -> str:
+    pkg_dir = current_mgana_path()
+    envs = parse_meta(get_absolute_directory('.mgana/env.json', pkg_dir))
+    return envs['script']
+
+def mgana_script_path() -> str:
+    pkg_dir = current_mgana_path()
+    envs = parse_meta(get_absolute_directory('.mgana/env.json', pkg_dir))
+    return envs['workspace']

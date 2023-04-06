@@ -34,7 +34,7 @@ def main():
     elif args.command == 'build':
         build_analysis(parser)
     elif args.command == 'run' or args.command == 'final' or args.command == 'plots':
-        from mgana.ana_run import run
+        from mgana.test_run import run
         run(parser)
 
 if __name__ == "__main__":

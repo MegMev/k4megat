@@ -10,12 +10,8 @@ def setup_run_parser(parser):
     publicOptions.add_argument("--ncpus", help="Set number of threads", type=int)
     #publicOptions.add_argument("--final", action='store_true', help="Run final analysis (produces final histograms and trees)")
     #publicOptions.add_argument("--plots", action='store_true', help="Run analysis plots")
-    publicOptions.add_argument("--preprocess", action='store_true', help="Run preprocessing")
     publicOptions.add_argument("--validate", action='store_true', help="Validate a given production")
     publicOptions.add_argument("--rerunfailed", action='store_true', help="Rerun failed jobs")
-
-    internalOptions = parser.add_argument_group('\033[4m\033[1m\033[91m Internal options, NOT FOR USERS\033[0m')
-    internalOptions.add_argument("--batch", action='store_true', help="Submit on batch")
 
 def setup_run_parser_final(parser):
     publicOptions = parser.add_argument_group('User final options')

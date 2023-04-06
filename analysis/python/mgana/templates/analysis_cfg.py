@@ -2,10 +2,14 @@
 analysesList = ['__pkgname__']
 
 #Optional: output directory, default is local running directory
-outputDir   = "."
+outputDir   = "./workspace"
 
-#Optional
+#Optional: number of threads
 nCPUS       = 4
+
+#Optional: geometry and readout
+geometryFile = ['Megat.xml', 'TPC_readout.xml']
+readoutName = ['TpcStripHits', 'TpcPixelHits']
 
 #Mandatory: RDFanalysis class where the use defines the operations on the TTree
 class RDFanalysis():
@@ -13,7 +17,7 @@ class RDFanalysis():
     #Mandatory: analysers function to define the analysers to process, please make sure you return the last dataframe, in this example it is df2
     def analysers(df):
         df2 = (df
-               .Define("dummy_collection", "__pkgname__::dummy_collection(TpcStripHits)")
+               .Define("dummy_collection", "__pkgname__::dummy_collection(TpcSegStripHits)")
               )
         return df2
 

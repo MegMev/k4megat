@@ -8,6 +8,8 @@ import importlib.util
 from array import array
 import datetime
 
+from .logger import rootLogger
+
 DATE = datetime.datetime.fromtimestamp(datetime.datetime.now().timestamp()).strftime('%Y-%m-%d_%H-%M-%S')
 
 #__________________________________________________________
@@ -361,7 +363,6 @@ def runLocal(rdfModule, fileList, args):
 
 #__________________________________________________________
 def runStages(args, rdfModule, preprocess, analysisFile):
-    # check if analyses plugins need to be loaded before anything
     analysesList = getElement(rdfModule, "analysesList")
     if analysesList and len(analysesList) > 0:
         _ana = []
@@ -441,28 +442,6 @@ def runStages(args, rdfModule, preprocess, analysisFile):
                 print ('----> Running Locally')
                 args.output = outputchunk
                 runLocal(rdfModule, chunkList[ch], args)
-
-
-#__________________________________________________________
-def testfile(f):
-    tf=ROOT.TFile.Open(f)
-    tt=None
-    try :
-        tt=tf.Get("events")
-        if tt==None:
-            print ('file does not contains events, selection was too tight, will skip: ',f)
-            return False
-    except IOError as e:
-        print ("I/O error({0}): {1}".format(e.errno, e.strerror))
-        return False
-    except ValueError:
-        print ("Could read the file")
-        return False
-    except:
-        print ("Unexpected error:", sys.exc_info()[0])
-        print ('file ===%s=== must be deleted'%f)
-        return False
-    return True
 
 #__________________________________________________________
 def runFinal(rdfModule):
@@ -778,7 +757,6 @@ def run(mainparser):
     Set things in motion.
     """
     args, _ = mainparser.parse_known_args()
-    #check that the analysis file exists
     analysisFile = args.pathToAnalysisScript
     if not os.path.isfile(analysisFile):
         print("Script ", analysisFile, " does not exist")
