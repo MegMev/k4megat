@@ -1,12 +1,6 @@
 import ROOT
 from megat import simcalo
 
-# reduce some typing later
-from ROOT import gInterpreter as interp
-interp.Declare('''
-using namespace megat;
-''')
-
 # we need MT for long-time job, here is for demo
 ROOT.EnableImplicitMT()
 

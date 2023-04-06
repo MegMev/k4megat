@@ -9,18 +9,18 @@ find_package(DD4hep REQUIRED)
 
 #--- Set a better default for installation directory---------------------------
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX "__megatpath__" CACHE PATH "default install path" FORCE)
+  set(CMAKE_INSTALL_PREFIX "__install_path__" CACHE PATH "default install path" FORCE)
 endif()
 
 #--- Offer the user the choice of overriding the installation directories
-set(MEGAT_DIR "__megatpath__" CACHE PATH
+set(MEGAT_DIR "__megat_path__" CACHE PATH
     "Installation directory for MegatAnalyzer framework")
 
 #--- Find all paths to '__pkgname__' library pieces
-file(GLOB headers "include/*.h")
-file(GLOB sources "src/*.cc")
-file(GLOB classes "src/classes.h")
-file(GLOB reflex_sel "src/classes_def.xml")
+file(GLOB headers "include/*.h" "include/*.hpp" "include/*.hxx")
+file(GLOB sources "src/*.cc" "src/*.cpp")
+file(GLOB classes "src/dict.h")
+file(GLOB reflex_sel "src/dict_def.xml")
 
 #--- generate the ROOT dictionary using a REFLEX selection
 set(CMAKE_ROOTTEST_NOROOTMAP OFF)

@@ -52,8 +52,10 @@ CLOSED: [2023-03-04 六 09:15]
 - need a new spack environment
 
 * Analysis
-** Spark & RDataFrame mini-framework
-
+** mgana
+*** plugin manager
+- dynamic loading in python: importlib.import_module
+- 
 * Geometry model
 ** General
 *** Check whether alignment can be applied on assembly volume

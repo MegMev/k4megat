@@ -1,0 +1,18 @@
+* =mgana=
+** init
+| parameter       | description                                         | mandatory | default       |
+| /package/       | name of the CMake project                           | yes       | nil           |
+| /--out-dir/     | top-level directory where CMakeLists.txt is located | no        | nil           |
+| /--work-dir/    | work directory (relative or absolute)               | no        | workspace     |
+| /--build-dir/   | build directory (relative or absolute)              | no        | .build        |
+| /--install-dir/ | install directory (relative or absolute)            | no        | .install      |
+| /--name/        | name of the default header and source file          | no        | DummyAnalysis |
+
+#+begin_src bash
+  # create a package 'MgTest' using current directory as top directory
+  mgana init MgTest
+
+  # create a package 'MgTest' with a specified directory '~/mydir'
+  # the top-level direcotry will be '~/mydir/MgTest'
+  mgana init --out-dir ~/mydir MgTest
+#+end_src

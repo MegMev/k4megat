@@ -1,30 +1,41 @@
 #!/usr/bin/env python3
 
 import argparse
+from mgana.ana_init import setup_init_parser, init_analysis
+from mgana.ana_build import setup_build_parser, build_analysis
 
 def main():
     parser = argparse.ArgumentParser(description='MegatAnalyzer parser')
     subparsers = parser.add_subparsers(help='types of running modes', dest='command')
+
     parser_init      = subparsers.add_parser('init', help="generate a RDataFrame based Megat analysis")
+    setup_init_parser(parser_init)
+
+    parser_build      = subparsers.add_parser('build', help="Build the analysis package")
+    setup_build_parser(parser_build)
+
+    ####
     parser_run       = subparsers.add_parser('run', help="run a RDataFrame based Megat analysis")
     parser_run_final = subparsers.add_parser('final', help="run a RDataFrame based Megat analysis final configuration")
     parser_run_plots = subparsers.add_parser('plots', help="run a RDataFrame based Megat analysis plot configuration")
 
+
     import mgana.cmd_parsers as mgpars
-    mgpars.setup_init_parser(parser_init)
     mgpars.setup_run_parser(parser_run)
     mgpars.setup_run_parser_final(parser_run_final)
     mgpars.setup_run_parser_plots(parser_run_plots)
 
+    # parse cmd arguments
     args = parser.parse_args()
 
+    #
     if args.command == 'init':
-        from mgana.ana_init import init_analysis
         init_analysis(parser)
+    elif args.command == 'build':
+        build_analysis(parser)
     elif args.command == 'run' or args.command == 'final' or args.command == 'plots':
         from mgana.ana_run import run
         run(parser)
-
 
 if __name__ == "__main__":
     main()
