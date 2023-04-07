@@ -71,10 +71,25 @@ add_subdirectory(analysis)
 #########################
 # Configure and install #
 #########################
-configure_file(cmake/thismegat.sh       bin/thismegat.sh       @ONLY)
-install(FILES    ${CMAKE_BINARY_DIR}/bin/thismegat.sh DESTINATION bin )
-configure_file(cmake/thismegat_only.sh       bin/thismegat_only.sh       @ONLY)
-install(FILES    ${CMAKE_BINARY_DIR}/bin/thismegat_only.sh DESTINATION bin )
+configure_file(cmake/thismegat.sh bin/thismegat.sh @ONLY)
+install(FILES
+  ${CMAKE_BINARY_DIR}/bin/thismegat.sh
+  DESTINATION bin
+  PERMISSIONS
+  OWNER_READ OWNER_WRITE OWNER_EXECUTE
+  GROUP_READ GROUP_EXECUTE
+  WORLD_READ WORLD_EXECUTE
+)
+
+configure_file(cmake/thismegat_only.sh bin/thismegat_only.sh @ONLY)
+install(FILES
+  ${CMAKE_BINARY_DIR}/bin/thismegat_only.sh
+  DESTINATION bin
+  PERMISSIONS
+  OWNER_READ OWNER_WRITE OWNER_EXECUTE
+  GROUP_READ GROUP_EXECUTE
+  WORLD_READ WORLD_EXECUTE
+)
 
 
 install(EXPORT ${PROJECT_NAME}

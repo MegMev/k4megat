@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# A wrapper script to source environment setup script and flush out the updated environment
+# variables to stdout.
+# To be used by python script to get the list of updated environ variables.
+
+exec {orig_stdout}>&1 # create a backup of stdout
+exec >&2              # and then use stderr while sourcing the child script
+
+source "$@"           # run arbitrary script with arbitrary arguments *in this shell*
+                      # note that this means that if it runs "exit", we abort prematurely
+
+while read -r varname; do
+    printf '%s\0%s\0' "$varname" "${!varname}" >&$orig_stdout # '!' is indirect substitution
+done < <(compgen -e)  # process substitution

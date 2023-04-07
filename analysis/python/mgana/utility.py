@@ -72,15 +72,15 @@ def is_absolute_path(path: str) -> bool:
 def execute(command: list[str],
             working_dir=None,
             env=None,
-            is_print: bool=False):
+            is_print: bool=False) -> str:
     if working_dir:
         working_dir = os.path.abspath(os.path.expanduser(working_dir))
     p = subprocess.run(command,
                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                        cwd=working_dir, universal_newlines=True, text=True,
                        check=True, env=env)
-    if is_print:
-        print(p.stdout)
+    if is_print: print(p.stdout)
+    return p.stdout
 
 class Subprocess:
     ''''''
@@ -132,16 +132,36 @@ class Subprocess:
             self.exited = True
             self.exit_code = self._return_code
 
-# todo: can't source in Popen and the environment not passed
+def setup_environment(setup_script: str):
+    '''
+    Update the run environment of current process by invoking setup_script (shell script)
+    '''
+    import itertools
+    stdout = execute(shlex.split(f"mgenv_wrapper {setup_script}"))
+    items_iter = iter(stdout.split('\0'))
+
+    rootLogger.debug(f'Setup new environment from {setup_script}:')
+    for (k,v) in itertools.zip_longest(items_iter, items_iter):
+        if k:
+            os.environ[k]=v
+            rootLogger.debug(f'{k} = {os.getenv(k)}')
+
 def setup_megat():
+    '''
+    Update k4megat run environment
+    '''
+    # get current run environ
     pkg_dir = current_mgana_path()
     envs = parse_meta(get_absolute_directory('.mgana/env.json', pkg_dir))
     old_root = os.getenv('MEGAT_ROOT')
-    setup_script = get_absolute_directory('bin/thismegat.sh', envs['megat'])
-    execute(shlex.split(f'source {setup_script}'))
-    new_root = os.getenv('MEGAT_ROOT')
-    assert new_root, f"Can't setup k4megat installation:\n\n {setup_script} not effective"
 
+    # update run environ from current pkg metadata
+    setup_script = get_absolute_directory('bin/thismegat.sh', envs['megat'])
+    setup_environment(setup_script)
+    new_root = os.getenv('MEGAT_ROOT')
+
+    # check the updated envrion is effective and no conflict
+    assert new_root, f"Can't setup k4megat installation:\n\n {setup_script} not effective"
     if old_root and old_root != new_root:
         rootLogger.warning(f'''
         Unmatched megat installation path:

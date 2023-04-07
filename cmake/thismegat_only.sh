@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 # Source this script to set up the megat running environment.
 # Only the MegatSW related environments are configured.
 # The running environment of dependency should be setup in other methods
@@ -54,10 +55,7 @@ megat_add_library_path()    {
 
 ### set this variable to the install prefix of this script
 #-----------------------------------------------------------------------------
-SOURCE=${BASH_ARGV[0]}
-if [ "x$SOURCE" = "x" ]; then
-    SOURCE=${(%):-%N} # for zsh
-fi
+SOURCE=${BASH_SOURCE[0]:-${(%):-%x}}
 megat_parse_this ${SOURCE}
 
 ### megat specific

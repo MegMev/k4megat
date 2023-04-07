@@ -26,7 +26,7 @@ def build_analysis(mainparser):
         is_all = False
 
     # setup megat env
-    # setup_megat()
+    setup_megat()
 
     # get running env config
     pkg_dir = current_mgana_path()
