@@ -42,12 +42,12 @@ def build_analysis(mainparser):
 
     if args.clean:
         execute(shlex.split(cmds['clean']))
-        print(f'clean done')
+        print(f'----> clean done')
     if args.config or is_all:
         execute(shlex.split(cmds['pre-build']))
-        print(f'pre-build done')
+        print(f'----> pre-build done')
     if args.build or is_all:
         execute(shlex.split(cmds['build']))
-        print(f'compiling done')
+        print(f'----> compiling done')
         execute(shlex.split(cmds['install']))
-        print(f'intallation done')
+        print(f'----> intallation done')

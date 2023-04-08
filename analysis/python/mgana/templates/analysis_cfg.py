@@ -1,6 +1,18 @@
 #Optional: List of analysis packages to load in runtime
 analysesList = ['__pkgname__']
 
+#Optional: name of this analysis
+analysisName = 'dummyAnalysis'
+
+#Optional: input directory, default is local running directory
+inputDir  = "./workspace"
+
+#Mandatory: List of processes
+processList = {
+            'dummy_process':{},
+            # 'dummy_process':{'fraction'=0.8, 'chunks'=2, 'output'='dummy_output'}
+            }
+
 #Optional: output directory, default is local running directory
 outputDir   = "./workspace"
 

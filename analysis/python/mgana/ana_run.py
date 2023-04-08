@@ -388,11 +388,11 @@ def runStages(args, rdfModule, preprocess, analysisFile):
         os.system("mkdir -p {}".format(outputDirEos))
 
     #check if files are specified, and if so run the analysis on it/them (this will exit after)
-    if len(args.files_list)>0:
+    if len(args.files)>0:
         print("----> Running with user defined list of files (either locally or from batch)")
         path, filename = os.path.split(args.output)
         if path!='': os.system("mkdir -p {}".format(path))
-        runLocal(rdfModule, args.files_list, args)
+        runLocal(rdfModule, args.files, args)
         sys.exit(0)
 
     #check if batch mode and set start and end file from original list
@@ -559,9 +559,6 @@ def runFinal(rdfModule):
     print('events in ttree  ',eventsTTree)
 
     histoList = getElement(rdfModule,"histoList", True)
-    doScale = getElement(rdfModule,"doScale", True)
-    intLumi = getElement(rdfModule,"intLumi", True)
-
     doTree = getElement(rdfModule,"doTree", True)
     for pr in getElement(rdfModule,"processList", True):
         print ('\n---->  Running over process : ',pr)
@@ -738,20 +735,6 @@ def runPlots(analysisFile):
     apl.run(analysisFile)
 
 #__________________________________________________________
-def runValidate(jobdir):
-    listdir=os.listdir(jobdir)
-    if jobdir[-1]!="/":jobdir+="/"
-    for dir in listdir:
-        if not os.path.isdir(jobdir+dir): continue
-        listfile=glob.glob(jobdir+dir+"/*.sh")
-        for file in listfile:
-            with open(file) as f:
-                for line in f:
-                    pass
-                lastLine = line
-            print(line)
-
-#__________________________________________________________
 def run(mainparser):
     """
     Set things in motion.
@@ -771,7 +754,7 @@ def run(mainparser):
 
     #set the RDF ELogLevel
     try:
-        verbosity = ROOT.Experimental.RLogScopedVerbosity(ROOT.Detail.RDF.RDFLogChannel(), getattr(ROOT.Experimental.ELogLevel,args.eloglevel))
+        verbosity = ROOT.Experimental.RLogScopedVerbosity(ROOT.Detail.RDF.RDFLogChannel(), getattr(ROOT.Experimental.ELogLevel,args.loglevel))
     except AttributeError:
         pass
 

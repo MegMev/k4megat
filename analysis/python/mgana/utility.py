@@ -185,7 +185,7 @@ def mgana_script_path() -> str:
     envs = parse_meta(get_absolute_directory('.mgana/env.json', pkg_dir))
     return envs['script']
 
-def mgana_script_path() -> str:
+def mgana_workspace_path() -> str:
     pkg_dir = current_mgana_path()
     envs = parse_meta(get_absolute_directory('.mgana/env.json', pkg_dir))
     return envs['workspace']
