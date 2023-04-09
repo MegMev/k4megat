@@ -16,20 +16,16 @@ def getElement(rdfModule, element, isFinal=False):
 
         #return default values or crash if mandatory
         if element=='processList':
-            print('The variable <{}> is mandatory in your analysis.py file, will exit'.format(element))
+            print(f'Variable <{element}> is mandatory in your analysis script, will exit')
             sys.exit(3)
 
         elif element=='analysers':
-            print('The function <{}> is mandatory in your analysis.py file, will exit'.format(element))
+            print(f'Err: Function <{element}> is mandatory in your analysis script, will exit')
             if isFinal: print('The function <{}> is not part of final analysis'.format(element))
             sys.exit(3)
 
         elif element=='analysisName':
-            rootLogger.warning('The variable <analysisName> is not specified in the analysis script, use file name instead')
-            return ""
-
-        elif element=='outputDir':
-            print('The variable <{}> is optional in your analysis.py file, return default workspace path'.format(element))
+            rootLogger.warning(f'Warn: <{element}> is not specified in your analysis script, will use script file name')
             return ""
 
         elif element=='output':
@@ -38,18 +34,8 @@ def getElement(rdfModule, element, isFinal=False):
             sys.exit(3)
 
         elif element=='nCPUS':
-            print('The variable <{}> is optional in your analysis.py file, return default value 4'.format(element))
+            print(f'Warn: Variable <{element}> not specified in your analysis script, will use 4')
             return 4
-
-        elif element=='geometryFile':
-            print('The variable <{}> is optional in your analysis.py file, return default value empty string'.format(element))
-            if isFinal: print('The option <{}> is not available in final analysis'.format(element))
-            return ""
-
-        elif element=='readoutName':
-            print('The variable <{}> is optional in your analysis.py file, return default value empty string'.format(element))
-            if isFinal: print('The option <{}> is not available in final analysis'.format(element))
-            return ""
 
         elif element=='procDict':
             if isFinal:
@@ -113,7 +99,7 @@ def getElementDict(d, element):
         value=d[element]
         return value
     except KeyError:
-        rootLogger.warning(f'{element} not exist, using default value (None)')
+        rootLogger.debug(f'{element} not exist, using default value')
         return None
 
 #__________________________________________________________
@@ -224,27 +210,27 @@ def saveBenchmark(outfile, benchmark):
 
 #__________________________________________________________
 def runRDF(rdfModule, inputlist, outFile, nevt, args):
-    # for convenience
-    ROOT.gInterpreter.Declare("using namespace megat;")
+    # # for convenience
+    # ROOT.gInterpreter.Declare("using namespace megat;")
 
-    # geometry management
-    geometryFile = getElement(rdfModule, "geometryFile")
-    geomFileList = ROOT.vector('string')()
-    if geometryFile:
-        for geofile in geometryFile:
-            realfile = geofile if is_absolute_path(geofile) else os.path.join(megat_geometry_path(), geofile)
-            geomFileList.push_back(realfile)
-        # load default geometry, with default readout specification
-        megat.loadGeometry(geomFileList)
+    # # geometry management
+    # geometryFile = getElement(rdfModule, "geometryFile")
+    # geomFileList = ROOT.vector('string')()
+    # if geometryFile:
+    #     for geofile in geometryFile:
+    #         realfile = geofile if is_absolute_path(geofile) else os.path.join(megat_geometry_path(), geofile)
+    #         geomFileList.push_back(realfile)
+    #     # load default geometry, with default readout specification
+    #     megat.loadGeometry(geomFileList)
 
-    # create extra geometry for each separate readout specification of TPC
-    readoutName  = getElement(rdfModule, "readoutName")
-    readoutList = ROOT.vector('string')()
-    if readoutName:
-        for ro in readoutName:
-            # readout name is the tag of this geometry
-            megat.loadGeometry(geomFileList, ro, ro, "TPC")
-            readoutList.push_back(ro)
+    # # create extra geometry for each separate readout specification of TPC
+    # readoutName  = getElement(rdfModule, "readoutName")
+    # readoutList = ROOT.vector('string')()
+    # if readoutName:
+    #     for ro in readoutName:
+    #         # readout name is the tag of this geometry
+    #         megat.loadGeometry(geomFileList, ro, ro, "TPC")
+    #         readoutList.push_back(ro)
 
     # MT config
     ncpus = 1
@@ -265,7 +251,8 @@ def runRDF(rdfModule, inputlist, outFile, nevt, args):
       df = df.Range(0, args.nevents)
 
     # run RDF
-    print("----> Init done, about to run {} events on {} CPUs".format(nevt, ncpus))
+    print("----> Init done:")
+    print("      about to run {} events on {} CPUs".format(nevt, ncpus))
     df1 = getElement(rdfModule.RDFanalysis, "analysers")(df)
 
     # save snapshot
@@ -277,7 +264,7 @@ def runRDF(rdfModule, inputlist, outFile, nevt, args):
     df1.Snapshot("events", outFile, branchListVec)
 
 #__________________________________________________________
-def runLocal(rdfModule, fileList, args):
+def runLocal(rdfModule, fileList, outputDir, args):
     '''
     Process a list of ROOT files.
     '''
@@ -291,7 +278,7 @@ def runLocal(rdfModule, fileList, args):
     fileListRoot = ROOT.vector('string')()
     for fileName in fileList:
         fileListRoot.push_back(fileName)
-        print ("   ",fileName)
+        print ("     ",fileName)
         tf=ROOT.TFile.Open(str(fileName),"READ")
         tf.cd()
         for key in tf.GetListOfKeys():
@@ -306,20 +293,9 @@ def runLocal(rdfModule, fileList, args):
       nevents_local = args.nevents
     print ("----> nevents original={}  local={}".format(nevents_meta,nevents_local))
 
-    #check if outputDir exist and if not create it
-    outputDir = getElement(rdfModule,"outputDir")
-    if not (outputDir or is_absolute_path(outputDir)):
-        outputDir = os.path.join(mgana_workspace_path(), outputDir)
-    else:
-        outputDir = expand_absolute_directory(outputDir)
-
-    if not os.path.exists(outputDir):
-        os.makedirs(outputDir)
-
-    outFile = os.path.join(outputDir, args.output)
-
     # run RDF
     start_time = time.time()
+    outFile = os.path.join(outputDir, args.output)
     runRDF(rdfModule, fileListRoot, outFile, nevents_local, args)
 
     # pass-down the initial nevents
@@ -336,7 +312,9 @@ def runLocal(rdfModule, fileList, args):
 
     # print benchmarks
     elapsed_time = time.time() - start_time
+    print  ()
     print  ("==============================SUMMARY==============================")
+    print  ("Output file              :  ",outFile)
     print  ("Elapsed time (H:M:S)     :  ",time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
     print  ("Events Processed/Second  :  ",int(nevents_local/elapsed_time))
     print  ("Total Events Processed   :  ",int(nevents_local))
@@ -372,7 +350,7 @@ def runLocal(rdfModule, fileList, args):
 
 
 #__________________________________________________________
-def runStages(rdfModule, args):
+def runConfiguration(rdfModule, args):
     '''
     Load and run the analysis script. There are two sources of input list of files (mutual exclusive):
     1) specified in command line option '--files'
@@ -386,7 +364,7 @@ def runStages(rdfModule, args):
     if analysesList and len(analysesList) > 0:
         _ana = []
         for analysis in analysesList:
-            print(f'----> Load cxx analyzers from {analysis}...')
+            print(f'----> Info: Loading analyzer package {analysis}...')
             if analysis.startswith('libMegatAnalyzer_'):
                 ROOT.gSystem.Load(os.path.join(libPath, analysis))
             else:
@@ -397,10 +375,46 @@ def runStages(rdfModule, args):
             # todo: ugly hack to auto-load dictionary
             _ana.append(getattr(ROOT, analysis).dictionary)
 
+    # for convenience
+    ROOT.gInterpreter.Declare("using namespace megat;")
+
+    # geometry management (the 'default' one)
+    geometryFile = getElement(rdfModule, "geometryFile")
+    geomFileList = ROOT.vector('string')()
+    if geometryFile:
+        for geofile in geometryFile:
+            realfile = geofile if is_absolute_path(geofile) else os.path.join(megat_geometry_path(), geofile)
+            geomFileList.push_back(realfile)
+        # load default geometry, with default readout specification
+        megat.loadGeometry(geomFileList)
+
+    # extra geometry for each separate readout specification of TPC
+    readoutName  = getElement(rdfModule, "readoutName")
+    readoutList = ROOT.vector('string')()
+    if readoutName:
+        for ro in readoutName:
+            # readout name is the tag of this geometry
+            megat.loadGeometry(geomFileList, ro, ro, "TPC")
+            readoutList.push_back(ro)
+
+    #check if outputDir exist and if not create it
+    outputDir = getElement(rdfModule,"outputDir")
+    if not outputDir:
+        outputDir = mgana_workspace_path()
+    if not is_absolute_path(outputDir):
+        outputDir = os.path.join(mgana_workspace_path(), outputDir)
+    else:
+        outputDir = expand_absolute_directory(outputDir)
+    if not os.path.exists(outputDir):
+        os.makedirs(outputDir)
+    print("----> Info: Output top-level path:")
+    print(f"      {outputDir}")
+    print  ("===================================================================")
+
     # option 1: files are specified in command line, then run rdf directly
     if len(args.files)>0:
         print("----> Running with user defined list of files")
-        runLocal(rdfModule, args.files, args)
+        runLocal(rdfModule, args.files, outputDir, args)
         sys.exit(0)
 
     # option 2: files specified as process list
@@ -425,7 +439,7 @@ def runStages(rdfModule, args):
         except TypeError:
             print ('----> no values set for process {} will use default values'.format(process))
 
-        print ('----> Running process {} with fraction={}, output={}, chunks={}'.format(process, fraction, output, chunks))
+        print ('\n----> Running process {} with fraction={}, output={}, chunks={}'.format(process, fraction, output, chunks))
 
         if fraction < 1: fileList = getsubfileList(fileList, eventList, fraction)
         chunkList=[fileList]
@@ -433,13 +447,13 @@ def runStages(rdfModule, args):
 
         #create dir if more than 1 chunk
         if chunks > 1:
-            outputDir = getElement(rdfModule,"outputDir")
-            if not outputDir:
-                rootLogger.error('outputDir is mandatory if using processList')
-            if not is_absolute_path(outputDir):
-                outputDir = os.path.join(mgana_workspace_path(), outputDir)
-            else:
-                outputDir = expand_absolute_directory(outputDir)
+            # outputDir = getElement(rdfModule,"outputDir")
+            # if not outputDir:
+            #     outputDir = mgana_workspace_path()
+            # if not is_absolute_path(outputDir):
+            #     outputDir = os.path.join(mgana_workspace_path(), outputDir)
+            # else:
+            #     outputDir = expand_absolute_directory(outputDir)
 
             outputdir = os.path.join(outputDir, output)
             if not os.path.exists(outputdir):
@@ -447,10 +461,10 @@ def runStages(rdfModule, args):
 
         for ch in range(len(chunkList)):
             outputchunk=''
-            if len(chunkList) > 1: outputchunk = "/{}/chunk{}.root".format(output,ch)
+            if len(chunkList) > 1: outputchunk = "{}/chunk{}.root".format(output,ch)
             else:                outputchunk = "{}.root".format(output)
             args.output = outputchunk
-            runLocal(rdfModule, chunkList[ch], args)
+            runLocal(rdfModule, chunkList[ch], outputDir, args)
 
 #__________________________________________________________
 def runFinal(rdfModule):
@@ -754,7 +768,7 @@ def run(mainparser):
         sys.exit(3)
 
     #
-    print ("----> Info: Loading analyzers from libMegatAnalysis... ",)
+    print ("----> Info: Loading MegatAnalyzer Runtime... ",)
     ROOT.gSystem.Load("libMegatAnalysis")
     ROOT.gErrorIgnoreLevel = ROOT.kFatal
     # force auto-loading [todo: ugly as a hack]
@@ -779,7 +793,7 @@ def run(mainparser):
     if hasattr(args, 'command'):
         if args.command == "run":
             try:
-                runStages(rdfModule, args)
+                runConfiguration(rdfModule, args)
             except Exception as excp:
                 print('----> Error: During the execution of the stage file:')
                 print('      ' + analysisFile)
