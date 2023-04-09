@@ -189,3 +189,14 @@ def mgana_workspace_path() -> str:
     pkg_dir = current_mgana_path()
     envs = parse_meta(get_absolute_directory('.mgana/env.json', pkg_dir))
     return envs['workspace']
+
+def get_io_directory(ioDir) -> str:
+    if not ioDir:
+        ioDir = mgana_workspace_path()
+    if not is_absolute_path(ioDir):
+        ioDir = os.path.join(mgana_workspace_path(), ioDir)
+    else:
+        ioDir = expand_absolute_directory(ioDir)
+    if not os.path.exists(ioDir):
+        os.makedirs(ioDir)
+    return ioDir
