@@ -22,6 +22,7 @@ selections['ZH']   = ["sel0","sel1"]
 
 plots = {}
 plots['ZH'] = {'signal':{'signal1':['batch']},
+               'backgrounds':{}
                }
 
 #Extra labels: key is selection tag

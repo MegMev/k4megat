@@ -1,6 +1,4 @@
 import sys, os
-import ntpath
-import importlib
 import ROOT
 import copy
 import re

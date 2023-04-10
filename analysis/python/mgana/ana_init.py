@@ -24,7 +24,7 @@ def setup_analysis(package: str,
         path = get_absolute_directory(package, output_dir)
 
     if not os.path.exists(path):
-        os.mkdir(path)
+        os.makedirs(path)
 
     # create dict of metadata
     if megat_root:
