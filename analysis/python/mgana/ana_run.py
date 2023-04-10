@@ -1,16 +1,12 @@
-import ROOT
 import os, sys
-import time
-import glob
-import json
-import subprocess
+import glob, time, json
 import importlib.util
 from array import array
-import datetime
 
+import ROOT, megat
+from .utility import is_absolute_path, expand_absolute_directory
+from .utility import megat_geometry_path, mgana_lib_path, mgana_workspace_path, get_io_directory
 from .logger import rootLogger
-
-DATE = datetime.datetime.fromtimestamp(datetime.datetime.now().timestamp()).strftime('%Y-%m-%d_%H-%M-%S')
 
 #__________________________________________________________
 def getElement(rdfModule, element, isFinal=False):
@@ -20,46 +16,21 @@ def getElement(rdfModule, element, isFinal=False):
 
         #return default values or crash if mandatory
         if element=='processList':
-            print('The variable <{}> is mandatory in your analysis.py file, will exit'.format(element))
+            print(f'Err: Variable <{element}> is mandatory in your analysis script, will exit')
             sys.exit(3)
 
         elif element=='analysers':
-            print('The function <{}> is mandatory in your analysis.py file, will exit'.format(element))
-            if isFinal: print('The function <{}> is not part of final analysis'.format(element))
-            sys.exit(3)
-
-        elif element=='output':
-            print('The function <{}> is mandatory in your analysis.py file, will exit'.format(element))
+            print(f'Err: Function <{element}> is mandatory in your analysis script, will exit')
             if isFinal: print('The function <{}> is not part of final analysis'.format(element))
             sys.exit(3)
 
         elif element=='analysisName':
-            print('The variable <analysisName> is optional in your analysis.py file, return default value ""')
+            rootLogger.warning(f'Warn: <{element}> is not specified in your analysis script, will use script file name')
             return ""
 
         elif element=='nCPUS':
-            print('The variable <{}> is optional in your analysis.py file, return default value 4'.format(element))
+            print(f'Warn: Variable <{element}> not specified in your analysis script, will use 4')
             return 4
-
-        elif element=='outputDir':
-            print('The variable <{}> is optional in your analysis.py file, return default value running dir'.format(element))
-            return ""
-
-        elif element=='geometryFile':
-            print('The variable <{}> is optional in your analysis.py file, return default value empty string'.format(element))
-            if isFinal: print('The option <{}> is not available in final analysis'.format(element))
-            return ""
-
-        elif element=='readoutName':
-            print('The variable <{}> is optional in your analysis.py file, return default value empty string'.format(element))
-            if isFinal: print('The option <{}> is not available in final analysis'.format(element))
-            return ""
-
-        elif element=='procDict':
-            if isFinal:
-                print('The variable <{}> is mandatory in your analysis_final.py file, exit'.format(element))
-                sys.exit(3)
-            else: print('The option <{}> is not available in presel analysis'.format(element))
 
         elif element=='cutList':
             if isFinal:
@@ -79,28 +50,10 @@ def getElement(rdfModule, element, isFinal=False):
                 sys.exit(3)
             else: print('The option <{}> is not available in presel analysis'.format(element))
 
-        elif element=='doTree':
+        elif element=='saveCutTree':
             if isFinal:
                 print('The variable <{}> is optional in your analysis_final.py file return default value False'.format(element))
                 return False
-            else: print('The option <{}> is not available in presel analysis'.format(element))
-
-        elif element=='procDictAdd':
-            if isFinal:
-                print('The variable <{}> is optional in your analysis_final.py file return empty dictionary'.format(element))
-                return {}
-            else: print('The option <{}> is not available in presel analysis'.format(element))
-
-        elif element=='doScale':
-            if isFinal:
-                print('The variable <{}> is optional in your analysis_final.py file return empty dictionary'.format(element))
-                return {}
-            else: print('The option <{}> is not available in presel analysis'.format(element))
-
-        elif element=='intLumi':
-            if isFinal:
-                print('The variable <{}> is optional in your analysis_final.py file, return empty dictionary. However, if you set doScale, then it is mandatory!'.format(element))
-                return {}
             else: print('The option <{}> is not available in presel analysis'.format(element))
 
         elif element=='saveTabular':
@@ -123,19 +76,21 @@ def getElementDict(d, element):
         value=d[element]
         return value
     except KeyError:
-#        print (element, "does not exist using default value")
+        rootLogger.debug(f'{element} not exist, using default value')
         return None
 
 #__________________________________________________________
-def getProcessInfo(process, inputDir):
-    if inputDir!=None:
-        return getProcessInfoFiles(process, inputDir)
-    else:
-        print('inputDir is mandatory')
-        sys.exist(3)
-
-#__________________________________________________________
 def getProcessInfoFiles(process, inputDir):
+    '''
+    Get the list of files and nevents.
+    If inputDir/process.root exist, return this file;
+    otherwise, return all root files under inputDir/process/.
+    '''
+    if not inputDir:
+        inputDir = mgana_workspace_path()
+    else:
+        inputDir = expand_absolute_directory(inputDir)
+
     filelist=[]
     eventlist=[]
     filetest='{}/{}.root'.format(inputDir, process)
@@ -161,11 +116,13 @@ def getProcessInfoFiles(process, inputDir):
             filelist.append(f)
             eventlist.append(getEntries(f))
 
-
     return filelist, eventlist
 
 #__________________________________________________________
 def getEntries(f):
+    '''
+    Return nentries in a ROOT file.
+    '''
     tf=ROOT.TFile.Open(f,"READ")
     tf.cd()
     tt=tf.Get("events")
@@ -175,6 +132,9 @@ def getEntries(f):
 
 #__________________________________________________________
 def getsubfileList(fileList, eventList, fraction):
+    '''
+    Return the min list of files with sum nevents > fraction*total_nevents
+    '''
     nevts=sum(eventList)
     nevts_target=nevts*fraction
     nevts_real=0
@@ -185,9 +145,11 @@ def getsubfileList(fileList, eventList, fraction):
         tmplist.append(fileList[ev])
     return tmplist
 
-
 #__________________________________________________________
 def getchunkList(fileList, chunks):
+    '''
+    Divide the fileList into 'chunks' list on average and return the chunked list
+    '''
     chunklist=[]
     if chunks>len(fileList):chunks=len(fileList)
     nfilesperchunk=int(len(fileList)/chunks)
@@ -198,13 +160,17 @@ def getchunkList(fileList, chunks):
             if (filecount>=ch*nfilesperchunk and filecount<(ch+1)*nfilesperchunk) or (filecount>=ch*nfilesperchunk and ch==chunks-1):
                 listtmp.append(fileName)
             filecount+=1
-
         chunklist.append(listtmp)
-    return chunklist
 
+    return chunklist
 
 #__________________________________________________________
 def saveBenchmark(outfile, benchmark):
+    '''
+    Save the benchmark into a json file
+    '''
+    import json
+
     benchmarks = []
     try:
         with open(outfile, 'r') as benchin:
@@ -218,21 +184,9 @@ def saveBenchmark(outfile, benchmark):
     with open(outfile, 'w') as benchout:
         json.dump(benchmarks, benchout, indent=2)
 
-
-#__________________________________________________________
-def getCommandOutput(command):
-    p = subprocess.Popen(command, shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE,universal_newlines=True)
-    (stdout,stderr) = p.communicate()
-    return {"stdout":stdout, "stderr":stderr, "returncode":p.returncode}
-
 #__________________________________________________________
 def runRDF(rdfModule, inputlist, outFile, nevt, args):
-    # for convenience and compatibility with user code
-    ROOT.gInterpreter.Declare("using namespace FCCAnalyses;")
-    geometryFile = getElement(rdfModule, "geometryFile")
-    readoutName  = getElement(rdfModule, "readoutName")
-    if geometryFile!="" and readoutName!="":
-        ROOT.CaloNtupleizer.loadGeometry(geometryFile, readoutName)
+    # MT config
     ncpus = 1
     # cannot use MT with Range()
     if args.nevents < 0:
@@ -250,32 +204,35 @@ def runRDF(rdfModule, inputlist, outFile, nevt, args):
     if args.nevents > 0:
       df = df.Range(0, args.nevents)
 
-    preprocess=False
-    if preprocess:
-        df2 = runPreprocess(df)
+    # run RDF
+    print("----> Init done:")
+    print("      about to run {} events on {} CPUs".format(nevt, ncpus))
+    df1 = getElement(rdfModule.RDFanalysis, "analysers")(df)
 
-    print("----> Init done, about to run {} events on {} CPUs".format(nevt, ncpus))
-
-    df2 = getElement(rdfModule.RDFanalysis, "analysers")(df)
-
+    # save snapshot
     branchList = getElement(rdfModule.RDFanalysis, "output")()
     branchListVec = ROOT.vector('string')()
     for branchName in branchList:
         branchListVec.push_back(branchName)
 
-    df2.Snapshot("events", outFile, branchListVec)
-
+    df1.Snapshot("events", outFile, branchListVec)
 
 #__________________________________________________________
-def runLocal(rdfModule, fileList, args):
-    #Create list of files to be Processed
+def runLocal(rdfModule, fileList, outputDir, args):
+    '''
+    Process a list of ROOT files.
+    '''
+    # meta: the initial nevents in the analysis chain
+    nevents_meta = 0
+    # local: the nevents processed in the current analysis
+    nevents_local = 0
+
+    # create list of files to be Processed and aggregate total nevents
     print ("----> Create dataframe object from files: ", )
     fileListRoot = ROOT.vector('string')()
-    nevents_meta = 0
-    nevents_local = 0
     for fileName in fileList:
         fileListRoot.push_back(fileName)
-        print ("   ",fileName)
+        print ("     ",fileName)
         tf=ROOT.TFile.Open(str(fileName),"READ")
         tf.cd()
         for key in tf.GetListOfKeys():
@@ -289,43 +246,29 @@ def runLocal(rdfModule, fileList, args):
     if args.nevents > 0:
       nevents_local = args.nevents
     print ("----> nevents original={}  local={}".format(nevents_meta,nevents_local))
-    outFile = getElement(rdfModule,"outputDir")
-    if outFile!="" and outFile[-1]!="/": outFile+="/"
 
-    if args.batch == False:
-        outFile+=args.output
-    else:
-        outFile=args.output
+    # run RDF
     start_time = time.time()
-    #run RDF
+    outFile = os.path.join(outputDir, args.output)
     runRDF(rdfModule, fileListRoot, outFile, nevents_local, args)
 
+    # pass-down the initial nevents
     outf = ROOT.TFile( outFile, "update" )
     outt = outf.Get("events")
     outn = outt.GetEntries()
     n = array( "i", [ 0 ] )
-    n[0]=nevents_local
-    if nevents_meta>nevents_local:n[0]=nevents_meta
+    n[0] = nevents_local
+    if nevents_meta > nevents_local: n[0] = nevents_meta
     p = ROOT.TParameter(int)( "eventsProcessed", n[0])
     p.Write()
-
-#    if args.test:
-#        outf2 = ROOT.TFile(fileListRoot[0])
-#        outt2_1 = outf2.Get("metadata")
-#        outt2_2 = outf2.Get("run_metadata")
-#        outt2_3 = outf2.Get("evt_metadata")
-#        outt2_4 = outf2.Get("col_metadata")
-#        outf.cd()
-#        outt2_1.Write()
-#        outt2_2.Write()
-#        outt2_3.Write()
-#        outt2_4.Write()
-
     outf.Write()
     outf.Close()
 
+    # print benchmarks
     elapsed_time = time.time() - start_time
+    print  ()
     print  ("==============================SUMMARY==============================")
+    print  ("Output file              :  ",outFile)
     print  ("Elapsed time (H:M:S)     :  ",time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
     print  ("Events Processed/Second  :  ",int(nevents_local/elapsed_time))
     print  ("Total Events Processed   :  ",int(nevents_local))
@@ -335,12 +278,11 @@ def runLocal(rdfModule, fileList, args):
     print  (" ")
     print  (" ")
 
+    # save the benchmarks
     if args.bench:
-        import json
-
         analysis_name = getElement(rdfModule, 'analysisName')
         if not analysis_name:
-            analysis_name = args.pathToAnalysisScript
+            analysis_name = expand_absolute_directory(args.pathToAnalysisScript)
 
         bench_time = {}
         bench_time['name'] = 'Time spent running the analysis: '
@@ -348,7 +290,7 @@ def runLocal(rdfModule, fileList, args):
         bench_time['unit'] = 'Seconds'
         bench_time['value'] = elapsed_time
         bench_time['range'] = 10
-        bench_time['extra'] = 'Analysis path: ' + args.pathToAnalysisScript
+        bench_time['extra'] = 'Analysis path: ' + expand_absolute_directory(args.pathToAnalysisScript)
         saveBenchmark('benchmarks_smaller_better.json', bench_time)
 
         bench_evt_per_sec = {}
@@ -357,52 +299,38 @@ def runLocal(rdfModule, fileList, args):
         bench_evt_per_sec['unit'] = 'Evt/s'
         bench_evt_per_sec['value'] = nevents_local / elapsed_time
         bench_time['range'] = 1000
-        bench_time['extra'] = 'Analysis path: ' + args.pathToAnalysisScript
+        bench_time['extra'] = 'Analysis path: ' + expand_absolute_directory(args.pathToAnalysisScript)
         saveBenchmark('benchmarks_bigger_better.json', bench_evt_per_sec)
 
 
 #__________________________________________________________
-def runStages(args, rdfModule, preprocess, analysisFile):
-    analysesList = getElement(rdfModule, "analysesList")
-    if analysesList and len(analysesList) > 0:
-        _ana = []
-        for analysis in analysesList:
-            print(f'----> Load cxx analyzers from {analysis}...')
-            if analysis.startswith('libFCCAnalysis_'):
-                ROOT.gSystem.Load(analysis)
-            else:
-                ROOT.gSystem.Load(f'libFCCAnalysis_{analysis}')
-            if not hasattr(ROOT, analysis):
-                print(f'----> ERROR: analysis "{analysis}" not properly loaded. Exit')
-                sys.exit(4)
-            _ana.append(getattr(ROOT, analysis).dictionary)
-
+def runStages(rdfModule, args):
+    '''
+    Load and run the analysis script for pre-processing stages.
+    New branches to be used for later usage are defined in this step.
+    Filtering and histogramming are the tasks done in runFinal.
+    There are two sources of input list of files (mutual exclusive):
+    1) specified in command line option '--files'
+    2) generated from the analysis script parameter 'processList'
+    '''
     #check if outputDir exist and if not create it
-    outputDir = getElement(rdfModule,"outputDir")
-    if not os.path.exists(outputDir) and outputDir!='':
-        os.system("mkdir -p {}".format(outputDir))
+    outputDir = get_io_directory(getElement(rdfModule,"outputDir"))
 
-    #check if outputDir exist and if not create it
-    outputDirEos = getElement(rdfModule,"outputDirEos")
-    if not os.path.exists(outputDirEos) and outputDirEos!='':
-        os.system("mkdir -p {}".format(outputDirEos))
+    print("----> Info: Output top-level path:")
+    print(f"      {outputDir}")
+    print  ("===================================================================")
 
-    #check if files are specified, and if so run the analysis on it/them (this will exit after)
+    # option 1: files are specified in command line, then run rdf directly
     if len(args.files)>0:
-        print("----> Running with user defined list of files (either locally or from batch)")
-        path, filename = os.path.split(args.output)
-        if path!='': os.system("mkdir -p {}".format(path))
-        runLocal(rdfModule, args.files, args)
+        print("----> Running with user defined list of files")
+        runLocal(rdfModule, args.files, outputDir, args)
         sys.exit(0)
 
-    #check if batch mode and set start and end file from original list
-    runBatch = getElement(rdfModule,"runBatch")
-
-    #check if the process list is specified
+    # option 2: files specified as process list
     processList = getElement(rdfModule,"processList")
 
     for process in processList:
-        fileList, eventList = getProcessInfo(process, getElement(rdfModule, "inputDir"))
+        fileList, eventList = getProcessInfoFiles(process, getElement(rdfModule, "inputDir"))
         if len(fileList)==0:
             print('----> ERROR: No files to process. Exit')
             sys.exit(3)
@@ -420,99 +348,73 @@ def runStages(args, rdfModule, preprocess, analysisFile):
         except TypeError:
             print ('----> no values set for process {} will use default values'.format(process))
 
-        print ('----> Running process {} with fraction={}, output={}, chunks={}'.format(process, fraction, output, chunks))
+        print ('\n----> Running process {} with fraction={}, output={}, chunks={}'.format(process, fraction, output, chunks))
 
-        if fraction<1:fileList = getsubfileList(fileList, eventList, fraction)
+        if fraction < 1: fileList = getsubfileList(fileList, eventList, fraction)
         chunkList=[fileList]
-        if chunks>1: chunkList = getchunkList(fileList, chunks)
+        if chunks > 1: chunkList = getchunkList(fileList, chunks)
 
         #create dir if more than 1 chunk
-        if chunks>1:
-            outputdir=outputDir+"/"+output
-
-            if not os.path.exists(outputdir) and outputDir!='':
-                os.system("mkdir -p {}".format(outputdir))
+        if chunks > 1:
+            outputdir = os.path.join(outputDir, output)
+            if not os.path.exists(outputdir):
+                os.makedirs(outputdir)
 
         for ch in range(len(chunkList)):
             outputchunk=''
-            if len(chunkList)>1: outputchunk="/{}/chunk{}.root".format(output,ch)
-            else:                outputchunk="{}.root".format(output)
-            #run locally
-            if runBatch == False:
-                print ('----> Running Locally')
-                args.output = outputchunk
-                runLocal(rdfModule, chunkList[ch], args)
+            if len(chunkList) > 1: outputchunk = "{}/chunk{}.root".format(output,ch)
+            else:                outputchunk = "{}.root".format(output)
+            args.output = outputchunk
+            runLocal(rdfModule, chunkList[ch], outputDir, args)
 
 #__________________________________________________________
 def runFinal(rdfModule):
-
-    procFile = getElement(rdfModule,"procDict", True)
-    procDict = None
-    if 'https://fcc-physics-events.web.cern.ch' in procFile:
-        print ('----> getting process dictionary from the web')
-        import urllib.request
-        req = urllib.request.urlopen(procFile).read()
-        procDict = json.loads(req.decode('utf-8'))
-
-    else:
-        procFile = os.path.join(os.getenv('FCCDICTSDIR', deffccdicts), '') + procFile
-        if not os.path.isfile(procFile):
-            print ('----> No procDict found: ==={}===, exit'.format(procFile))
-            sys.exit(3)
-        with open(procFile, 'r') as f:
-            procDict=json.load(f)
-
-
-    procDictAdd = getElement(rdfModule,"procDictAdd", True)
-    for procAdd in procDictAdd:
-        if getElementDict(procDict, procAdd) == None:
-            procDict[procAdd] = procDictAdd[procAdd]
-
+    '''
+    Run the analysis script for simple defining, filtering and histogramming.
+    Generate an output root file for every cut specification of each input process.
+    The output file contains the specified histograms and optionally the filtered tree.
+    '''
     ROOT.ROOT.EnableImplicitMT(getElement(rdfModule,"nCPUS", True))
 
-    nevents_real=0
+    #
     start_time = time.time()
-
+    nevents_real=0
     processEvents={}
     eventsTTree={}
     processList={}
     saveTab=[]
     efficiencyList=[]
 
-    inputDir = getElement(rdfModule,"inputDir", True)
-    if inputDir!="":
-        if inputDir[-1]!="/":inputDir+="/"
+    # init directories
+    inputDir = get_io_directory(getElement(rdfModule,"inputDir", False))
+    outputDir = get_io_directory(getElement(rdfModule,"outputDir"))
 
-    outputDir = getElement(rdfModule,"outputDir", True)
-    if outputDir!="":
-        if outputDir[-1]!="/":outputDir+="/"
-
-    if not os.path.exists(outputDir) and outputDir!='':
-        os.system("mkdir -p {}".format(outputDir))
-
+    # init list of cuts
     cutList = getElement(rdfModule,"cutList", True)
     length_cuts_names = max([len(cut) for cut in cutList])
     cutLabels = getElement(rdfModule,"cutLabels", True)
 
-    # save a table in a separate tex file
+    # init a table in a separate tex file
     saveTabular = getElement(rdfModule,"saveTabular", True)
     if saveTabular:
-        # option to rewrite the cuts in a better way for the table. otherwise, take them from the cutList
+        # option to rewrite the cuts in a better way for the table
         if cutLabels:
             cutNames = list(cutLabels.values())
         else:
             cutNames = [cut for cut in cutList]
-
+        # 
         cutNames.insert(0,' ')
         saveTab.append(cutNames)
         efficiencyList.append(cutNames)
 
-    for pr in getElement(rdfModule,"processList", True):
+    # init file list and nevents of each process
+    for pr in getElement(rdfModule,"processList"):
         processEvents[pr]=0
         eventsTTree[pr]=0
-
         fileListRoot = ROOT.vector('string')()
-        fin  = inputDir+pr+'.root' #input file
+
+        # check if it's file
+        fin  = f'{inputDir}/{pr}.root'
         if not os.path.isfile(fin):
             print ('----> file ',fin,'  does not exist. Try if it is a directory as it was processed with batch')
         else:
@@ -528,14 +430,15 @@ def runFinal(rdfModule):
             if not found:
                 processEvents[pr]=1
             tt=tfin.Get("events")
-            eventsTTree[pr]+=tt.GetEntries()
-
+            eventsTTree[pr]=tt.GetEntries()
             tfin.Close()
             fileListRoot.push_back(fin)
 
-        if os.path.isdir(inputDir+pr):
+        # check if it's directory
+        fin  = f'{inputDir}/{pr}'
+        if os.path.isdir(fin):
             print ('----> open directory ',fin)
-            flist=glob.glob(inputDir+pr+"/chunk*.root")
+            flist=glob.glob(f'{fin}/chunk*.root')
             for f in flist:
                 tfin = ROOT.TFile.Open(f)
                 print ('  ----> ',f)
@@ -548,29 +451,34 @@ def runFinal(rdfModule):
                         found=True
                 if not found:
                     processEvents[pr]=1
-
                 tt=tfin.Get("events")
                 eventsTTree[pr]+=tt.GetEntries()
                 tfin.Close()
                 fileListRoot.push_back(f)
+
+        # append
         processList[pr]=fileListRoot
 
     print('processed events ',processEvents)
     print('events in ttree  ',eventsTTree)
 
+    # run the rdf for each process and each cut
     histoList = getElement(rdfModule,"histoList", True)
-    doTree = getElement(rdfModule,"doTree", True)
-    for pr in getElement(rdfModule,"processList", True):
-        print ('\n---->  Running over process : ',pr)
+    saveCutTree = getElement(rdfModule,"saveCutTree", True)
 
+    for pr in getElement(rdfModule,"processList"):
+        print ('\n---->  Running over process : ',pr)
         RDF = ROOT.ROOT.RDataFrame
         df  = RDF("events", processList[pr])
+
+        # Define some new columns
         defineList = getElement(rdfModule,"defineList", True)
         if len(defineList)>0:
             print ('----> Running extra Define')
             for define in defineList:
                 df=df.Define(define, defineList[define])
 
+        # Create all histos, snapshots, etc...
         fout_list = []
         histos_list = []
         tdf_list = []
@@ -580,21 +488,17 @@ def runFinal(rdfModule):
         eff_list=[]
         eff_list.append(pr)
 
-        # Define all histos, snapshots, etc...
-        print ('----> Defining snapshots and histograms')
+        print ('----> Defining snapshots and histograms for each cut')
         for cut in cutList:
-            fout = outputDir+pr+'_'+cut+'.root' #output file for tree
-            fout_list.append(fout)
-
             df_cut = df.Filter(cutList[cut])
             count_list.append(df_cut.Count())
 
+            # define the histos
             histos = []
-
             for v in histoList:
-                if "name" in histoList[v]: # default 1D histogram
+                if "variable" in histoList[v]: # default 1D histogram
                     model = ROOT.RDF.TH1DModel(v, ";{};".format(histoList[v]["title"]), histoList[v]["bin"], histoList[v]["xmin"], histoList[v]["xmax"])
-                    histos.append(df_cut.Histo1D(model,histoList[v]["name"]))
+                    histos.append(df_cut.Histo1D(model,histoList[v]["variable"]))
                 elif "cols" in histoList[v]: # multi dim histogram (1, 2 or 3D)
                     cols = histoList[v]['cols']
                     bins = histoList[v]['bins']
@@ -616,7 +520,11 @@ def runFinal(rdfModule):
                     sys.exit(3)
             histos_list.append(histos)
 
-            if doTree:
+            # save the filtered input tree
+            fout = f'{outputDir}/{pr}_{cut}.root'
+            fout_list.append(fout)
+
+            if saveCutTree:
                 opts = ROOT.RDF.RSnapshotOptions()
                 opts.fLazy = True
                 snapshot_tdf = df_cut.Snapshot("events", fout, "", opts)
@@ -631,14 +539,19 @@ def runFinal(rdfModule):
         nevents_real += all_events
         uncertainty = ROOT.Math.sqrt(all_events)
 
-        if doScale:
-            all_events = all_events*1.*procDict[pr]["crossSection"]*procDict[pr]["kfactor"]*procDict[pr]["matchingEfficiency"]*intLumi/processEvents[pr]
-            uncertainty = ROOT.Math.sqrt(all_events)*procDict[pr]["crossSection"]*procDict[pr]["kfactor"]*procDict[pr]["matchingEfficiency"]*intLumi/processEvents[pr]
-            print('  Printing scaled number of events!!! ')
-
         print ('----> Cutflow')
         print ('       {cutname:{width}} : {nevents}'.format(cutname='All events', width=16+length_cuts_names, nevents=all_events))
 
+        # Write the histos into output root file
+        print ('----> Saving outputs')
+        for i, cut in enumerate(cutList):
+            fhisto = f'{outputDir}/{pr}_{cut}_histo.root'
+            tf    = ROOT.TFile.Open(fhisto,'RECREATE')
+            for h in histos_list[i]:
+                h.Write()
+            tf.Close()
+
+        # append to tex tabular
         if saveTabular:
             cuts_list.append('{nevents:.2e} $\\pm$ {uncertainty:.2e}'.format(nevents=all_events,uncertainty=uncertainty)) # scientific notation - recomended for backgrounds
             # cuts_list.append('{nevents:.3f} $\\pm$ {uncertainty:.3f}'.format(nevents=all_events,uncertainty=uncertainty)) # float notation - recomended for signals with few events
@@ -648,10 +561,6 @@ def runFinal(rdfModule):
             neventsThisCut = count_list[i].GetValue()
             neventsThisCut_raw = neventsThisCut
             uncertainty = ROOT.Math.sqrt(neventsThisCut_raw)
-            if doScale:
-                neventsThisCut = neventsThisCut*1.*procDict[pr]["crossSection"]*procDict[pr]["kfactor"]*procDict[pr]["matchingEfficiency"]*intLumi/processEvents[pr]
-                uncertainty = ROOT.Math.sqrt(neventsThisCut_raw)*procDict[pr]["crossSection"]*procDict[pr]["kfactor"]*procDict[pr]["matchingEfficiency"]*intLumi/processEvents[pr]
-            print ('       After selection {cutname:{width}} : {nevents}'.format(cutname=cut, width=length_cuts_names, nevents=neventsThisCut))
 
             # Saving the number of events, uncertainty and efficiency for the output-file
             if saveTabular and cut != 'selNone':
@@ -669,31 +578,13 @@ def runFinal(rdfModule):
                     cuts_list.append(cuts_list[-1])
                     eff_list.append('0.')
 
-        # And save everything
-        print ('----> Saving outputs')
-        for i, cut in enumerate(cutList):
-            fhisto = outputDir+pr+'_'+cut+'_histo.root' #output file for histograms
-            tf    = ROOT.TFile.Open(fhisto,'RECREATE')
-            for h in histos_list[i]:
-                try :
-                    h.Scale(1.*procDict[pr]["crossSection"]*procDict[pr]["kfactor"]*procDict[pr]["matchingEfficiency"]/processEvents[pr])
-                except KeyError:
-                    print ('----> No value defined for process {} in dictionary'.format(pr))
-                    if h.Integral(0,-1)>0:h.Scale(1./h.Integral(0,-1))
-                h.Write()
-            tf.Close()
-
-            if doTree:
-                # test that the snapshot worked well
-                validfile = testfile(fout_list[i])
-                if not validfile: continue
-
         if saveTabular and cut != 'selNone':
             saveTab.append(cuts_list)
             efficiencyList.append(eff_list)
 
+    # save the statistic into tex tabular
     if saveTabular:
-        f = open(outputDir+"outputTabular.txt","w")
+        f = open(f'{outputDir}/outputTabular.txt','w')
         # Printing the number of events in format of a LaTeX table
         print('\\begin{table}[H] \n    \\centering \n    \\resizebox{\\textwidth}{!}{ \n    \\begin{tabular}{|l||',end='',file=f)
         print('c|' * (len(cuts_list)-1),end='',file=f)
@@ -728,37 +619,58 @@ def runFinal(rdfModule):
     print  ('Total Events Processed   :  ',nevents_real)
     print  ('===================================================================')
 
+#__________________________________________________________
+def runPlots(param):
+    from .ana_plot import ana_plot
+    ana_plot(param)
 
 #__________________________________________________________
-def runPlots(analysisFile):
-    import mgana.ana_plot as apl
-    apl.run(analysisFile)
+def setup_run_parser(parser):
+    publicOptions = parser.add_argument_group('User options')
+    publicOptions.add_argument("pathToAnalysisScript", help="path to analysis script")
+    publicOptions.add_argument("--loglevel", help="Specify the RDataFrame ELogLevel", type=str, default="kUnset", choices = ['kUnset','kFatal','kError','kWarning','kInfo','kDebug'])
+    publicOptions.add_argument("--files", help="Specify input file to bypass the processList", default=[], nargs='+')
+    publicOptions.add_argument("--output", help="Specify output file name to bypass the processList and or outputList, default output.root", type=str, default="output.root")
+    publicOptions.add_argument("--nevents", help="Specify max number of events to process", type=int, default=-1)
+    publicOptions.add_argument('--bench', action='store_true', help='Output benchmark results to a JSON file')
+    publicOptions.add_argument("--ncpus", help="Set number of threads", type=int)
+    #publicOptions.add_argument("--final", action='store_true', help="Run final analysis (produces final histograms and trees)")
+    #publicOptions.add_argument("--plots", action='store_true', help="Run analysis plots")
+
+def setup_run_parser_final(parser):
+    publicOptions = parser.add_argument_group('User final options')
+    publicOptions.add_argument("pathToAnalysisScript", help="path to analysis_final script")
+    publicOptions.add_argument("--loglevel", help="Specify the RDataFrame ELogLevel", type=str, default="kUnset", choices = ['kUnset','kFatal','kError','kWarning','kInfo','kDebug'])
+
+def setup_run_parser_plots(parser):
+    publicOptions = parser.add_argument_group('User plots options')
+    publicOptions.add_argument("pathToAnalysisScript", help="path to analysis_plots script")
 
 #__________________________________________________________
-def run(mainparser):
+def run_analysis(mainparser):
     """
     Set things in motion.
     """
     args, _ = mainparser.parse_known_args()
     analysisFile = args.pathToAnalysisScript
     if not os.path.isfile(analysisFile):
-        print("Script ", analysisFile, " does not exist")
-        print("specify a valid analysis script in the command line arguments")
+        rootLogger.error(f'Script {analysisFile} not exist')
         sys.exit(3)
 
-    print ("----> Info: Loading analyzers from libMegatAnalysis... ",)
+    #
+    print ("----> Info: Loading MegatAnalyzer Runtime... ",)
     ROOT.gSystem.Load("libMegatAnalysis")
     ROOT.gErrorIgnoreLevel = ROOT.kFatal
     # force auto-loading [todo: ugly as a hack]
     ROOT.LoadMegat()
 
-    #set the RDF ELogLevel
+    # set the RDF ELogLevel
     try:
-        verbosity = ROOT.Experimental.RLogScopedVerbosity(ROOT.Detail.RDF.RDFLogChannel(), getattr(ROOT.Experimental.ELogLevel,args.loglevel))
+        ROOT.Experimental.RLogScopedVerbosity(ROOT.Detail.RDF.RDFLogChannel(), getattr(ROOT.Experimental.ELogLevel,args.loglevel))
     except AttributeError:
         pass
 
-    #load the analysis
+    # load the analysis script
     analysisFile = os.path.abspath(analysisFile)
     print('----> Info: Loading analysis file:')
     print('      ' + analysisFile)
@@ -767,10 +679,52 @@ def run(mainparser):
     rdfModule = importlib.util.module_from_spec(rdfSpec)
     rdfSpec.loader.exec_module(rdfModule)
 
+    # load current pkg and dependency pkgs
+    libPath = mgana_lib_path()
+    analysesList = getElement(rdfModule, "analysesList")
+    if analysesList and len(analysesList) > 0:
+        _ana = []
+        for analysis in analysesList:
+            print(f'----> Info: Loading analyzer package {analysis}...')
+            if analysis.startswith('libMegatAnalyzer_'):
+                ROOT.gSystem.Load(os.path.join(libPath, analysis))
+            else:
+                ROOT.gSystem.Load(os.path.join(libPath, f'libMegatAnalyzer_{analysis}'))
+            if not hasattr(ROOT, analysis):
+                rootLogger.error(f'----> ERROR: analysis "{analysis}" not properly loaded. Exit')
+                sys.exit(4)
+            # todo: ugly hack to auto-load dictionary
+            _ana.append(getattr(ROOT, analysis).dictionary)
+
+    # for convenience
+    ROOT.gInterpreter.Declare("using namespace megat;")
+    ROOT.gInterpreter.Declare("using namespace ROOT;")
+    ROOT.gInterpreter.Declare("using namespace ROOT::VecOps;")
+
+    # load geometry (the 'default' one)
+    geometryFile = getElement(rdfModule, "geometryFile")
+    geomFileList = ROOT.vector('string')()
+    if geometryFile:
+        for geofile in geometryFile:
+            realfile = geofile if is_absolute_path(geofile) else os.path.join(megat_geometry_path(), geofile)
+            geomFileList.push_back(realfile)
+        # load default geometry, with default readout specification
+        megat.loadGeometry(geomFileList)
+
+    # load extra geometry for each separate readout specification of TPC
+    readoutName  = getElement(rdfModule, "readoutName")
+    readoutList = ROOT.vector('string')()
+    if readoutName:
+        for ro in readoutName:
+            # readout name is the tag of this geometry
+            megat.loadGeometry(geomFileList, ro, ro, "TPC")
+            readoutList.push_back(ro)
+
+    # execute specific command
     if hasattr(args, 'command'):
         if args.command == "run":
             try:
-                runStages(args, rdfModule, args.preprocess, analysisFile)
+                runStages(rdfModule, args)
             except Exception as excp:
                 print('----> Error: During the execution of the stage file:')
                 print('      ' + analysisFile)
@@ -784,9 +738,9 @@ def run(mainparser):
                 print('      ' + analysisFile)
                 print('      exception occurred:')
                 print(excp)
-        elif args.command == "plots":
+        elif args.command == "plot":
             try:
-                runPlots(analysisFile)
+                runPlots(rdfModule)
             except Exception as excp:
                 print('----> Error: During the execution of the plots file:')
                 print('      ' + analysisFile)

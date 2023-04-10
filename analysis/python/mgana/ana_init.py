@@ -74,8 +74,12 @@ def setup_analysis(package: str,
             f.write(replace_all(open(f'{tmpl_dir}/Package.cc', 'r').read(), replacement_dict))
         with open(f'{path}/include/{name}.h', 'w') as f:
             f.write(replace_all(open(f'{tmpl_dir}/Package.h', 'r').read(), replacement_dict))
-        with open(get_absolute_directory(f'{script_dir}/analysis_cfg.py', path), 'w') as f:
-            f.write(replace_all(open(f'{tmpl_dir}/analysis_cfg.py', 'r').read(), replacement_dict))
+        with open(get_absolute_directory(f'{script_dir}/analysis_stage1.py', path), 'w') as f:
+            f.write(replace_all(open(f'{tmpl_dir}/analysis_stage1.py', 'r').read(), replacement_dict))
+        with open(get_absolute_directory(f'{script_dir}/analysis_final.py', path), 'w') as f:
+            f.write(replace_all(open(f'{tmpl_dir}/analysis_final.py', 'r').read(), replacement_dict))
+        with open(get_absolute_directory(f'{script_dir}/analysis_plot.py', path), 'w') as f:
+            f.write(replace_all(open(f'{tmpl_dir}/analysis_plot.py', 'r').read(), replacement_dict))
         with open(f'{path}/CMakeLists.txt', 'w') as f:
             f.write(replace_all(open(f'{tmpl_dir}/CMakeLists.txt', 'r').read(), replacement_dict))
         with open(f'{path}/.mgana/env.json', 'w') as f:

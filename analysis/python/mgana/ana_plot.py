@@ -1,11 +1,11 @@
-#!/usr/bin/env python
 import sys, os
-import os.path
 import ntpath
 import importlib
 import ROOT
 import copy
 import re
+
+from .utility import get_io_directory
 
 #__________________________________________________________
 def removekey(d, key):
@@ -18,31 +18,30 @@ def sortedDictValues(dic):
     return [dic[key] for key in keys]
 
 #__________________________________________________________
-def mapHistos(var, label, sel, param):
-    print ('run plots for var:{}     label:{}     selection:{}'.format(var,label,sel))
+def mapHistos(var,   # histogram name
+              label, # label string (key of 'plots')
+              sel,   # selection tag string
+              param  # param python script
+              ):
+    print (f'run plots for var:{var}     label:{label}     selection:{sel}')
     signal=param.plots[label]['signal']
     backgrounds=param.plots[label]['backgrounds']
 
+    # get input directory
+    inputDir = get_io_directory(param.inputDir, False)
+
+    # get signal hists
     hsignal = {}
     for s in signal:
         hsignal[s]=[]
         for f in signal[s]:
-            fin=param.inputDir+f+'_'+sel+'_histo.root'
+            fin=f'{inputDir}/{f}_{sel}_histo.root'
             if not os.path.isfile(fin):
-                print ('file {} does not exist, skip'.format(fin))
+                print (f'War: {fin} does not exist, skip')
             else:
                 tf=ROOT.TFile(fin)
                 h=tf.Get(var)
                 hh = copy.deepcopy(h)
-                scaleSig=1.
-                try:
-                    scaleSig=param.scaleSig
-                except AttributeError:
-                    print ('no scale signal, using 1')
-                    param.scaleSig=scaleSig
-                print ('scaleSig ',scaleSig)
-                hh.Scale(param.intLumi*scaleSig)
-
                 if len(hsignal[s])==0:
                     hsignal[s].append(hh)
                 else:
@@ -50,6 +49,7 @@ def mapHistos(var, label, sel, param):
                     hsignal[s][0]=hh
 
 
+    # get bkg hists
     hbackgrounds = {}
     for b in backgrounds:
         hbackgrounds[b]=[]
@@ -61,7 +61,6 @@ def mapHistos(var, label, sel, param):
                 tf=ROOT.TFile(fin)
                 h=tf.Get(var)
                 hh = copy.deepcopy(h)
-                hh.Scale(param.intLumi)
                 if len(hbackgrounds[b])==0:
                     hbackgrounds[b].append(hh)
                 else:
@@ -79,9 +78,14 @@ def mapHistos(var, label, sel, param):
     return hsignal,hbackgrounds
 
 #__________________________________________________________
-def runPlots(var,sel,param,hsignal,hbackgrounds,extralab,splitLeg):
-
-    ###Below are settings for separate signal and background legends
+def runPlots(var,
+             sel, # list sel tags
+             param, # param config file
+             hsignal, # map of signal histograms
+             hbackgrounds, # map of bkg histograms
+             extralab,
+             splitLeg: bool):
+    #Below are settings for separate signal and background legends
     if(splitLeg):
         legsize = 0.04*(len(hsignal))
         legsize2 = 0.04*(len(hbackgrounds))
@@ -119,13 +123,7 @@ def runPlots(var,sel,param,hsignal,hbackgrounds,extralab,splitLeg):
     for s in hsignal:
         leg.AddEntry(hsignal[s][0],param.legend[s],"l")
 
-
-    yields={}
-    for s in hsignal:
-        yields[s]=[param.legend[s],hsignal[s][0].Integral(0,-1), hsignal[s][0].GetEntries()]
-    for b in hbackgrounds:
-        yields[b]=[param.legend[b],hbackgrounds[b][0].Integral(0,-1), hbackgrounds[b][0].GetEntries()]
-
+    # get list of hists
     histos=[]
     colors=[]
 
@@ -140,15 +138,9 @@ def runPlots(var,sel,param,hsignal,hbackgrounds,extralab,splitLeg):
         histos.append(hbackgrounds[b][0])
         colors.append(param.colors[b])
 
-    intLumiab = param.intLumi/1e+06
-
-
-    lt = "FCCAnalyses: FCC-hh Simulation (Delphes)"
-    rt = "#sqrt{{s}} = {:.1f} TeV,   L = {:.0f} ab^{{-1}}".format(param.energy,intLumiab)
-
-    if 'ee' in param.collider:
-        lt = "FCCAnalyses: FCC-ee Simulation (Delphes)"
-        rt = "#sqrt{{s}} = {:.1f} GeV,   L = {:.0f} ab^{{-1}}".format(param.energy,intLumiab)
+    # get plot label
+    lt = "Megat: Simulation"
+    rt = "#sqrt{{s}} = {:.1f} TeV".format(param.energy)
 
     customLabel=""
     try:
@@ -156,39 +148,35 @@ def runPlots(var,sel,param,hsignal,hbackgrounds,extralab,splitLeg):
     except AttributeError:
         print ('no customLable, using nothing...')
 
-    scaleSig=1.
-    try:
-        scaleSig=param.scaleSig
-    except AttributeError:
-        print ('no scale signal, using 1')
-        param.scaleSig=scaleSig
-
-    if 'AAAyields' in var:
-        drawStack(var, 'events', leg, lt, rt, param.formats, param.outdir+"/"+sel, False , True , histos, colors, param.ana_tex, extralab, scaleSig, customLabel, nsig, nbkg, leg2, yields)
-        return
-
+    # draw the plots, available combinations: [stack, nostack] + [lin, log]
     if 'stack' in param.stacksig:
         if 'lin' in param.yaxis:
-            drawStack(var+"_stack_lin", 'events', leg, lt, rt, param.formats, param.outdir+"/"+sel, False , True , histos, colors, param.ana_tex, extralab, scaleSig, customLabel, nsig, nbkg, leg2, yields)
+            drawStack(var+"_stack_lin", 'events', leg, lt, rt, param.formats, param.outputDir+"/"+sel, False , True , histos, colors, param.ana_tex, extralab, customLabel, nsig, nbkg, leg2)
         if 'log' in param.yaxis:
-            drawStack(var+"_stack_log", 'events', leg, lt, rt, param.formats, param.outdir+"/"+sel, True , True , histos, colors, param.ana_tex, extralab, scaleSig, customLabel, nsig, nbkg, leg2, yields)
+            drawStack(var+"_stack_log", 'events', leg, lt, rt, param.formats, param.outputDir+"/"+sel, True , True , histos, colors, param.ana_tex, extralab, customLabel, nsig, nbkg, leg2)
         if 'lin' not in param.yaxis and 'log' not in param.yaxis:
             print ('unrecognised option in formats, should be [\'lin\',\'log\']'.format(param.formats))
 
     if 'nostack' in param.stacksig:
         if 'lin' in param.yaxis:
-            drawStack(var+"_nostack_lin", 'events', leg, lt, rt, param.formats, param.outdir+"/"+sel, False , False , histos, colors, param.ana_tex, extralab, scaleSig, customLabel, nsig, nbkg, leg2, yields)
+            drawStack(var+"_nostack_lin", 'events', leg, lt, rt, param.formats, param.outputDir+"/"+sel, False , False , histos, colors, param.ana_tex, extralab, customLabel, nsig, nbkg, leg2)
         if 'log' in param.yaxis:
-            drawStack(var+"_nostack_log", 'events', leg, lt, rt, param.formats, param.outdir+"/"+sel, True , False , histos, colors, param.ana_tex, extralab, scaleSig, customLabel, nsig, nbkg, leg2, yields)
+            drawStack(var+"_nostack_log", 'events', leg, lt, rt, param.formats, param.outputDir+"/"+sel, True , False , histos, colors, param.ana_tex, extralab, customLabel, nsig, nbkg, leg2)
         if 'lin' not in param.yaxis and 'log' not in param.yaxis:
             print ('unrecognised option in formats, should be [\'lin\',\'log\']'.format(param.formats))
+
     if 'stack' not in param.stacksig and 'nostack' not in param.stacksig:
         print ('unrecognised option in stacksig, should be [\'stack\',\'nostack\']'.format(param.formats))
 
 
-#_____________________________________________________________________________________________________________
-def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, logY, stacksig, histos, colors, ana_tex, extralab, scaleSig, customLabel, nsig, nbkg, legend2=None, yields=None):
-
+#___________________________________________________________________________________________
+def drawStack(name, ylabel, legend, leftText, rightText,
+              formats, directory,
+              logY, stacksig, histos,
+              colors, ana_tex, extralab, customLabel,
+              nsig, nbkg,
+              legend2=None):
+    # canvas
     canvas = ROOT.TCanvas(name, name, 600, 600)
     canvas.SetLogy(logY)
     canvas.SetTicks(1,1)
@@ -212,14 +200,11 @@ def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, log
         else:
             ylabel+=' / {:.2f} {}'.format(bwidth, unit)
 
+    # get y-axis max
     for h in iterh:
       sumhistos.Add(h)
-
     maxh = sumhistos.GetMaximum()
     minh = sumhistos.GetMinimum()
-
-    if logY:
-       canvas.SetLogy(1)
 
     # define stacked histo
     hStack    = ROOT.THStack("hstack","")
@@ -228,24 +213,12 @@ def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, log
 
     # first plot backgrounds
     if(nbkg>0):
-        histos[nsig].SetLineWidth(0)
-        histos[nsig].SetLineColor(ROOT.kBlack)
-        histos[nsig].SetFillColor(colors[nsig])
-
-        #put histograms in a dictionary according to their yields
-        if histos[nsig].Integral()>0:
-            BgMCHistYieldsDic[histos[nsig].Integral()] = histos[nsig]
-        # for empty histograms, put them as having negative yields (so multiple ones don't overwrite each other in the dictionary)
-        else:
-            BgMCHistYieldsDic[-1*nbkg] = histos[nsig]
-
-        # now loop over other background (skipping first)
+        # get the yield for each background 
         iterh = iter(histos)
         for i in range(nsig):
             next(iterh)
-        next(iterh)
 
-        k = nsig+1
+        k = nsig
         for h in iterh:
             h.SetLineWidth(0)
             h.SetLineColor(ROOT.kBlack)
@@ -262,6 +235,7 @@ def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, log
             hStack.Add(h)
             hStackBkg.Add(h)
 
+        # draw bkgs directly if signals are not stacked
         if not stacksig:
             hStack.Draw("hist")
 
@@ -277,13 +251,15 @@ def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, log
       else:
         hStackSig.Add(histos[l])
 
+    # draw sig+bkg stacks
     if stacksig:
         hStack.Draw("hist")
-
-    xlabel = histos[0].GetXaxis().GetTitle()
-
-    if (not stacksig) and nbkg==0:
+    elif nbkg == 0:
         hStackSig.Draw("hist nostack")
+
+    # set axis labels
+    xlabel = histos[0].GetXaxis().GetTitle()
+    if (not stacksig) and nbkg==0:
         hStackSig.GetXaxis().SetTitle(xlabel)
         hStackSig.GetYaxis().SetTitle(ylabel)
 
@@ -296,6 +272,7 @@ def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, log
         hStack.GetYaxis().SetTitleOffset(1.95)
         hStack.GetXaxis().SetTitleOffset(1.40)
 
+    # set y-axis range
     lowY=0.
     if logY:
         highY=200.*maxh/ROOT.gPad.GetUymax()
@@ -319,44 +296,11 @@ def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, log
             hStack.SetMaximum(1.3*maxh)
             hStack.SetMinimum(0.)
 
-    if(nbkg>0):
-        escape_scale_Xaxis=True
-        hStacklast = hStack.GetStack().Last()
-        lowX_is0=True
-        lowX=hStacklast.GetBinCenter(1)-(hStacklast.GetBinWidth(1)/2.)
-        highX_ismax=False
-        highX=hStacklast.GetBinCenter(hStacklast.GetNbinsX())+(hStacklast.GetBinWidth(1)/2.)
+    # todo: why here? last stack draw
+    if not stacksig and nbkg:
+        hStackSig.Draw("same hist nostack")
 
-        if escape_scale_Xaxis==False:
-            for i_bin in range( 1, hStacklast.GetNbinsX()+1 ):
-                bkg_val=hStacklast.GetBinContent(i_bin)
-                sig_val=histos[0].GetBinContent(i_bin)
-                if bkg_val/maxh>0.1 and i_bin<15 and lowX_is0==True :
-                    lowX_is0=False
-                    lowX=hStacklast.GetBinCenter(i_bin)-(hStacklast.GetBinWidth(i_bin)/2.)
-
-            val_to_compare=bkg_val
-            if sig_val>bkg_val : val_to_compare=sig_val
-            if val_to_compare<lowY and i_bin>15 and highX_ismax==False:
-                highX_ismax=True
-                highX=hStacklast.GetBinCenter(i_bin)+(hStacklast.GetBinWidth(i_bin)/2.)
-                highX*=1.1
-            # protections
-            if lowX<hStacklast.GetBinCenter(1)-(hStacklast.GetBinWidth(1)/2.) :
-                lowX=hStacklast.GetBinCenter(1)-(hStacklast.GetBinWidth(1)/2.)
-            if highX>hStacklast.GetBinCenter(hStacklast.GetNbinsX())+(hStacklast.GetBinWidth(1)/2.) :
-                highX=hStacklast.GetBinCenter(hStacklast.GetNbinsX())+(hStacklast.GetBinWidth(1)/2.)
-            if lowX>=highX :
-                lowX=hStacklast.GetBinCenter(1)-(hStacklast.GetBinWidth(1)/2.)
-                highX=hStacklast.GetBinCenter(hStacklast.GetNbinsX())+(hStacklast.GetBinWidth(1)/2.)
-            hStack.GetXaxis().SetLimits(int(lowX),int(highX))
-
-    if not stacksig:
-        if 'AAAyields' not in name and nbkg>0:
-            hStackSig.Draw("same hist nostack")
-        else:
-            hStackSig.Draw("hist nostack")
-
+    # draw legend and other annotations
     legend.Draw()
     if legend2 != None:
         legend2.Draw()
@@ -375,18 +319,11 @@ def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, log
     Text.SetTextSize(0.04)
     Text.DrawLatex(0.18, 0.85, text)
 
-    rightText = re.split(",", rightText)
-    text = '#bf{#it{' + rightText[0] +'}}'
-
+    text = '#bf{#it{' + rightText +'}}'
     Text.SetTextAlign(12);
     Text.SetNDC(ROOT.kTRUE)
     Text.SetTextSize(0.04)
     Text.DrawLatex(0.18, 0.81, text)
-
-    rightText[1]=rightText[1].replace("   ","")
-    text = '#bf{#it{' + rightText[1] +'}}'
-    Text.SetTextSize(0.035)
-    Text.DrawLatex(0.18, 0.76, text)
 
     text = '#bf{#it{' + ana_tex +'}}'
     Text.SetTextSize(0.04)
@@ -396,93 +333,13 @@ def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, log
     Text.SetTextSize(0.025)
     Text.DrawLatex(0.18, 0.66, text)
 
-    text = '#bf{#it{' + 'Signal scale=' + str(scaleSig)+'}}'
-    Text.SetTextSize(0.025)
-    if scaleSig!=1:Text.DrawLatex(0.18, 0.63, text)
-
+    # update and print canvas
     canvas.RedrawAxis()
     canvas.GetFrame().SetBorderSize( 12 )
     canvas.Modified()
     canvas.Update()
 
-    if 'AAAyields' in name:
-        dummyh=ROOT.TH1F("","",1,0,1)
-        dummyh.SetStats(0)
-        dummyh.GetXaxis().SetLabelOffset(999)
-        dummyh.GetXaxis().SetLabelSize(0)
-        dummyh.GetYaxis().SetLabelOffset(999)
-        dummyh.GetYaxis().SetLabelSize(0)
-        dummyh.Draw("AH")
-        legend.Draw()
-
-        Text.SetNDC()
-        Text.SetTextAlign(31);
-        Text.SetTextSize(0.04)
-
-        text = '#it{' + leftText +'}'
-        Text.DrawLatex(0.90, 0.92, text)
-
-        text = '#bf{#it{' + rightText[0] +'}}'
-        Text.SetTextAlign(12);
-        Text.SetNDC(ROOT.kTRUE)
-        Text.SetTextSize(0.04)
-        Text.DrawLatex(0.18, 0.83, text)
-
-        text = '#bf{#it{' + rightText[1] +'}}'
-        Text.SetTextSize(0.035)
-        Text.DrawLatex(0.18, 0.78, text)
-
-        text = '#bf{#it{' + ana_tex +'}}'
-        Text.SetTextSize(0.04)
-        Text.DrawLatex(0.18, 0.73, text)
-
-        text = '#bf{#it{' + extralab +'}}'
-        Text.SetTextSize(0.025)
-        Text.DrawLatex(0.18, 0.68, text)
-
-        text = '#bf{#it{' + 'Signal scale=' + str(scaleSig)+'}}'
-        Text.SetTextSize(0.04)
-        Text.DrawLatex(0.18, 0.55, text)
-
-        dy=0
-        text = '#bf{#it{' + 'Process' +'}}'
-        Text.SetTextSize(0.035)
-        Text.DrawLatex(0.18, 0.45, text)
-
-        text = '#bf{#it{' + 'Yields' +'}}'
-        Text.SetTextSize(0.035)
-        Text.DrawLatex(0.5, 0.45, text)
-
-        text = '#bf{#it{' + 'Raw MC' +'}}'
-        Text.SetTextSize(0.035)
-        Text.DrawLatex(0.75, 0.45, text)
-
-        for y in yields:
-            text = '#bf{#it{' + yields[y][0] +'}}'
-            Text.SetTextSize(0.035)
-            Text.DrawLatex(0.18, 0.4-dy*0.05, text)
-
-            stry=str(yields[y][1])
-            stry=stry.split('.')[0]
-            text = '#bf{#it{' + stry +'}}'
-            Text.SetTextSize(0.035)
-            Text.DrawLatex(0.5, 0.4-dy*0.05, text)
-
-            stry=str(yields[y][2])
-            stry=stry.split('.')[0]
-            text = '#bf{#it{' + stry +'}}'
-            Text.SetTextSize(0.035)
-            Text.DrawLatex(0.75, 0.4-dy*0.05, text)
-
-
-            dy+=1
-        #canvas.Modified()
-        #canvas.Update()
-
-
     printCanvas(canvas, name, formats, directory)
-
-
 
 
 #____________________________________________________
@@ -496,29 +353,18 @@ def printCanvas(canvas, name, formats, directory):
             canvas.SaveAs(outFile)
 
 
-
 #__________________________________________________________
-def run(paramFile):
+def ana_plot(param):
     ROOT.gROOT.SetBatch(True)
     ROOT.gErrorIgnoreLevel = ROOT.kWarning
-
-    module_path = os.path.abspath(paramFile)
-    module_dir = os.path.dirname(module_path)
-    base_name = os.path.splitext(ntpath.basename(paramFile))[0]
-
-    sys.path.insert(0, module_dir)
-    param = importlib.import_module(base_name)
 
     if hasattr(param, "splitLeg"):
         splitLeg = param.splitLeg
     else:
         splitLeg = False
 
-    counter=0
     for var in param.variables:
         for label, sels in param.selections.items():
             for sel in sels:
                 hsignal,hbackgrounds=mapHistos(var,label,sel, param)
                 runPlots(var+"_"+label,sel,param,hsignal,hbackgrounds,param.extralabel[sel],splitLeg)
-                if counter==0: runPlots("AAAyields_"+label,sel,param,hsignal,hbackgrounds,param.extralabel[sel],splitLeg)
-        counter+=1
