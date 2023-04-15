@@ -65,7 +65,7 @@ source ${your_install_dir}/bin/thismegat_only.sh
 ```
 
 NOTE:
-In case of fresh login after installation, both [Step 1](#Step-1) and [Step 2](#Step-2) need to be repeated to configure the running environment. The two scripts can be put into your shell's login script for convenience.
+In case of fresh login after installation, both [Step 1](#Step-1) and [Step 4](#Step-4) need to be repeated to configure the running environment. The two scripts can be put into your shell's login script for convenience.
 
 Step 5: run a test scripts to confirm the installation
 ---
