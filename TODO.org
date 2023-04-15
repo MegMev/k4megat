@@ -53,9 +53,20 @@ CLOSED: [2023-03-04 六 09:15]
 
 * Analysis
 ** mgana
-*** plugin manager
-- dynamic loading in python: importlib.import_module
-- 
+*** refactor
+Current implementation is highly unmaintainable.
+More clean API is needed, maybe OOP oriented.
+
+*** plugin manager [1/5]
+1. [X] dynamic loading in python: importlib.import_module
+2. [ ] central registry
+3. [ ] package manifest
+4. [ ] dependency resolving and lock file
+5. [ ] CMakesList.txt dual function: as independent project or subdirectory package
+   
+*** update subcommand
+*** plot subcommand
+
 * Geometry model
 ** General
 *** Check whether alignment can be applied on assembly volume
