@@ -49,7 +49,7 @@ namespace megat {
     }
 
     StatusCode sc  = m_eventDataSvc.retrieve();
-    m_podioDataSvc = dynamic_cast<PodioDataSvc*>( m_eventDataSvc.get() );
+    m_podioDataSvc = dynamic_cast<PodioLegacyDataSvc*>( m_eventDataSvc.get() );
     if ( sc == StatusCode::FAILURE ) {
       error() << "Error retrieving Event Data Service" << endmsg;
       return StatusCode::FAILURE;
@@ -70,12 +70,12 @@ namespace megat {
         collect = collections->GetHC( iter_coll );
         if ( std::find( m_readoutNames.begin(), m_readoutNames.end(), collect->GetName() ) != m_readoutNames.end() ) {
           // Add CellID encoding string to collection metadata
-          auto  lcdd        = m_geoSvc->lcdd();
-          auto  allReadouts = lcdd->readouts();
-          auto  idspec      = lcdd->idSpecification( collect->GetName() );
-          auto  field_str   = idspec.fieldDescription();
-          auto& coll_md     = m_podioDataSvc->getProvider().getCollectionMetaData( m_caloHits.get()->getID() );
-          coll_md.setValue( "CellIDEncodingString", field_str );
+          auto lcdd        = m_geoSvc->lcdd();
+          auto allReadouts = lcdd->readouts();
+          auto idspec      = lcdd->idSpecification( collect->GetName() );
+          auto field_str   = idspec.fieldDescription();
+          //          auto& coll_md     = m_podioDataSvc->getProvider().getCollectionMetaData( m_caloHits.get()->getID()
+          //          ); coll_md.setValue( "CellIDEncodingString", field_str );
 
           size_t n_hit = collect->GetSize();
           debug() << "\t" << n_hit << " hits are stored in a collection #" << iter_coll << ": " << collect->GetName()

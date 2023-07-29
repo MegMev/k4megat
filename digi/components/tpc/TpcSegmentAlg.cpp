@@ -55,7 +55,7 @@ StatusCode TpcSegmentAlg::initialize() {
   m_volMgr = m_geoSvc->getVolumeManager();
 
   // cast is needed to use some un-interface methods
-  m_podioDataSvc = dynamic_cast<PodioDataSvc*>( evtSvc().get() );
+  m_podioDataSvc = dynamic_cast<PodioLegacyDataSvc*>( evtSvc().get() );
   if ( nullptr == m_podioDataSvc ) {
     error() << "Error retrieving Event Data Service" << endmsg;
     return StatusCode::FAILURE;

@@ -1,5 +1,5 @@
 #include "Analysis/GeoUtils.h"
-#include "spdlog/spdlog.h"
+//#include "spdlog/spdlog.h"
 #include <Parsers/Printout.h>
 #include <stdexcept>
 
@@ -22,7 +22,7 @@ namespace megat {
       setGeomLogLevel( level );
 
       if ( tpc_readout_name.empty() ) {
-        if ( !tag.empty() ) spdlog::warn( "Tag is not used for geometry when using default TPC readout" );
+        // if ( !tag.empty() ) spdlog::warn( "Tag is not used for geometry when using default TPC readout" );
 
         tag = "default";
       } else if ( tag.empty() ) {

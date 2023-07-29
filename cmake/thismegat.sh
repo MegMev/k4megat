@@ -82,6 +82,19 @@ megat_add_path CMAKE_PREFIX_PATH $(cd @podio_INCLUDE_DIR@/.. > /dev/null;pwd);
 megat_add_path CMAKE_PREFIX_PATH $(cd @EDM4HEP_INCLUDE_DIR@/.. > /dev/null;pwd);
 #-----------------------------------------------------------------------------
 
+### k4FWCore
+#----PATH---------------------------------------------------------------------
+megat_add_path PATH       $(cd @k4FWCore_DIR@/../../../bin > /dev/null;pwd);
+#----LIBRARY_PATH-------------------------------------------------------------
+megat_add_library_path    $(cd @k4FWCore_DIR@/../../../lib > /dev/null;pwd);
+#----PYTHONPATH---------------------------------------------------------------
+megat_add_path PYTHONPATH $(cd @k4FWCore_DIR@/../../../python > /dev/null;pwd);
+#----ROOT_INCLUDE_PATH--------------------------------------------------------
+megat_add_path ROOT_INCLUDE_PATH $(cd @k4FWCore_DIR@/../../../include > /dev/null;pwd);
+#----CMAKE_PREFIX_PATH--------------------------------------------------------
+megat_add_path CMAKE_PREFIX_PATH $(cd @k4FWCore_DIR@/../../.. > /dev/null;pwd);
+#-----------------------------------------------------------------------------
+
 ### gaudi
 #----PATH---------------------------------------------------------------------
 megat_add_path PATH       @Gaudi_BINARY_DIR@;

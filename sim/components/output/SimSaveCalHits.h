@@ -51,7 +51,7 @@ namespace megat {
     /// Pointer to the geometry service
     ServiceHandle<IGeoSvc> m_geoSvc;
     /// Pointer to Podio and Event Data Services
-    PodioDataSvc*                   m_podioDataSvc;
+    PodioLegacyDataSvc*             m_podioDataSvc;
     ServiceHandle<IDataProviderSvc> m_eventDataSvc;
     /// Handle for calo hits
     DataHandle<edm4hep::SimCalorimeterHitCollection> m_caloHits{ "CaloHits", Gaudi::DataHandle::Writer, this };

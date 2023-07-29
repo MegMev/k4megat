@@ -63,7 +63,7 @@ private:
   /// Pointer to the geometry service
   ServiceHandle<IGeoSvc> m_geoSvc;
   /// Data service: needed to register objects and get collection IDs. Just an observing pointer.
-  PodioDataSvc* m_podioDataSvc;
+  PodioLegacyDataSvc* m_podioDataSvc;
   /// volume manager
   dd4hep::VolumeManager m_volMgr;
 

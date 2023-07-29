@@ -59,7 +59,7 @@ namespace {
 
     double length_along_u() const { return u_length; }
 
-    void setID( dd4hep::long64 id_val ) { _id = id_val; }
+    void setID( int64_t id_val ) { _id = id_val; }
 
     // overwrite to include points inside the inner radius of the barrel
     bool insideBounds( const Vector3D& point, double epsilon ) const {

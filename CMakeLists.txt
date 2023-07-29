@@ -35,6 +35,9 @@ else()
     HINTS $ENV{CPPGSL_ROOT_DIR} ${CPPGSL_ROOT_DIR})
 endif()
 
+# dd4hep provides some useful compiling flags (esp. rpath)
+dd4hep_set_compiler_flags()
+
 #---------------------------------------------------------------
 include(GNUInstallDirs)
 include(CTest)
