@@ -14,7 +14,7 @@
 #-------------------------------------------------------------------------------
 
 ### import helper functions
-source $(dirname "$0")/thismagat_internal.sh
+source $(dirname "$0")/thismegat_internal.sh
 
 ### set this variable to the install prefix of this script
 #-----------------------------------------------------------------------------

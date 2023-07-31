@@ -13,6 +13,7 @@ megat_parse_this()   {
 }
 
 ### Prepend a new path (arg2) into environment variable (arg1)
+### - no effect if this path already exists
 #-----------------------------------------------------------------------------
 megat_add_path()   {
     local path_name=${1}

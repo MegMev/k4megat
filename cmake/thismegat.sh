@@ -10,6 +10,9 @@
 # Original Author: Pere Mato. F. Gaede, M.Frank
 #-------------------------------------------------------------------------------
 
+### import helper functions
+source $(dirname "$0")/thismegat_internal.sh
+
 ### set this variable to the install prefix of this script
 #-----------------------------------------------------------------------------
 SOURCE=${BASH_SOURCE[0]:-${(%):-%x}}

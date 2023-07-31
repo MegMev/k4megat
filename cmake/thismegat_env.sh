@@ -11,7 +11,7 @@
 #-------------------------------------------------------------------------------
 
 ### import helper functions
-source $(dirname "$0")/thismagat_internal.sh
+source $(dirname "$0")/thismegat_internal.sh
 
 ### dd4hep: source thisdd4hep.sh, which in turn setup the following:
 ### - ROOT

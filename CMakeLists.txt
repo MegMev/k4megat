@@ -76,19 +76,11 @@ add_subdirectory(analysis)
 #########################
 configure_file(cmake/thismegat.sh bin/thismegat.sh @ONLY)
 configure_file(cmake/thismegat_only.sh bin/thismegat_only.sh @ONLY)
-configure_file(cmake/thismegat_only.sh bin/thismegat_env.sh @ONLY)
+configure_file(cmake/thismegat_env.sh bin/thismegat_env.sh @ONLY)
+configure_file(cmake/thismegat_internal.sh bin/thismegat_internal.sh @ONLY)
 file(GLOB files ${CMAKE_BINARY_DIR}/bin/thismegat*.sh)
 install(FILES
   ${files}
-  DESTINATION bin
-  PERMISSIONS
-  OWNER_READ OWNER_WRITE OWNER_EXECUTE
-  GROUP_READ GROUP_EXECUTE
-  WORLD_READ WORLD_EXECUTE
-)
-
-install(FILES
-  ${CMAKE_SOURCE_DIR}/cmake/thismegat_internal.sh
   DESTINATION bin
   PERMISSIONS
   OWNER_READ OWNER_WRITE OWNER_EXECUTE
