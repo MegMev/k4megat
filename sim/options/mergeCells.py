@@ -60,9 +60,9 @@ merge = MergeCells("mergeCells",
 merge.inhits.Path = "CaloHits"
 merge.outhits.Path = "CaloHitsNew"
 
-from Configurables import FCCDataSvc, PodioOutput
+from Configurables import FCCDataSvc, PodioLegacyOutput
 podiosvc = FCCDataSvc("EventDataSvc")
-out = PodioOutput("out", filename="output_test_mergeCells.root")
+out = PodioLegacyOutput("out", filename="output_test_mergeCells.root")
 out.outputCommands = ["keep *"]
 
 ApplicationMgr(EvtSel='NONE',

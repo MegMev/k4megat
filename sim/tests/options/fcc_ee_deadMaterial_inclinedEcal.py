@@ -101,9 +101,9 @@ geantsim.AuditExecute = True
 energy_in_layers.AuditExecute = True
 
 import uuid
-from Configurables import PodioOutput
+from Configurables import PodioLegacyOutput
 ### PODIO algorithm
-out = PodioOutput("out", OutputLevel=DEBUG)
+out = PodioLegacyOutput("out", OutputLevel=DEBUG)
 out.outputCommands = ["drop *", "keep energyInLayer", "keep energyInCryo"]
 out.filename = "fccee_energyInCaloLayers_%ideg_%igev_%s.root" % (theta, momentum, uuid.uuid4().hex[0:16])
 

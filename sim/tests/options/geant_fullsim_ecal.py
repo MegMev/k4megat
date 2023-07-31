@@ -46,8 +46,8 @@ geantsim = SimAlg("SimAlg",
                     outputs = ["SimSaveCalHits/saveECalHits", "SimSaveCalHits/saveCalEndcapHits"],
                     eventProvider=particle_converter)
 
-from Configurables import PodioOutput
-out = PodioOutput("out",
+from Configurables import PodioLegacyOutput
+out = PodioLegacyOutput("out",
                    OutputLevel=DEBUG)
 out.outputCommands = ["keep *"]
 

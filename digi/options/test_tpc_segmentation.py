@@ -12,14 +12,14 @@ geoservice = GeoSvc("MegatGeoSvc",
                     OutputLevel = WARNING)
 
 # Data service
-from Configurables import k4DataSvc
-datasvc = k4DataSvc("EventDataSvc")
+from Configurables import k4LegacyDataSvc
+datasvc = k4LegacyDataSvc("EventDataSvc")
 datasvc.input = 'tpcdrift_megat.root'
 # datasvc.ForceLeaves= True
 
 # Fetch the collection into TES
-from Configurables import PodioInput
-inp = PodioInput()
+from Configurables import PodioLegacyInput
+inp = PodioLegacyInput()
 inp.collections = ["TpcDriftHits"]
 
 # Add algorithm
@@ -35,8 +35,8 @@ tpcstripseg.outHits.Path = "TpcSegStripHits"
 tpcstripseg.readoutName = "TpcStripHits"
 
 # Select & Write the collections to disk ROOT file
-from Configurables import PodioOutput
-out = PodioOutput()
+from Configurables import PodioLegacyOutput
+out = PodioLegacyOutput()
 out.filename = 'tpcseg_megat.root'
 out.outputCommands = ['keep *']
 

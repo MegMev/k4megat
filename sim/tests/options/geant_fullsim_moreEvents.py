@@ -51,8 +51,8 @@ geantsim = SimAlg("SimAlg",
                     outputs = ["SimSaveTrackerHits/SimSaveTrackerHits"],
                     eventProvider=particle_converter)
 
-from Configurables import PodioOutput
-out = PodioOutput("out",
+from Configurables import PodioLegacyOutput
+out = PodioLegacyOutput("out",
                   filename = "test_geant_fullsim_moreEvents.root",
                   OutputLevel=DEBUG)
 out.outputCommands = ["keep *"]

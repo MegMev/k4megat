@@ -2,8 +2,8 @@ from Gaudi.Configuration import *
 import GaudiKernel.SystemOfUnits as units
 
 # TES
-from Configurables import k4DataSvc
-podioevent = k4DataSvc("EventDataSvc")
+from Configurables import k4LegacyDataSvc
+podioevent = k4LegacyDataSvc("EventDataSvc")
 
 # geometry service
 ### Configures the detector construction: geometry and sd
@@ -53,11 +53,11 @@ pgun=SimSingleParticleGeneratorTool('ParticleGun', saveEdm=True,
 ##### output collections
 from Configurables import SimSaveCalHits
 saveCalo = SimSaveCalHits('saveCalo',readoutNames = ['CztHits'])
-saveCalo.CaloHits.Path = 'CztHits'
+saveCalo.CaloHits.Path = 'CztSimHits'
 
 from Configurables import SimSaveTrackerHits
 saveTpc = SimSaveTrackerHits('saveTpc',readoutNames = ['TpcHits'])
-saveTpc.SimTrackHits.Path = 'TpcHits'
+saveTpc.SimTrackHits.Path = 'TpcSimHits'
 
 ##### save trajectory and history
 from Configurables import SimSaveTrajectory
@@ -80,8 +80,8 @@ geantsim = SimAlg('SimAlg',
                     OutputLevel = DEBUG)
 
 # output to root file
-from Configurables import PodioOutput
-out = PodioOutput('out')
+from Configurables import PodioLegacyOutput
+out = PodioLegacyOutput('out')
 out.filename = 'megat.gaudi.root'
 out.outputCommands = ['keep *']
 

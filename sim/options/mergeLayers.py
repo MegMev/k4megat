@@ -50,9 +50,9 @@ merge = MergeLayers("mergeLayers",
 merge.inhits.Path = "caloHits"
 merge.outhits.Path = "newCaloHits"
 
-from Configurables import FCCDataSvc, PodioOutput
+from Configurables import FCCDataSvc, PodioLegacyOutput
 podiosvc = FCCDataSvc("EventDataSvc")
-out = PodioOutput("out", filename="testMergeLayers.root")
+out = PodioLegacyOutput("out", filename="testMergeLayers.root")
 out.outputCommands = ["keep *"]
 
 ApplicationMgr(EvtSel='NONE',

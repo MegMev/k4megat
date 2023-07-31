@@ -94,9 +94,9 @@ audsvc.Auditors = [chra]
 geantsim.AuditExecute = True
 hist.AuditExecute = True
 
-from Configurables import PodioOutput
+from Configurables import PodioLegacyOutput
 ### PODIO algorithm
-out = PodioOutput("out",OutputLevel=DEBUG)
+out = PodioLegacyOutput("out",OutputLevel=DEBUG)
 out.outputCommands = ["keep *"]
 out.filename = "fccee_samplingFraction_inclinedEcal.root"
 

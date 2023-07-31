@@ -55,9 +55,9 @@ resegment = RedoSegmentation("ReSegmentation",
 resegment.inhits.Path = "positionedCaloHits"
 resegment.outhits.Path = "newCaloHits"
 
-from Configurables import FCCDataSvc, PodioOutput
+from Configurables import FCCDataSvc, PodioLegacyOutput
 podiosvc = FCCDataSvc("EventDataSvc")
-out = PodioOutput("out", filename="test_redoSegmentationPhiEta.root")
+out = PodioLegacyOutput("out", filename="test_redoSegmentationPhiEta.root")
 out.outputCommands = ["keep *"]
 
 ApplicationMgr(EvtSel='NONE',

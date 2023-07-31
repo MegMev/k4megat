@@ -38,9 +38,9 @@ rewrite.inhits.Path = "caloHits"
 rewrite.outhits.Path = "caloRecoHits"
 
 # PODIO algorithm
-from Configurables import FCCDataSvc, PodioOutput
+from Configurables import FCCDataSvc, PodioLegacyOutput
 podiosvc = FCCDataSvc("EventDataSvc")
-out = PodioOutput("out")
+out = PodioLegacyOutput("out")
 out.outputCommands = ["keep *"]
 out.filename = "rewrittenBitfield_ecalEndcapSim.root"
 

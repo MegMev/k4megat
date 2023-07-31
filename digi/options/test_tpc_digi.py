@@ -23,8 +23,8 @@ geoSvc = GeoSvc("MegatGeoSvc",
 appMgr.ExtSvc += [geoSvc]
 
 # Data service
-from Configurables import k4DataSvc
-dataSvc = k4DataSvc("EventDataSvc")
+from Configurables import k4LegacyDataSvc
+dataSvc = k4LegacyDataSvc("EventDataSvc")
 dataSvc.input = "megat.gaudi.root"
 appMgr.ExtSvc += [dataSvc]
 
@@ -42,8 +42,8 @@ appMgr.ExtSvc += [rdmEngine, rdmSvc]
 ################################# Algorithms ########################################
 
 # Fetch the collection into TES
-from Configurables import PodioInput
-inputAlg = PodioInput()
+from Configurables import PodioLegacyInput
+inputAlg = PodioLegacyInput()
 inputAlg.collections = ["TpcSimHits"]
 appMgr.TopAlg += [inputAlg]
 
@@ -110,8 +110,8 @@ appMgr.TopAlg += [pixelSamplingAlg, stripSamplingAlg]
 ################################# Output ########################################
 
 # Select & Write the collections to disk ROOT file
-from Configurables import PodioOutput
-outAlg = PodioOutput('outAlg')
+from Configurables import PodioLegacyOutput
+outAlg = PodioLegacyOutput('outAlg')
 outAlg.filename = 'tpcdigi_megat.root'
 outAlg.outputCommands = ['drop *', 'keep TpcPixelHits', 'keep TpcStripHits']
 appMgr.TopAlg += [outAlg]

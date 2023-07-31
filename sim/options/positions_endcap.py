@@ -29,9 +29,9 @@ positions.hits.Path = "caloHits"
 positions.positionedHits.Path = "caloPositions"
 
 # PODIO algorithm
-from Configurables import FCCDataSvc, PodioOutput
+from Configurables import FCCDataSvc, PodioLegacyOutput
 podiosvc = FCCDataSvc("EventDataSvc")
-out = PodioOutput("out")
+out = PodioLegacyOutput("out")
 out.outputCommands = ["keep *"]
 out.filename = "positions_ecalEndcapSim.root"
 

@@ -2,8 +2,8 @@ from Gaudi.Configuration import *
 import GaudiKernel.SystemOfUnits as units
 
 # TES
-from Configurables import k4DataSvc
-podioevent = k4DataSvc("EventDataSvc")
+from Configurables import k4LegacyDataSvc
+podioevent = k4LegacyDataSvc("EventDataSvc")
 
 # geometry service
 ### Configures the detector construction: geometry and sd
@@ -81,8 +81,8 @@ geantsim = SimAlg('SimAlg',
                     OutputLevel = WARNING)
 
 # output to root file
-from Configurables import PodioOutput
-out = PodioOutput()
+from Configurables import PodioLegacyOutput
+out = PodioLegacyOutput()
 out.filename = 'megat.gaudi.root'
 out.outputCommands = ['keep *']
 

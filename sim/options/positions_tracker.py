@@ -34,8 +34,8 @@ positions.hits.Path = "Hits"
 positions.positionedHits.Path = "Positions"
 
 # PODIO algorithm
-from Configurables import PodioOutput
-out = PodioOutput("out",
+from Configurables import PodioLegacyOutput
+out = PodioLegacyOutput("out",
                   OutputLevel=DEBUG)
 out.outputCommands = ["keep *"]
 out.filename = "positions_trackerSim.root"
