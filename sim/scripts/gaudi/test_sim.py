@@ -48,12 +48,13 @@ from Configurables import SimSingleParticleGeneratorTool
 pgun=SimSingleParticleGeneratorTool('ParticleGun', saveEdm=True,
                                       particleName = "mu-", energyMin = 10000, energyMax = 10000,
                                       etaMin = -4, etaMax = 4, phiMin = -3.14, phiMax = 3.14,
-                                      OutputLevel = DEBUG)
+#                                      vertexX=500, vertexZ=-500,
+                                      OutputLevel = INFO)
 
 ##### output collections
 from Configurables import SimSaveCalHits
 saveCalo = SimSaveCalHits('saveCalo',readoutNames = ['CztHits'])
-saveCalo.CaloHits.Path = 'CztSimHits'
+saveCalo.CaloHits.Path = 'CaloSimHits'
 
 from Configurables import SimSaveTrackerHits
 saveTpc = SimSaveTrackerHits('saveTpc',readoutNames = ['TpcHits'])
@@ -77,11 +78,11 @@ geantsim = SimAlg('SimAlg',
                               'SimSaveTrajectory/saveTrajectory',
                               ],
                     eventProvider = pgun,
-                    OutputLevel = DEBUG)
+                    OutputLevel = WARNING)
 
 # output to root file
 from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput('out')
+out = PodioLegacyOutput()
 out.filename = 'megat.gaudi.root'
 out.outputCommands = ['keep *']
 
@@ -89,7 +90,7 @@ out.outputCommands = ['keep *']
 from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg = [geantsim, out],
                 EvtSel = 'NONE',
-                EvtMax = 1,
+                EvtMax = 1000,
                 # order is important, as GeoSvc is needed by G4SimSvc
                 ExtSvc = [podioevent, geoservice, geantservice],
-                OutputLevel = DEBUG)
+                OutputLevel = WARNING)
