@@ -44,7 +44,7 @@ namespace megat {
       /// Pointer to the particle collection, ownership is intended to be transfered to SaveTool
       edm4hep::MCParticleCollection* m_mcParticles;
       /// Map to get the edm end vertex id from a Geant4 unique particle ID
-      std::map<size_t, size_t> m_g4IdToEndVertexMap;
+      // std::map<size_t, size_t> m_g4IdToEndVertexMap;
     };
   } // namespace sim
 } // namespace megat

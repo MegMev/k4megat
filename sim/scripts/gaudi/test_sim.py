@@ -26,7 +26,7 @@ physicslist.fullphysics = "SimFtfpBert"
 from Configurables import SimFullSimActions
 actions = SimFullSimActions()
 actions.enableHistory=True # toggle, default: false and no action is binded
-actions.energyCut= 0.1 # min kinetic e the generated track to be saved (in MeV)
+actions.energyCut= 0.1 # min kinetic energy (MeV) for the generated track to be saved
 
 # g4 service
 ### Configures the Geant simulation: detector building, fields, regions, physics, actions
@@ -63,7 +63,7 @@ saveTpc.SimTrackHits.Path = 'TpcSimHits'
 ##### save trajectory and history
 from Configurables import SimSaveTrajectory
 savetrajectorytool = SimSaveTrajectory("saveTrajectory")
-savetrajectorytool.TrajectoryPoints.Path = "trajectoryPoints"
+savetrajectorytool.TrajectoryPoints.Path = "TrajectoryPoints"
 
 from Configurables import SimSaveParticleHistory
 savehisttool = SimSaveParticleHistory("saveHistory")

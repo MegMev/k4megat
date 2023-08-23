@@ -42,8 +42,6 @@ namespace megat {
     virtual StatusCode saveOutput( const G4Event& aEvent ) final;
 
   private:
-    /// Pointer to the geometry service
-    ServiceHandle<IGeoSvc> m_geoSvc;
     /// Handle for trajectory hits including position information
     DataHandle<edm4hep::TrackerHitCollection> m_trackHits{ "Hits/Trajectory", Gaudi::DataHandle::Writer, this };
   };

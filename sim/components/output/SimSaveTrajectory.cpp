@@ -1,7 +1,4 @@
 #include "SimSaveTrajectory.h"
-
-// FCCSW
-#include "SimInterface/IGeoSvc.h"
 #include "SimKernel/Units.h"
 
 // Geant4
@@ -17,7 +14,7 @@ namespace megat {
   DECLARE_COMPONENT_WITH_ID( SimSaveTrajectory, "SimSaveTrajectory" )
 
   SimSaveTrajectory::SimSaveTrajectory( const std::string& aType, const std::string& aName, const IInterface* aParent )
-      : GaudiTool( aType, aName, aParent ), m_geoSvc( "MegatGeoSvc", aName ) {
+      : GaudiTool( aType, aName, aParent ) {
     declareInterface<ISimSaveOutputTool>( this );
     declareProperty( "TrajectoryPoints", m_trackHits, "Handle for trajectory hits" );
   }

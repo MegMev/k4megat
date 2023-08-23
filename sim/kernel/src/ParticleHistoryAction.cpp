@@ -12,10 +12,11 @@ namespace megat {
     ParticleHistoryAction::ParticleHistoryAction( double aEnergyCut ) : m_energyCut( aEnergyCut ) {}
 
     void ParticleHistoryAction::PreUserTrackingAction( const G4Track* aTrack ) {
-      auto            g4EvtMgr = G4EventManager::GetEventManager();
-      auto            evtinfo  = dynamic_cast<EventInformation*>( g4EvtMgr->GetUserInformation() );
-      G4LorentzVector prodPos( aTrack->GetGlobalTime() - aTrack->GetLocalTime(), aTrack->GetVertexPosition() );
-      G4LorentzVector endPos( aTrack->GetGlobalTime(), aTrack->GetPosition() );
+      auto g4EvtMgr = G4EventManager::GetEventManager();
+      auto evtinfo  = dynamic_cast<EventInformation*>( g4EvtMgr->GetUserInformation() );
+      // Not used: should be handled in addParticle
+      // G4LorentzVector prodPos( aTrack->GetGlobalTime() - aTrack->GetLocalTime(), aTrack->GetVertexPosition() );
+      // G4LorentzVector endPos( aTrack->GetGlobalTime(), aTrack->GetPosition() );
       if ( selectSecondary( *aTrack, m_energyCut ) ) { evtinfo->addParticle( aTrack ); }
     }
 
