@@ -8,7 +8,7 @@ geoservice = GeoSvc("MegatGeoSvc",
                     # buildType="BUILD_RECO",
                     buildType="BUILD_SIMU",
                     detectors=[path.join(detector_path, 'geometry/compact/Megat.xml'),
-                                              './tpc_seg_test.xml'],
+                                              'geometry/compact/TPC_readout.xml'],
                     OutputLevel = WARNING)
 
 # Data service

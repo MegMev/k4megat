@@ -17,8 +17,7 @@ detector_path = environ.get("MEGAT_ROOT", "")
 geoSvc = GeoSvc("MegatGeoSvc",
                 buildType="BUILD_SIMU",
                 detectors=[path.join(detector_path, 'geometry/compact/Megat.xml'),
-                           './tpc_seg_test.xml'
-                           ],
+                           path.join(detector_path, 'geometry/compact/TPC_readout.xml')],
                 OutputLevel = WARNING)
 appMgr.ExtSvc += [geoSvc]
 
