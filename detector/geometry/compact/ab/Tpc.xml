@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+
+    <!-- Dimension parameters deduced from the above parameters (defined for clearance & convenience) -->
+    <define>
+        <!-- Drifting volume's physical dimension -->
+        <constant name="Tpc_Drift_X" value="Tpc_Fiducial_X+Tpc_CaseAndField_Gap*2" />
+        <constant name="Tpc_Drift_Y" value="Tpc_Fiducial_Y+Tpc_CaseAndField_Gap*2" />
+        <constant name="Tpc_Drift_Z" value="Tpc_Fiducial_Z" />
+
+        <!-- Case -->
+        <constant name="Tpc_Case_Inner_X" value="Tpc_Drift_X" />
+        <constant name="Tpc_Case_Inner_Y" value="Tpc_Drift_Y" />
+        <constant name="Tpc_Case_Inner_Z" value="Tpc_Drift_Z" />
+
+        <constant name="Tpc_Case_Outer_X" value="Tpc_Case_Inner_X+Tpc_Case_SideThickness*2" />
+        <constant name="Tpc_Case_Outer_Y" value="Tpc_Case_Inner_Y+Tpc_Case_SideThickness*2" />
+        <constant name="Tpc_Case_Outer_Z" value="Tpc_Case_Inner_Z+Tpc_Case_TopThickness" />
+
+        <!-- Film -->
+        <constant name="Tpc_Film_X" value="Tpc_Window_X"/>
+        <constant name="Tpc_Film_Y" value="Tpc_Window_Y"/>
+
+        <!-- Tpc envelope's center offset (samples on X-O-Y plane, readout PCB on top) -->
+        <constant name="Tpc_Offset" value="Tpc_Drift_Z/2" />
+    </define>
+
+    <detectors>
+
+        <detector id="1" name="Tpc" type="Megat_OneSideTpc"
+                  readout="TpcHits" sensitive="tracker">
+
+            <!-- 0: subdetector envelope and its placement in the world (its center is fiducial center) -->
+            <envelope>
+                <shape type="Assembly"/>
+                <position x="0" y="0" z="Tpc_Offset"/>
+            </envelope>
+
+            <!-- 1: drift volume -->
+            <driftvol name="Tpc_Gas"
+                      material="TPC_gas"
+                      vis="TpcGasVis"
+                      limits="Tpc_LimitSet">
+
+                <!-- in principle, any shape is supported -->
+                <shape type="Box" dx="Tpc_Drift_X/2" dy="Tpc_Drift_Y/2" dz="Tpc_Drift_Z/2"/>
+
+                <anode_surface sensitive="false">
+                    <!-- origin point and surface normal unit direction in drift volume's coordinate system -->
+                    <origin x="0" y="0" z="Tpc_Drift_Z/2"/>
+                    <!-- normal direction should parallel to drift direction -->
+                    <normal x="0" y="0" z="1"/>
+                </anode_surface>
+
+            </driftvol>
+
+            <!-- 2: Readout PCBs: surfaces of type Sensitive are attached and to used for segmentation -->
+            <readout_pcbs name="Tpc_Pcb"
+                          material="PCB"
+                          vis="TpcPcbVis">
+
+                <!-- shape ( only box suported currently ) -->
+                <shape type="Box" dx="Tpc_Pcb_X/2" dy="Tpc_Pcb_Y/2" dz="Tpc_Pcb_Z/2"/>
+
+                <!-- surface for readout segmentation -->
+                <surface dim_u="Tpc_Fiducial_X" dim_v="Tpc_Fiducial_Y">
+                    <u_direction x="1." y="0." z="0."/>
+                    <v_direction x="0." y="1." z="0."/>
+                    <normal x="0." y="0." z="1."/>
+                    <origin x="0." y="0." z="-Tpc_Pcb_Z/2"/>
+                </surface>
+
+                <!-- PCB envelope's placement relative to subdector's envelope -->
+                <position x="0" y="0" z="Tpc_Drift_Z/2+Tpc_Pcb_Z/2"/>
+
+            </readout_pcbs>
+
+            <!-- 3: auxiliary components -->
+            <!-- 3.1: Case -->
+            <shape name="Tpc_Case_Solid" type="BooleanShape" operation="Subtraction">
+                <shape type="BooleanShape" operation="Subtraction">
+                    <shape type="Box" dx="Tpc_Case_Outer_X/2" dy="Tpc_Case_Outer_Y/2" dz="Tpc_Case_Outer_Z/2" />
+                    <shape type="Box" dx="Tpc_Case_Inner_X/2" dy="Tpc_Case_Inner_Y/2" dz="Tpc_Case_Outer_Z/2" />
+                    <position x="0" y="0" z="Tpc_Case_TopThickness"/>
+                </shape>
+                <shape type="Box" dx="Tpc_Window_X/2" dy="Tpc_Window_Y/2" dz="Tpc_Case_Outer_Z/2" />
+                <position x="0" y="0" z="-1*mm"/>
+            </shape>
+            <volume name="Tpc_Case_Volume" shape="Tpc_Case_Solid" material="AluminumOxide" vis="TpcCaseVis" />
+            <physvol name="Tpc_Case" volume="Tpc_Case_Volume">
+                <position x="0" y="0" z="-Tpc_Case_TopThickness/2"/>
+            </physvol>
+
+            <!-- 3.2: Film -->
+            <shape name="Film_Solid" type="Box" dx="Tpc_Film_X/2" dy="Tpc_Film_Y/2" dz="Tpc_Film_Thickness/2" />
+            <volume name="Film_Volume" shape="Film_Solid" material="" vis=""/>
+            <physvol name="Film" volume="Film_Volume">
+                <position x="0" y="0" z="-Tpc_Drift_Z/2-Tpc_Film_Thickness/2"/>
+            </physvol>
+
+        </detector>
+    </detectors>
+
+    <readouts>
+        <readout name="TpcHits">
+            <segmentation type="NoSegmentation"/>
+            <id>system:6</id>
+        </readout>
+    </readouts>
+</lccdd>

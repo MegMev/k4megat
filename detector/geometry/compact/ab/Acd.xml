@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+
+    <!-- Dimension parameters deduced from the above parameters (defined for clearance & convenience) -->
+    <define>
+        <!-- Sensitive volume's physical dimension -->
+        <constant name="Acd_Drift_X" value="Acd_Fiducial_X+Acd_CaseAndField_Gap*2" />
+        <constant name="Acd_Drift_Y" value="Acd_Fiducial_Y+Acd_CaseAndField_Gap*2" />
+        <constant name="Acd_Drift_Z" value="Acd_Fiducial_Z" />
+
+        <!-- Case -->
+        <constant name="Acd_Case_Inner_X" value="Acd_Drift_X" />
+        <constant name="Acd_Case_Inner_Y" value="Acd_Drift_Y" />
+        <constant name="Acd_Case_Inner_Z" value="Acd_Drift_Z" />
+
+        <constant name="Acd_Case_Outer_X" value="Acd_Case_Inner_X+Acd_Case_SideThickness*2" />
+        <constant name="Acd_Case_Outer_Y" value="Acd_Case_Inner_Y+Acd_Case_SideThickness*2" />
+        <constant name="Acd_Case_Outer_Z" value="Acd_Case_Inner_Z+Acd_Case_TopThickness" />
+
+        <!-- Envelope's center offset (located on top of Tracker PCB) -->
+        <constant name="Acd_Offset" value="Tpc_Pcb_Z+Tpc_Fiducial_Z+Acd_Pcb_Z+Acd_Fiducial_Z/2" />
+
+    </define>
+
+    <detectors>
+
+        <detector id="2" name="Acd" type="Megat_OneSideTpc"
+                  readout="AcdHits" sensitive="tracker">
+
+            <!-- 0: subdetector envelope and its placement in the world (its center is fiducial center -->
+            <envelope>
+                <shape type="Assembly"/>
+                <position x="0" y="0" z="Acd_Offset"/>
+            </envelope>
+
+            <!-- 1: drift volume -->
+            <driftvol name="Acd_Gas"
+                      material="TPC_gas"
+                      vis="TpcGasVis"
+                      limits="Tpc_LimitSet">
+
+                <!-- in principle, any shape is supported -->
+                <shape type="Box" dx="Acd_Drift_X/2" dy="Acd_Drift_Y/2" dz="Acd_Drift_Z/2"/>
+
+                <anode_surface sensitive="false">
+                    <!-- origin point and surface normal unit direction in drift volume's coordinate system -->
+                    <origin x="0" y="0" z="-Acd_Drift_Z/2"/>
+                    <!-- normal direction should parallel to drift direction -->
+                    <normal x="0" y="0" z="-1"/>
+                </anode_surface>
+
+            </driftvol>
+
+            <!-- 2: Readout PCBs: surfaces of type Sensitive are attached and to used for segmentation -->
+            <readout_pcbs name="Acd_Pcb"
+                          material="PCB"
+                          vis="TpcPcbVis">
+
+                <!-- shape ( only box suported currently ) -->
+                <shape type="Box" dx="Acd_Pcb_X/2" dy="Acd_Pcb_Y/2" dz="Acd_Pcb_Z/2"/>
+
+                <!-- surface for readout segmentation -->
+                <surface dim_u="Acd_Fiducial_X" dim_v="Acd_Fiducial_Y">
+                    <u_direction x="1." y="0." z="0."/>
+                    <v_direction x="0." y="1." z="0."/>
+                    <normal x="0." y="0." z="-1."/>
+                    <origin x="0." y="0." z="Acd_Pcb_Z/2"/>
+                </surface>
+
+                <!-- PCB envelope's placement relative to subdector's envelope -->
+                <position x="0" y="0" z="-Acd_Drift_Z/2-Acd_Pcb_Z/2"/>
+
+            </readout_pcbs>
+
+            <!-- 3: auxiliary components (the case) -->
+            <shape name="Acd_Case_Solid" type="BooleanShape" operation="Subtraction">
+                <shape type="Box" dx="Acd_Case_Outer_X/2" dy="Acd_Case_Outer_Y/2" dz="Acd_Case_Outer_Z/2" />
+                <shape type="Box" dx="Acd_Case_Inner_X/2" dy="Acd_Case_Inner_Y/2" dz="Acd_Case_Outer_Z/2" />
+                <position x="0" y="0" z="-Acd_Case_TopThickness"/>
+            </shape>
+            <volume name="Acd_Case_Volume" shape="Acd_Case_Solid" material="AluminumOxide" vis="TpcCaseVis" />
+            <physvol name="Acd_Case" volume="Acd_Case_Volume">
+                <position x="0" y="0" z="Acd_Case_TopThickness/2"/>
+            </physvol>
+
+        </detector>
+    </detectors>
+
+    <readouts>
+        <readout name="AcdHits">
+            <segmentation type="NoSegmentation"/>
+            <id>system:6</id>
+        </readout>
+    </readouts>
+</lccdd>

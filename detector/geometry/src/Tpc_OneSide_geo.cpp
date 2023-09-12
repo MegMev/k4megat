@@ -172,9 +172,10 @@ namespace {
       Volume     pcb_vol  = xml::createStdVolume( description, x_pcbs );
       if ( build_type == DetectorBuildType::BUILD_RECO ) { pcb_vol.setSensitiveDetector( sd ); }
 
-      int    nrow = 1;
-      int    ncol = 1;
-      double row_gap, col_gap;
+      int    nrow    = 1;
+      int    ncol    = 1;
+      double row_gap = 0.;
+      double col_gap = 0.;
       if ( x_pcbs.hasChild( _U( row ) ) ) {
         xml_dim_t x_row = x_pcbs.child( _U( row ) );
         nrow            = x_row.nmodules();

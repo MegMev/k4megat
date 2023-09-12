@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+    <!-- #==========================================================================
+     #  AIDA Detector description implementation 
+     #==========================================================================
+     # Copyright (C) Organisation europeenne pour la Recherche nucleaire (CERN)
+     # All rights reserved.
+     #
+     # For the licensing terms see $DD4hepINSTALL/LICENSE.
+     # For the list of contributors see $DD4hepINSTALL/doc/CREDITS.
+     #
+     #==========================================================================
+    -->
+
+    <info name="AlphaBeta"
+          title="Ultra Low-background Alpha-Beta Counter and Alpha Spectrometer"
+          author="Yong Zhou" url="https://github.com/ufan"
+          status="development"
+          version="pre-release-0.1">
+    </info>
+
+    <!-- Material definitions -->
+    <includes>
+        <gdmlFile ref="../../material/elements.xml" />
+        <gdmlFile ref="../../material/materials.xml" />
+    </includes>
+
+    <!-- Visual setting -->
+    <display>
+        <vis name="InvisibleNoDaughters"      showDaughters="false" visible="false"/>
+        <vis name="InvisibleWithDaughters"    showDaughters="true" visible="false"/>
+
+        <vis name="PassiveVis" alpha="0.0" r="0.83" g="0.84" b="0.86" showDaughters="true" visible="true" />
+
+        <vis name="TpcCaseVis"  alpha="0.4" r="0.8"  g="0.9"  b="1"  showDaughters="false" visible="false"/>
+        <vis name="TpcGasVis"          alpha="0.8" r="1"    g="0.1"  b="0.1" showDaughters="true" visible="true"/>
+        <vis name="TpcPcbVis" alpha="0.4" r="0.2" g="0.8" b="0.2" showDaughters="false" visible="true" />
+    </display>
+
+    <!-- Dimension parameters to be customized explicitly -->
+    <define>
+        <!-- World size -->
+        <constant name="world_side" value="2*m" />
+        <constant name="world_x" value="world_side/2" />
+        <constant name="world_y" value="world_side/2" />
+        <constant name="world_z" value="world_side/2" />
+    </define>
+
+    <!-- Tpc's parameters -->
+    <define>
+        <!-- Fiducial volume -->
+        <constant name="Tpc_Fiducial_X" value="Tpc_Strip_Width*Tpc_Strip_Nr" />
+        <constant name="Tpc_Fiducial_Y" value="Tpc_Fiducial_X" />
+        <constant name="Tpc_Fiducial_Z" value="6.5*cm" />
+
+        <!-- PCB's physical dimension -->
+        <constant name="Tpc_Pcb_X" value="24*cm" />
+        <constant name="Tpc_Pcb_Y" value="24*cm" />
+        <constant name="Tpc_Pcb_Z" value="2.4*mm" />
+
+        <!-- Gap between the case wall and field cage -->
+        <constant name="Tpc_CaseAndField_Gap" value="2*mm"/>
+
+        <!-- Aluminium case's physical dimension -->
+        <constant name="Tpc_Case_TopThickness" value="2*mm"/>
+        <constant name="Tpc_Case_SideThickness" value="1.1*cm"/>
+
+        <!-- Entrance window's physical dimension -->
+        <constant name="Tpc_Window_X" value="15*cm"/>
+        <constant name="Tpc_Window_Y" value="15*cm"/>
+
+        <!-- Entrance window is filled by a thin film, which is aligned with inner surface of top case -->
+        <constant name="Tpc_Film_Thickness" value="0.1*mm"/>
+
+        <!-- Strip width & number -->
+        <constant name="Tpc_Strip_Width" value="1.6*mm" />
+        <constant name="Tpc_Strip_Nr" value="96" />
+
+    </define>
+
+    <!-- Acd's parameters -->
+    <define>
+        <!-- Fiducial volume -->
+        <constant name="Acd_Fiducial_X" value="Tpc_Fiducial_X" />
+        <constant name="Acd_Fiducial_Y" value="Tpc_Fiducial_Y" />
+        <constant name="Acd_Fiducial_Z" value="1.2*cm" />
+
+        <!-- PCB's physical dimension (an artificial thin layer for readout segmentation)-->
+        <constant name="Acd_Pcb_Z" value="0.1*mm" />
+
+        <!-- Gap between the case wall and field cage -->
+        <constant name="Acd_CaseAndField_Gap" value="2*mm"/>
+
+        <!-- Aluminium case's physical dimension -->
+        <constant name="Acd_Case_TopThickness" value="2*mm"/>
+        <constant name="Acd_Case_SideThickness" value="1.1*cm"/>
+
+        <!-- Pad size & number -->
+        <constant name="Acd_Pad_Nr_X" value="2" />
+        <constant name="Acd_Pad_Nr_Y" value="2" />
+        <constant name="Acd_Pad_X" value="Acd_Fiducial_X/Acd_Pad_Nr_X" />
+        <constant name="Acd_Pad_Y" value="Acd_Fiducial_Y/Acd_Pad_Nr_Y" />
+
+    </define>
+
+    <!-- Limits -->
+    <limits>
+        <limitset name="Tpc_LimitSet">
+            <limit name="step_length_max" particles="*" value="1.0" unit="mm" />
+            <!-- <limit name="ekin_min" particles="*" value="0.01" unit="MeV" /> -->
+            <limit name="range_min" particles="*" value="2.0" unit="mm" />
+            <!-- <cut particles="e+" value="2.0" unit="mm" />
+                 <cut particles="e-" value="2.0" unit="mm" />
+                 <cut particles="gamma" value="5.0" unit="mm" /> -->
+        </limitset>
+    </limits>
+
+    <!-- Tpc geometry -->
+    <include ref="Tpc.xml" />
+
+    <!-- Anti-Coincidence Detector (ACD) geometry -->
+    <include ref="Acd.xml" />
+
+</lccdd>

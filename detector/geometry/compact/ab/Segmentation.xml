@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd>
+    <readouts>
+        <!-- Configure TPC segmentation -->
+        <readout name="TpcStripHits">
+            <segmentation   type="MultiSegmentation"  key="layer">
+                <segmentation name="XLayer" type="CartesianStripX" key_value="0"
+                              strip_size_x="Tpc_Strip_Width" offset_x="-Tpc_Fiducial_X/2 + Tpc_Strip_Width/2" />
+                <segmentation name="YLayer" type="CartesianStripY" key_value="1"
+                              strip_size_x="Tpc_Strip_Width" offset_x="-Tpc_Fiducial_Y/2 + Tpc_Strip_Width/2" />
+            </segmentation>
+            <id>system:6,layer:6,strip:16:48</id>
+        </readout>
+
+        <!-- Configure Acd segmentation -->
+        <readout name="AcdPadHits">
+            <segmentation type="CartesianGridXY" grid_size_x="Acd_Pad_X" grid_size_y="Acd_Pad_Y"
+                          offset_x="-Acd_Fiducial_X/2 + Acd_Pad_X/2" offset_y="-Acd_Fiducial_Y/2 + Acd_Pad_Y/2" />
+            <id>system:6,x:16:24,y:24</id>
+        </readout>
+    </readouts>
+</lccdd>
