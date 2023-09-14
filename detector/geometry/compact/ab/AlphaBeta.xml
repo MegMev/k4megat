@@ -30,10 +30,10 @@
         <vis name="InvisibleNoDaughters"      showDaughters="false" visible="false"/>
         <vis name="InvisibleWithDaughters"    showDaughters="true" visible="false"/>
 
-        <vis name="TpcCaseVis"  alpha="0.4" r="0.8"  g="0.9"  b="1"  showDaughters="false" visible="false"/>
-        <vis name="TpcGasVis"          alpha="0.8" r="1"    g="0.1"  b="0.1" showDaughters="true" visible="true"/>
-        <vis name="TpcPcbVis" alpha="0.4" r="0.2" g="0.8" b="0.2" showDaughters="false" visible="true" />
-        <vis name="TpcFilmVis" alpha="0.0" r="0.83" g="0.84" b="0.86" showDaughters="true" visible="true" />
+        <vis name="TpcFilmVis"  alpha="0.0" r="0.8"  g="0.9"  b="1"  showDaughters="false" visible="true"/>
+        <vis name="GasVis"          alpha="0.8" r="1"    g="0.1"  b="0.1" showDaughters="true" visible="true"/>
+        <vis name="PcbVis" alpha="0.0" r="0.2" g="0.8" b="0.2" showDaughters="false" visible="true" />
+        <vis name="CaseVis" alpha="0.0" r="0.83" g="0.84" b="0.8" showDaughters="true" visible="true" />
     </display>
 
     <!-- Dimension parameters to be customized explicitly -->

@@ -39,7 +39,7 @@
             <!-- 1: drift volume -->
             <driftvol name="Tpc_Gas"
                       material="TPC_gas"
-                      vis="TpcGasVis"
+                      vis="GasVis"
                       limits="Tpc_LimitSet">
 
                 <!-- in principle, any shape is supported -->
@@ -57,7 +57,7 @@
             <!-- 2: Readout PCBs: surfaces of type Sensitive are attached and to used for segmentation -->
             <readout_pcbs name="Tpc_Pcb"
                           material="PCB"
-                          vis="TpcPcbVis">
+                          vis="PcbVis">
 
                 <!-- shape ( only box suported currently ) -->
                 <shape type="Box" dx="Tpc_Pcb_X/2" dy="Tpc_Pcb_Y/2" dz="Tpc_Pcb_Z/2"/>
@@ -86,7 +86,7 @@
                 <shape type="Box" dx="Tpc_Window_X/2" dy="Tpc_Window_Y/2" dz="Tpc_Case_Outer_Z/2" />
                 <position x="0" y="0" z="-1*mm"/>
             </shape>
-            <volume name="Tpc_Case_Volume" shape="Tpc_Case_Solid" material="AluminumOxide" vis="TpcCaseVis" />
+            <volume name="Tpc_Case_Volume" shape="Tpc_Case_Solid" material="AluminumOxide" vis="CaseVis" />
             <physvol name="Tpc_Case" volume="Tpc_Case_Volume">
                 <position x="0" y="0" z="-Tpc_Case_TopThickness/2"/>
             </physvol>
