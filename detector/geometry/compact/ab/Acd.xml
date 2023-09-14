@@ -57,7 +57,7 @@
                           vis="TpcPcbVis">
 
                 <!-- shape ( only box suported currently ) -->
-                <shape type="Box" dx="Acd_Pcb_X/2" dy="Acd_Pcb_Y/2" dz="Acd_Pcb_Z/2"/>
+                <shape type="Box" dx="Tpc_Pcb_X/2" dy="Tpc_Pcb_Y/2" dz="Acd_Pcb_Z/2"/>
 
                 <!-- surface for readout segmentation -->
                 <surface dim_u="Acd_Fiducial_X" dim_v="Acd_Fiducial_Y">

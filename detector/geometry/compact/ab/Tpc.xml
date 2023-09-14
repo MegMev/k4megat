@@ -93,7 +93,7 @@
 
             <!-- 3.2: Film -->
             <shape name="Film_Solid" type="Box" dx="Tpc_Film_X/2" dy="Tpc_Film_Y/2" dz="Tpc_Film_Thickness/2" />
-            <volume name="Film_Volume" shape="Film_Solid" material="" vis=""/>
+            <volume name="Film_Volume" shape="Film_Solid" material="Kapton" vis="TpcFilmVis"/>
             <physvol name="Film" volume="Film_Volume">
                 <position x="0" y="0" z="-Tpc_Drift_Z/2-Tpc_Film_Thickness/2"/>
             </physvol>

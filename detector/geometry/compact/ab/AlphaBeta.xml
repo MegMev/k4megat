@@ -30,11 +30,10 @@
         <vis name="InvisibleNoDaughters"      showDaughters="false" visible="false"/>
         <vis name="InvisibleWithDaughters"    showDaughters="true" visible="false"/>
 
-        <vis name="PassiveVis" alpha="0.0" r="0.83" g="0.84" b="0.86" showDaughters="true" visible="true" />
-
         <vis name="TpcCaseVis"  alpha="0.4" r="0.8"  g="0.9"  b="1"  showDaughters="false" visible="false"/>
         <vis name="TpcGasVis"          alpha="0.8" r="1"    g="0.1"  b="0.1" showDaughters="true" visible="true"/>
         <vis name="TpcPcbVis" alpha="0.4" r="0.2" g="0.8" b="0.2" showDaughters="false" visible="true" />
+        <vis name="TpcFilmVis" alpha="0.0" r="0.83" g="0.84" b="0.86" showDaughters="true" visible="true" />
     </display>
 
     <!-- Dimension parameters to be customized explicitly -->
@@ -48,6 +47,10 @@
 
     <!-- Tpc's parameters -->
     <define>
+        <!-- Strip width & number -->
+        <constant name="Tpc_Strip_Width" value="1.6*mm" />
+        <constant name="Tpc_Strip_Nr" value="96" />
+
         <!-- Fiducial volume -->
         <constant name="Tpc_Fiducial_X" value="Tpc_Strip_Width*Tpc_Strip_Nr" />
         <constant name="Tpc_Fiducial_Y" value="Tpc_Fiducial_X" />
@@ -71,10 +74,6 @@
 
         <!-- Entrance window is filled by a thin film, which is aligned with inner surface of top case -->
         <constant name="Tpc_Film_Thickness" value="0.1*mm"/>
-
-        <!-- Strip width & number -->
-        <constant name="Tpc_Strip_Width" value="1.6*mm" />
-        <constant name="Tpc_Strip_Nr" value="96" />
 
     </define>
 

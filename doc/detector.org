@@ -1,0 +1,97 @@
+#+title: Detector Collection
+
+* Megat_OneSideTpc
+
+It's a general TPC detector class, implementing a TPC structure with one drift volume and readout by one planar PCB or
+multi-PCBs layout in one plane.
+
+It has the following categories of components inside:
+- An envelope encompassing the subdetector (mandatory)
+- A drift volume (sensitive, mandatory)
+- A collection of readout PCBs (in-sensitive, optional)
+- A collection of auxiliary components (in-sensitive, optional, e.g. field cage, film, aluminium case etc.)
+
+** Envelope (~<envelope>~)
+It's the mother volume of all other categories of components, whose placement parameters are defined with respect to
+the envelope's volume coordinate system.
+Generally, the envelope should be the shapeless 'Assembly' type and is invisible.
+
+#+begin_src xml
+  <envelope>
+      <shape type="Assembly"/>
+      <position x="***" y="***" z="***"/>
+      <rotation x="***" y="***" z="***" />
+  </envelope>
+#+end_src
+
+** Drift volume (~<driftvol>~)
+
+It's designed to be a sensitive component (in Geant4 and DD4hep sense).
+The volume contains the gas as sensitive material.
+An additional surface must be attached to one side of the drift volume, usually at the edge of
+the volume shape.
+This surface is an invisible helper, which is designed to help calculating the drift distance in simulation stage.
+The surface for readout segmentation is attached to the readout PCB (see ~<readout_pcbs>~  tag).
+
+#+begin_src xml
+  <driftvol name="***"
+            material="***"
+            vis="***"
+            limits="***">
+
+      <!-- in principle, any shape is supported -->
+      <shape type="Box" dx="***" dy="***" dz="***"/>
+      <position x="***" y="***" z="***"/>
+      <rotation x="***" y="***" z="***" />
+
+      <!-- anode surface is used for drift distance calculation -->
+      <anode_surface sensitive="false">
+          <!-- origin point relative to the drift volume -->
+          <origin x="0" y="0" z="***"/>
+          <!-- unit drift direction relative to the drift volume -->
+          <normal x="0" y="0" z="***"/>
+      </anode_surface>
+  </driftvol>
+
+
+#+end_src
+
+** Readout PCBs (~<readout_pcbs>~)
+ It's designed to be: 1) physical passive material in simulation; 2) information provider in digitization.
+ The surface attached is sensitive in DD4hep's sense, which is used to segment the readout pattern.
+ The shape of PCB is limited to box type and the segmentation in strip or pixel pattern.
+ In multi-PCB layout, all PCBs must be in the same plane.
+
+ #+begin_src xml
+   <readout_pcbs name="Pcb"
+                 material="PCB"
+                 vis="TpcPcbVis">
+
+     <!-- PCB shape ( the smallest unit in multi-layout, only box suported currently ) -->
+     <shape type="Box" dx="Tpc_Pcb_X/2" dy="Tpc_Pcb_Y/2" dz="Tpc_Pcb_Z/2"/>
+
+     <!-- PCB unit's surface for readout segmentation -->
+     <surface dim_u="fiducial_x*2" dim_v="fiducial_y*2">
+       <!-- parameters all relative to the PCB volume -->
+       <u_direction x="1." y="0." z="0."/>
+       <v_direction x="0." y="1." z="0."/>
+       <normal x="0." y="0." z="1."/>
+       <origin x="0." y="0." z="-Tpc_Pcb_Z/2"/>
+     </surface>
+
+     <!-- Row and column number: if not specified, a mono PCB is defined -->
+     <row nmodules="***" gap="***" />
+     <column nmodules="***" gap="***" />
+     
+     <!-- placement of the PCB assembly in subdetector's envelope -->
+     <position x="***" y="***" z="***"/>
+     <rotation x="***" y="***" z="***" />
+
+   </readout_pcbs>
+ #+end_src
+
+** Auxiliary components
+ All other passive components in the subdetector can be defined here.
+ ~<shape>~, ~<volume>~ and ~<physical>~ need to be defined for each component.
+ DD4hep's ~VolumeBuilder~ is in charge of geometry building for these components.
+
