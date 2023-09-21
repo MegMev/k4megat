@@ -14,6 +14,6 @@
 #include "Analysis/SimTracker.h"
 #include "Analysis/Tracker.h"
 #include "Analysis/Utils.h"
-#include "fmt/format-inl.h"
+/* #include "fmt/format-inl.h" */
 
 struct LoadMegat {};
