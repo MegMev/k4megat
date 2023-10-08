@@ -61,21 +61,21 @@ saveTpc = SimSaveTrackerHits('saveTpc',readoutNames = ['TpcHits'])
 saveTpc.SimTrackHits.Path = 'TpcSimHits'
 
 ##### save trajectory and history
-from Configurables import SimSaveTrajectory
-savetrajectorytool = SimSaveTrajectory("saveTrajectory")
-savetrajectorytool.TrajectoryPoints.Path = "TrajectoryPoints"
+# from Configurables import SimSaveTrajectory
+# savetrajectorytool = SimSaveTrajectory("saveTrajectory")
+# savetrajectorytool.TrajectoryPoints.Path = "TrajectoryPoints"
 
-from Configurables import SimSaveParticleHistory
-savehisttool = SimSaveParticleHistory("saveHistory")
-savehisttool.GenParticles.Path = "SimParticles"
+# from Configurables import SimSaveParticleHistory
+# savehisttool = SimSaveParticleHistory("saveHistory")
+# savehisttool.GenParticles.Path = "SimParticles"
 
 ##### finally the alg itself
 from Configurables import SimAlg
 geantsim = SimAlg('SimAlg',
                     outputs= ['SimSaveCalHits/saveCalo',
                               'SimSaveTrackerHits/saveTpc',
-                              'SimSaveParticleHistory/saveHistory',
-                              'SimSaveTrajectory/saveTrajectory',
+                              # 'SimSaveParticleHistory/saveHistory',
+                              # 'SimSaveTrajectory/saveTrajectory',
                               ],
                     eventProvider = pgun,
                     OutputLevel = WARNING)

@@ -4,6 +4,9 @@
 
     <!-- data class -->
     <class name="ROOT::VecOps::RVec<edm4hep::SimCalorimeterHitData>"/>
+    <class name="ROOT::VecOps::RVec<edm4hep::SimTrackerHitData>"/>
+    <class name="ROOT::VecOps::RVec<edm4hep::MCParticleData>"/>
+    <class name="ROOT::VecOps::RVec<edm4hep::TrackerHitData>"/>
     <class name="ROOT::VecOps::RVec<edm4hep::Vector3f>"/>
     <class name="megat::utility::IdConverter"/>
 

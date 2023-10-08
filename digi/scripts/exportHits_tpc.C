@@ -1,4 +1,4 @@
-void exportHits_tpc( string infile = "../options/simple_digi.root", string outfile = "flat_tpc_hits.root", int idx = -1,
+void exportHits_tpc( string infile = "../options/simple_digi.root", string outfile = "flat_tpc_hits.root",
                      string br_name = "TpcHits", string ro_name = "TpcStripHits" ) {
 
   // activate megat library
@@ -7,7 +7,6 @@ void exportHits_tpc( string infile = "../options/simple_digi.root", string outfi
   // load geometry
   using namespace megat::utility;
 
-  // string xmlGeometryPath = fmt::format( "{}/geometry/compact/Megat.xml", std::getenv( "MEGAT_ROOT" ) );
   string xmlGeometryPath = std::getenv( "MEGAT_ROOT" ) + std::string( "/geometry/compact/Megat.xml" );
   string xmlTpc          = std::getenv( "MEGAT_ROOT" ) + std::string( "/geometry/compact/TPC_readout.xml" );
   loadGeometry( { xmlGeometryPath, xmlTpc }, ro_name );

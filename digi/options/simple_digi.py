@@ -1,3 +1,16 @@
+#
+# Summary:
+# Digitize the simulation hits: TPC for strip-based readout, Calo for pixel-based readout
+#
+# Input:
+# The output of simulation job like test_sim.py
+#
+# Output:
+# Three collections are saved:
+# - GenParticles: primary particles
+# - TpcHits: TPC strip-based digis
+# - CaloHits: Calo pixel-based digis
+
 from Gaudi.Configuration import *
 
 # ApplicationMgr
@@ -43,7 +56,7 @@ appMgr.ExtSvc += [rdmEngine, rdmSvc]
 # Fetch the collection into TES
 from Configurables import PodioLegacyInput
 inputAlg = PodioLegacyInput()
-inputAlg.collections = ["TpcSimHits", "CaloSimHits"]
+inputAlg.collections = ["GenParticles", "TpcSimHits", "CaloSimHits"]
 appMgr.TopAlg += [inputAlg]
 
 # 1. Electron drift to anode surface
@@ -92,6 +105,7 @@ from Configurables import PodioLegacyOutput
 outAlg = PodioLegacyOutput('outAlg')
 outAlg.filename = 'simple_digi.root'
 outAlg.outputCommands = ['drop *',
+                         'keep GenParticles',
                          'keep TpcHits',
                          'keep CaloHits'
                          ]
