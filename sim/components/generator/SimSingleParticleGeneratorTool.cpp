@@ -106,6 +106,7 @@ namespace megat {
     particle.setTime( aVertex->GetT0() * Gaudi::Units::c_light * g42edm::length );
 
     particle.setPDG( aParticle->GetPDGcode() );
+    particle.setCharge( aParticle->GetCharge() );
     particle.setGeneratorStatus( 1 );
     particle.setMomentum( {
         (float)( aParticle->GetPx() * g42edm::energy ),

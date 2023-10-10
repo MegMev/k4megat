@@ -41,14 +41,14 @@ namespace megat {
       } );
       edmParticle.setTime( aSecondary->GetGlobalTime() * g42edm::length );
 
-      // size_t motherID   = aSecondary->GetParentID();
       auto g4StartPos = aSecondary->GetVertexPosition();
       edmParticle.setVertex( {
           g4StartPos.x() * g42edm::length,
           g4StartPos.y() * g42edm::length,
           g4StartPos.z() * g42edm::length,
       } );
-      // todo: no time at endpoint
+
+      // TODO: no time at endpoint, no parents/daughter relations
     }
 
   } // namespace sim

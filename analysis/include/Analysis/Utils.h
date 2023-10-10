@@ -52,9 +52,18 @@ namespace megat {
     GET_ITEM_FUNC_TEMPLATE( get_eDep, eDep )
     GET_ITEM_FUNC_TEMPLATE( get_energy, energy )
 
+    GET_ITEM_FUNC_TEMPLATE( get_pdg, PDG )
+    GET_ITEM_FUNC_TEMPLATE( get_charge, charge )
+    GET_ITEM_FUNC_TEMPLATE( get_mass, mass )
+    GET_ITEM_FUNC_TEMPLATE( get_vertex_x, vertex.x )
+    GET_ITEM_FUNC_TEMPLATE( get_vertex_y, vertex.y )
+    GET_ITEM_FUNC_TEMPLATE( get_vertex_z, vertex.z )
+
     // vector accessors
     GET_RVEC_FUNC_TEMPLATE( get_pos, position )
     GET_RVEC_FUNC_TEMPLATE( get_mom, momentum )
+
+    GET_RVEC_FUNC_TEMPLATE( get_vertex, vertex )
 
   }; // namespace utility
 } // namespace megat

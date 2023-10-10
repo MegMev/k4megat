@@ -1,3 +1,16 @@
+#
+# Summary:
+# Digitize the simulation hits: TPC for strip-based readout, Calo for pixel-based readout
+#
+# Input:
+# The output of simulation job like test_sim.py
+#
+# Output:
+# Three collections are saved:
+# - GenParticles: primary particles
+# - TpcHits: TPC strip-based digis
+# - CaloHits: Calo pixel-based digis
+
 from Gaudi.Configuration import *
 
 # ApplicationMgr
@@ -43,7 +56,7 @@ appMgr.ExtSvc += [rdmEngine, rdmSvc]
 # Fetch the collection into TES
 from Configurables import PodioLegacyInput
 inputAlg = PodioLegacyInput()
-inputAlg.collections = ["TpcSimHits", "CaloSimHits"]
+inputAlg.collections = ["GenParticles", "TpcSimHits", "CaloSimHits"]
 appMgr.TopAlg += [inputAlg]
 
 # 1. Electron drift to anode surface
@@ -60,55 +73,26 @@ driftAlg.outHits.Path = "TpcDriftHits"
 # driftAlg.attach_factor = 0.1
 appMgr.TopAlg += [driftAlg]
 
-# 2. Readout segmentation (pixel & strip)
+# 2. Readout segmentation
 from Configurables import TpcSegmentAlg
-pixelSegAlg = TpcSegmentAlg("TpcPixelSeg")
-pixelSegAlg.inHits.Path = "TpcDriftHits"
-pixelSegAlg.outHits.Path = "TpcSegPixelHits"
-pixelSegAlg.readoutName = "TpcPixelHits"
-
-stripSegAlg = TpcSegmentAlg("TpcStripSeg")
-stripSegAlg.inHits.Path = "TpcDriftHits"
-stripSegAlg.outHits.Path = "TpcSegStripHits"
-stripSegAlg.readoutName = "TpcStripHits"
-appMgr.TopAlg += [pixelSegAlg, stripSegAlg]
+tpcSegAlg = TpcSegmentAlg("TpcSegAlg")
+tpcSegAlg.inHits.Path = "TpcDriftHits"
+tpcSegAlg.outHits.Path = "TpcSegHits"
+tpcSegAlg.readoutName = "TpcStripHits"
+appMgr.TopAlg += [tpcSegAlg]
 
 # 3. Simple smear (add a fixed-width Gaussian noise)
 from Configurables import TpcSimpleSmearAlg
-pixelSmearAlg = TpcSimpleSmearAlg("TpcPixelSmear")
-pixelSmearAlg.inHits.Path = "TpcSegPixelHits"
-pixelSmearAlg.outHits.Path = "TpcSmearPixelHits"
-pixelSmearAlg.energy_sigma = 10 # eV
-pixelSmearAlg.time_sigma = 100 # ps
+tpcSmearAlg = TpcSimpleSmearAlg("TpcSmearAlg")
+tpcSmearAlg.inHits.Path = "TpcSegHits"
+tpcSmearAlg.outHits.Path = "TpcHits"
+tpcSmearAlg.energy_sigma = 10 # eV
+tpcSmearAlg.time_sigma = 100 # ps
+appMgr.TopAlg += [tpcSmearAlg]
 
-stripSmearAlg = TpcSimpleSmearAlg("TpcStripSmear")
-stripSmearAlg.inHits.Path = "TpcSegStripHits"
-stripSmearAlg.outHits.Path = "TpcSmearStripHits"
-stripSmearAlg.energy_sigma = 10 # eV
-stripSmearAlg.time_sigma = 100 # ps
-appMgr.TopAlg += [pixelSmearAlg, stripSmearAlg]
-
-# 4. Signal formation and sampling
-from Configurables import TpcSamplingAlg
-stripSamplingAlg = TpcSamplingAlg("TpcStripSampling")
-stripSamplingAlg.inHits.Path = "TpcSmearStripHits"
-stripSamplingAlg.simHits.Path = "TpcDriftHits"
-stripSamplingAlg.outHits.Path = "TpcStripHits"
-# stripSamplingAlg.sample_interval = 5 # ns
-# stripSamplingAlg.shape_time = 5 # us
-# stripSamplingAlg.nr_points = 512
-# stripSamplingAlg.gain = 1000
-# stripSamplingAlg.amplitude_offset = 100
-
-pixelSamplingAlg = TpcSamplingAlg("TpcPixelSampling")
-pixelSamplingAlg.inHits.Path = "TpcSmearPixelHits"
-pixelSamplingAlg.simHits.Path = "TpcDriftHits"
-pixelSamplingAlg.outHits.Path = "TpcPixelHits"
-appMgr.TopAlg += [pixelSamplingAlg, stripSamplingAlg]
-
-# 5. CZT calo smearing (fixed-with gassian to edep)
+# 4. CZT calo smearing (fixed-with gassian to edep)
 from Configurables import CaloSimpleSmearAlg
-caloSmearAlg = CaloSimpleSmearAlg("CaloSmear")
+caloSmearAlg = CaloSimpleSmearAlg("CaloSmearAlg")
 caloSmearAlg.inHits.Path = "CaloSimHits"
 caloSmearAlg.outHits.Path = "CaloHits"
 caloSmearAlg.energy_sigma = 60 # keV
@@ -119,10 +103,10 @@ appMgr.TopAlg += [caloSmearAlg]
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioLegacyOutput
 outAlg = PodioLegacyOutput('outAlg')
-outAlg.filename = 'digi_megat.root'
+outAlg.filename = 'simple_digi.root'
 outAlg.outputCommands = ['drop *',
-                         'keep TpcPixelHits',
-                         'keep TpcStripHits',
+                         'keep GenParticles',
+                         'keep TpcHits',
                          'keep CaloHits'
                          ]
 appMgr.TopAlg += [outAlg]
