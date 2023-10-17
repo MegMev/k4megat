@@ -52,7 +52,6 @@ void exportHits( string infile = "../options/simple_digi.root", string outfile =
   // prepare some processors
   using ROOT::RVecD;
   using namespace ROOT::VecOps;
-  ROOT::EnableImplicitMT();
 
   // real job
   ROOT::RDF::RSnapshotOptions opts;
