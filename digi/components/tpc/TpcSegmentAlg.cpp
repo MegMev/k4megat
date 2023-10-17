@@ -156,13 +156,13 @@ inline void TpcSegmentAlg::add_hit( edm4hep::SimTrackerHit hit, ISurface* pcb, e
     cache.energy += hit.getEDep();
     cache.position = cache.position + hit.getEDep() * gpos;
     if ( cache.time > hit.getTime() ) cache.time = hit.getTime();
+  } else {
+    auto& new_hit = m_hitCache[newCellId];
+    new_hit.hit.setCellID( newCellId );
+    new_hit.hit.addToRawHits( hit.getObjectID() );
+    new_hit.energy = hit.getEDep();
+    new_hit.time   = hit.getTime();
+    // pseudo truth position
+    new_hit.position = hit.getEDep() * gpos;
   }
-
-  auto& new_hit = m_hitCache[newCellId];
-  new_hit.hit.setCellID( newCellId );
-  new_hit.hit.addToRawHits( hit.getObjectID() );
-  new_hit.energy = hit.getEDep();
-  new_hit.time   = hit.getTime();
-  // pseudo truth position
-  new_hit.position = hit.getEDep() * gpos;
 }
