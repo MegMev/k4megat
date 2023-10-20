@@ -169,6 +169,9 @@
             <segmentation type="NoSegmentation"/>
             <id>system:6</id>
             <!-- <id>system:6,pcb:6</id> -->
+	    <hits_collections>
+		    <hits_collection name="TpcSimHits" key="system" key_value="1"/>
+	    </hits_collections>
         </readout>
     </readouts>
 </lccdd>

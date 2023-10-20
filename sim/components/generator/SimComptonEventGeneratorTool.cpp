@@ -1,12 +1,12 @@
-// local
-#include "SimComptonEventGeneratorTool.h"
 
-// FCCSW
-#include "SimKernel/Units.h"
-
-// Gaudi
+#include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/IRndmEngine.h"
 #include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/RndmGenerators.h"
+
+#include "SimInterface/ISimEventProviderTool.h"
+#include "SimKernel/Units.h"
+#include "k4FWCore/DataHandle.h"
 
 // CLHEP
 #include <CLHEP/Random/RandFlat.h>
@@ -15,14 +15,62 @@
 #include "G4Event.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
+#include "G4SystemOfUnits.hh"
 
 // datamodel
 #include "edm4hep/MCParticleCollection.h"
 
 namespace megat {
 
-  // Declaration of the Tool
-  DECLARE_COMPONENT_WITH_ID( SimComptonEventGeneratorTool, "SimComptonEventGeneratorTool" )
+  /** @class SimComptonEventGeneratorTool SimComptonEventGeneratorTool.h "SimComptonEventGeneratorTool.h"
+   *
+   *  Tool that generates compton events at origin, with a flux direction or 4-pi uniform direction
+   *
+   */
+
+  class SimComptonEventGeneratorTool : public GaudiTool, virtual public ISimEventProviderTool {
+  public:
+    SimComptonEventGeneratorTool( const std::string& type, const std::string& name, const IInterface* parent );
+    virtual ~SimComptonEventGeneratorTool();
+
+    virtual StatusCode initialize() final;
+
+    virtual G4Event* g4Event() final;
+
+  private:
+    StatusCode saveToEdm( const G4PrimaryVertex*, const G4PrimaryParticle*, const G4PrimaryParticle* );
+
+    /// Random number generators
+    Rndm::Numbers p_thetaGen;
+    Rndm::Numbers p_phiGen;
+    Rndm::Numbers m_engyGen;
+
+    /// Suppose the incident photon is directed along the Z axis
+    /// the compton event occurs at the origin
+
+    /// Minimum energy of the incident photons, set with energyMin
+    Gaudi::Property<double> m_energyMin{ this, "energyMin", 10 * CLHEP::MeV,
+                                         "[MeV] Minimum energy of incident photons" };
+    /// Maximum energy of the incident photons, set with energyMax
+    Gaudi::Property<double> m_energyMax{ this, "energyMax", 100 * CLHEP::MeV,
+                                         "[MeV]Maximum energy of incident photons" };
+
+    /// Minimum theta of the photons generated, set with thetaMin, the positive Angle to the Z axis
+    Gaudi::Property<double> p_thetaMin{ this, "p_thetaMin", 0, "[radian]Minimum theta of generated photons" };
+    /// Maximum theta of the photons generated, set with thetaMax,
+    Gaudi::Property<double> p_thetaMax{ this, "p_thetaMax", M_PI, "[radian]Maximum theta of generated photons" };
+    /// Minimum phi of the photons generated, set with phiMin,
+    /// phi: The Angle between the projection of electron momentum in the XY plane and the positive direction of the X
+    /// axis
+    Gaudi::Property<double> p_phiMin{ this, "p_phiMin", 0., "[radian]Minimum phi of generated photons" };
+    /// Maximum phi of the photons generated, set with phiMax
+    Gaudi::Property<double> p_phiMax{ this, "p_phiMax", M_PI, "[radian]Maximum phi of generated photons" };
+
+    /// Flag whether to save primary particle to EDM, set with saveEdm
+    Gaudi::Property<bool> m_saveEdm{ this, "saveEdm", false };
+    /// Handle for the genparticles to be written
+    DataHandle<edm4hep::MCParticleCollection> m_genParticlesHandle{ "GenParticles", Gaudi::DataHandle::Writer, this };
+  };
 
   SimComptonEventGeneratorTool::SimComptonEventGeneratorTool( const std::string& type, const std::string& nam,
                                                               const IInterface* parent )
@@ -184,5 +232,8 @@ namespace megat {
 
     return StatusCode::SUCCESS;
   }
+
+  // component declaration
+  DECLARE_COMPONENT_WITH_ID( SimComptonEventGeneratorTool, "SimComptonEventGeneratorTool" )
 
 } // namespace megat

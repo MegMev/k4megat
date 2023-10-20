@@ -103,5 +103,7 @@
         </plugin>
         
         <plugin name="InstallSurfaceManager"/>
+
+	<plugin type="config" name="Megat_RenameWorldVolume" new_name="World"/>
     </plugins>
 </lccdd>

@@ -1,14 +1,14 @@
-#include "GaudiAlg/GaudiTool.h"
 #include "SimInterface/IGeoSvc.h"
 #include "SimInterface/ISimSaveOutputTool.h"
 #include "SimKernel/Geant4PreDigiTrackHit.h"
 #include "SimKernel/Units.h"
+
+#include "GaudiAlg/GaudiTool.h"
 #include "k4FWCore/DataHandle.h"
 #include "k4FWCore/MetaDataHandle.h"
 
-#include "G4Event.hh"
-
 #include "DD4hep/Detector.h"
+#include "G4Event.hh"
 #include "edm4hep/Constants.h"
 #include "edm4hep/SimTrackerHitCollection.h"
 

@@ -51,6 +51,11 @@ pgun=SimSingleParticleGeneratorTool('ParticleGun', saveEdm=True,
 #                                      vertexX=500, vertexZ=-500,
                                       OutputLevel = INFO)
 
+##### vertex smearing tool
+from Configurables import SimVertexSmearVolumeTool
+vxSmearer = SimVertexSmearVolumeTool('vertexSmear')
+# vxSmearer.volumePath = '/world/TPC/Gas'
+
 ##### output collections
 from Configurables import SimSaveCalHits
 saveCalo = SimSaveCalHits('saveCalo',readoutName = 'CztHits')
@@ -78,6 +83,7 @@ geantsim = SimAlg('SimAlg',
                               'SimSaveTrajectory/saveTrajectory',
                               ],
                     eventProvider = pgun,
+                    vertexSmearer = vxSmearer,
                     OutputLevel = WARNING)
 
 # output to root file

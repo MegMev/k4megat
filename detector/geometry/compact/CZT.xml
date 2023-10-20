@@ -107,6 +107,9 @@
         <readout name="CztHits">
             <segmentation type="CartesianGridXY" grid_size_x="Czt_Pitch_X" grid_size_y="Czt_Pitch_Y" offset_x="-Czt_Crystal_X/2+Czt_Pitch_X/2" offset_y="-Czt_Crystal_Y/2+Czt_Pitch_Y/2" />
             <id>system:6,section:6,layer:6,row:32:8,column:8,x:8,y:8</id>
+	    <hits_collections>
+		    <hits_collection name="CztSimHits" key="system" key_value="2"/>
+	    </hits_collections>
         </readout>
     </readouts>
 
