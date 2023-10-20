@@ -155,7 +155,7 @@ static Ref_t create_element( Detector& description, xml_h e, Ref_t sens ) {
         Volume l_env( _toString( layer_id, "layer%d" ), Box( row_ll / 2, col_ll / 2, mod_z / 2 ), chamber_gas );
         // l_env.setVisAttributes( description.invisible() );
         l_env.setVisAttributes( description, x_det.visStr() );
-        DetElement l_de( sec_de, _toString( layer_id, "layer%d" ), layer_id );
+        DetElement l_de( sec_de, _toString( layer_id, "Layer%d" ), layer_id );
         l_des.emplace_back( l_de );
 
         double col_dd = -col_ll / 2.;
@@ -165,22 +165,21 @@ static Ref_t create_element( Detector& description, xml_h e, Ref_t sens ) {
           Volume row_env( _toString( col_id, "row%d" ), Box( row_ll / 2, mod_y / 2, mod_z / 2 ), chamber_gas );
           // row_env.setVisAttributes( description.invisible() );
           row_env.setVisAttributes( description, x_det.visStr() );
-          DetElement row_de( l_de, _toString( col_id, "row%d" ), col_id );
+          DetElement row_de( l_de, _toString( col_id, "Row%d" ), col_id );
           for ( int row_id = 0; row_id < nrow; row_id++ ) {
-            DetElement mod_de( row_de, m_name + _toString( col_id * nrow + row_id, "%d" ), col_id * nrow + row_id );
+            DetElement mod_de( row_de, _toString( col_id * nrow + row_id, "%d" ), col_id * nrow + row_id );
             pv = row_env.placeVolume( modules[m_name], Position( row_dd + mod_x / 2, 0, 0 ) );
             pv.addPhysVolID( "column", row_id );
-            pv->SetName( _toString( row_id, "column%d" ).c_str() );
+            pv->SetName( _toString( row_id, "Column%d" ).c_str() );
             mod_de.setPlacement( pv );
 
-            DetElement sens_de( mod_de, m_name + _toString( col_id * nrow + row_id, "sensor%d" ),
-                                col_id * nrow + row_id );
+            DetElement sens_de( mod_de, _toString( col_id * nrow + row_id, "Sensor%d" ), col_id * nrow + row_id );
             sens_de.setPlacement( mod_sens_pvs[m_name] );
             row_dd += mod_x + row_gap;
           }
           pv = l_env.placeVolume( row_env, Position( 0, col_dd + mod_y / 2, 0 ) );
           pv.addPhysVolID( "row", col_id );
-          pv->SetName( _toString( col_id, "row%d" ).c_str() );
+          pv->SetName( _toString( col_id, "Row%d" ).c_str() );
           row_de.setPlacement( pv );
 
           col_dd += mod_y + col_gap;
@@ -195,7 +194,7 @@ static Ref_t create_element( Detector& description, xml_h e, Ref_t sens ) {
     for ( auto vol : layers ) {
       pv = sec_env.placeVolume( vol.first, Position( 0, 0, l_dd - vol.second / 2 ) );
       pv.addPhysVolID( "layer", layer_id );
-      pv->SetName( _toString( layer_id, "layer%d" ).c_str() );
+      pv->SetName( _toString( layer_id, "Layer%d" ).c_str() );
       l_des[layer_id].setPlacement( pv );
       l_dd -= vol.second;
       layer_id++;
