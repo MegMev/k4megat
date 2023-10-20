@@ -167,13 +167,13 @@ static Ref_t create_element( Detector& description, xml_h e, Ref_t sens ) {
           row_env.setVisAttributes( description, x_det.visStr() );
           DetElement row_de( l_de, _toString( col_id, "Row%d" ), col_id );
           for ( int row_id = 0; row_id < nrow; row_id++ ) {
-            DetElement mod_de( row_de, _toString( col_id * nrow + row_id, "%d" ), col_id * nrow + row_id );
+            DetElement mod_de( row_de, _toString( row_id, "Module%d" ), col_id * nrow + row_id );
             pv = row_env.placeVolume( modules[m_name], Position( row_dd + mod_x / 2, 0, 0 ) );
             pv.addPhysVolID( "column", row_id );
             pv->SetName( _toString( row_id, "Column%d" ).c_str() );
             mod_de.setPlacement( pv );
 
-            DetElement sens_de( mod_de, _toString( col_id * nrow + row_id, "Sensor%d" ), col_id * nrow + row_id );
+            DetElement sens_de( mod_de, _toString( row_id, "Sensor%d" ), col_id * nrow + row_id );
             sens_de.setPlacement( mod_sens_pvs[m_name] );
             row_dd += mod_x + row_gap;
           }
