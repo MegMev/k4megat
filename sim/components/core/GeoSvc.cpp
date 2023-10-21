@@ -4,10 +4,11 @@
 #include "SimKernel/GeoConstruction.h"
 #include "TGeoManager.h"
 
+#include "DD4hep/BuildType.h"
+#include "DD4hep/DetectorTools.h"
 #include "DD4hep/Printout.h"
+#include "DDRec/Surface.h"
 #include "DDRec/SurfaceHelper.h"
-#include <DD4hep/BuildType.h>
-#include <DDRec/Surface.h>
 
 namespace megat {
   using namespace Gaudi;
@@ -115,5 +116,18 @@ namespace megat {
       }
     }
     return m_helperSurfList[volumeID];
+  }
+
+  dd4hep::PlacedVolume GeoSvc::getPlacedVolume( std::string path ) {
+    auto de = dd4hep::detail::tools::findElement( *m_dd4hepgeo, path );
+    if ( de.isValid() ) { return de.placement(); }
+
+    auto pv = dd4hep::detail::tools::findNode( m_dd4hepgeo->world().placement(), path );
+    return pv.isValid() ? pv : dd4hep::PlacedVolume();
+  }
+
+  dd4hep::DetElement GeoSvc::getDetElement( std::string path ) {
+    auto de = dd4hep::detail::tools::findElement( *m_dd4hepgeo, path );
+    return de.isValid() ? de : dd4hep::DetElement();
   }
 } // namespace megat

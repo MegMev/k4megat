@@ -4,25 +4,27 @@
 #include "SimInterface/IGeoSvc.h"
 
 // Gaudi
+#include "Gaudi/Property.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Incident.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/ServiceHandle.h"
-#include <Gaudi/Property.h>
 
 // DD4Hep
 #include "DD4hep/BuildType.h"
+#include "DD4hep/DetElement.h"
 #include "DD4hep/Detector.h"
-#include <DD4hep/VolumeManager.h>
-#include <DDRec/Surface.h>
+#include "DD4hep/VolumeManager.h"
+#include "DD4hep/Volumes.h"
+#include "DDRec/Surface.h"
 
 // Geant4
 #include "G4RunManager.hh"
 #include "G4VUserDetectorConstruction.hh"
-#include <GaudiKernel/StatusCode.h>
-#include <Parsers/Primitives.h>
+#include "GaudiKernel/StatusCode.h"
+#include "Parsers/Primitives.h"
 #include <string>
 
 namespace megat {
@@ -53,6 +55,9 @@ namespace megat {
 
     virtual dd4hep::rec::SurfaceList getSensitiveSurfList( dd4hep::VolumeID volumeID ) override;
     virtual dd4hep::rec::SurfaceList getHelperSurfList( dd4hep::VolumeID volumeID ) override;
+
+    virtual dd4hep::PlacedVolume getPlacedVolume( std::string path );
+    virtual dd4hep::DetElement   getDetElement( std::string path );
 
   private:
     /// Pointer to the interface to the DD4hep geometry
