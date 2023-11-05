@@ -1,4 +1,4 @@
-#include "SimKernel/ParticleHistoryEventAction.h"
+#include "SimKernel/FullSimEventAction.h"
 
 #include "SimKernel/EventInformation.h"
 
@@ -10,15 +10,15 @@ namespace megat {
 
   namespace sim {
 
-    ParticleHistoryEventAction::ParticleHistoryEventAction() {}
+    FullSimEventAction::FullSimEventAction() {}
 
-    void ParticleHistoryEventAction::BeginOfEventAction( const G4Event* /*anEvent*/ ) {
+    void FullSimEventAction::BeginOfEventAction( const G4Event* /*anEvent*/ ) {
 
       auto eventInfo = new EventInformation();
       G4EventManager::GetEventManager()->SetUserInformation( eventInfo );
     }
 
-    void ParticleHistoryEventAction::EndOfEventAction( const G4Event* /*anEvent*/ ) {}
+    void FullSimEventAction::EndOfEventAction( const G4Event* /*anEvent*/ ) {}
 
   } // namespace sim
 } // namespace megat

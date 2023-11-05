@@ -1,4 +1,4 @@
-#include "SimKernel/ParticleHistoryAction.h"
+#include "SimKernel/FullSimTrackingAction.h"
 
 #include "SimKernel/EventInformation.h"
 
@@ -9,9 +9,9 @@ namespace megat {
 
   namespace sim {
 
-    ParticleHistoryAction::ParticleHistoryAction( double aEnergyCut ) : m_energyCut( aEnergyCut ) {}
+    FullSimTrackingAction::FullSimTrackingAction( double aEnergyCut ) : m_energyCut( aEnergyCut ) {}
 
-    void ParticleHistoryAction::PreUserTrackingAction( const G4Track* aTrack ) {
+    void FullSimTrackingAction::PreUserTrackingAction( const G4Track* aTrack ) {
       auto g4EvtMgr = G4EventManager::GetEventManager();
       auto evtinfo  = dynamic_cast<EventInformation*>( g4EvtMgr->GetUserInformation() );
       // Not used: should be handled in addParticle
@@ -20,9 +20,9 @@ namespace megat {
       if ( selectSecondary( *aTrack, m_energyCut ) ) { evtinfo->addParticle( aTrack ); }
     }
 
-    void ParticleHistoryAction::PostUserTrackingAction( const G4Track* /*aTrack*/ ) {}
+    void FullSimTrackingAction::PostUserTrackingAction( const G4Track* /*aTrack*/ ) {}
 
-    bool ParticleHistoryAction::selectSecondary( const G4Track& aTrack, double aEnergyCut ) {
+    bool FullSimTrackingAction::selectSecondary( const G4Track& aTrack, double aEnergyCut ) {
       G4LorentzVector p4( aTrack.GetMomentum(), aTrack.GetTotalEnergy() );
       if ( p4.e() < aEnergyCut ) { return false; }
       return true;

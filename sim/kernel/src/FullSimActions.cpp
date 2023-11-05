@@ -1,6 +1,6 @@
 #include "SimKernel/FullSimActions.h"
-#include "SimKernel/ParticleHistoryAction.h"
-#include "SimKernel/ParticleHistoryEventAction.h"
+#include "SimKernel/FullSimEventAction.h"
+#include "SimKernel/FullSimTrackingAction.h"
 #include <iostream>
 
 namespace megat {
@@ -13,8 +13,8 @@ namespace megat {
 
     void FullSimActions::Build() const {
       if ( m_enableHistory ) {
-        SetUserAction( new ParticleHistoryEventAction() );
-        SetUserAction( new ParticleHistoryAction( m_energyCut ) );
+        SetUserAction( new FullSimEventAction() );
+        SetUserAction( new FullSimTrackingAction( m_energyCut ) );
       }
     }
   } // namespace sim
