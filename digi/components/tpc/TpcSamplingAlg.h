@@ -34,7 +34,7 @@
 namespace edm4hep {
   class SimTrackerHitCollection;
   class TrackerHitCollection;
-  class TPCHitCollection;
+  class RawTimeSeriesCollection;
 } // namespace edm4hep
 
 class TpcSamplingAlg : public GaudiAlgorithm {
@@ -58,12 +58,12 @@ private:
   /// Handle to EDM collection
   DataHandle<edm4hep::TrackerHitCollection>    m_inHits{ "TpcSegHits", Gaudi::DataHandle::Reader, this };
   DataHandle<edm4hep::SimTrackerHitCollection> m_simHits{ "TpcDriftHits", Gaudi::DataHandle::Reader, this };
-  DataHandle<edm4hep::TPCHitCollection>        m_outHits{ "TpcSampleHits", Gaudi::DataHandle::Writer, this };
+  DataHandle<edm4hep::RawTimeSeriesCollection> m_outHits{ "TpcSampleHits", Gaudi::DataHandle::Writer, this };
 
   /// Properties
-  Gaudi::Property<double> m_sampleInterval{ this, "sample_interval", 5, "[ns] Sample rate" };
-  Gaudi::Property<double> m_shapeTime{ this, "shape_time", 5, "[us] Shaping time of electronics" };
-  Gaudi::Property<int>    m_nrPts{ this, "nr_points", 512, "Number of sample points" };
-  Gaudi::Property<double> m_gain{ this, "gain", 100, "[1/keV] Gain factor" };
-  Gaudi::Property<int>    m_ampOffset{ this, "amplitude_offset", 0, "Amplitude offset" };
+  Gaudi::Property<float> m_sampleInterval{ this, "sample_interval", 25, "[ns] Sampling interval" };
+  Gaudi::Property<float> m_shapeTime{ this, "shape_time", 5, "[us] Shaping time of electronics" };
+  Gaudi::Property<int>   m_nrPts{ this, "nr_points", 512, "Number of sample points" };
+  Gaudi::Property<float> m_gain{ this, "gain", 100, "[1/keV] Gain factor" };
+  Gaudi::Property<int>   m_ampOffset{ this, "amplitude_offset", 0, "Amplitude offset" };
 };

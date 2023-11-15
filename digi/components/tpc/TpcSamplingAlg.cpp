@@ -2,8 +2,8 @@
 
 // edm4hep
 #include "SimKernel/Units.h"
+#include "edm4hep/RawTimeSeriesCollection.h"
 #include "edm4hep/SimTrackerHitCollection.h"
-#include "edm4hep/TPCHitCollection.h"
 #include "edm4hep/TrackerHitCollection.h"
 
 #include "boost/numeric/conversion/cast.hpp"
@@ -94,10 +94,10 @@ StatusCode TpcSamplingAlg::execute() {
 
     // 2. create output hit
     // [improve:] save seed size in quality member (temporary?)
-    auto new_hit = out_hits->create( hit.getCellID(), seeds.size(), hit.getTime(), hit.getEDep() );
+    auto new_hit = out_hits->create( hit.getCellID(), seeds.size(), hit.getTime(), hit.getEDep(), m_sampleInterval );
     std::for_each( adc_counts.begin(), adc_counts.end(), [&]( auto& count ) {
       try {
-        new_hit.addToRawDataWords( numeric_cast<int16_t>( std::lround( count ) + m_ampOffset ) );
+        new_hit.addToAdcCounts( numeric_cast<int16_t>( std::lround( count ) + m_ampOffset ) );
 
       } catch ( bad_numeric_cast& e ) {
         warning() << "ADC count out of range (16-bit), try adjusting the gain factor!" << endmsg;
