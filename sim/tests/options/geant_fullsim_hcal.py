@@ -33,7 +33,7 @@ from Configurables import SimAlg, SimSaveCalHits, SimPrimariesFromEdmTool
 # first, create a tool that saves the calorimeter hits (of type "hcal")
 # Name of that tool in GAUDI is "XX/YY" where XX is the tool class name ("SimSaveTrackerHits")
 # and YY is the given name ("saveTrackerHits")
-savehcaltool = SimSaveCalHits("saveHCalHits", readoutNames = ["HCalBarrelReadout"])
+savehcaltool = SimSaveCalHits("saveHCalHits", readoutName = ["HCalBarrelReadout"])
 savehcaltool.positionedCaloHits.Path = "positionedCaloHits"
 savehcaltool.caloHits.Path = "caloHits"
 # next, create the G4 algorithm, giving the list of names of tools ("XX/YY")
@@ -43,8 +43,8 @@ geantsim = SimAlg("SimAlg",
                     outputs = ["SimSaveCalHits/saveHCalHits"],
                     eventProvider=particle_converter)
 
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput("out",
+from Configurables import PodioOutput
+out = PodioOutput("out",
                    OutputLevel=DEBUG)
 out.outputCommands = ["keep *"]
 

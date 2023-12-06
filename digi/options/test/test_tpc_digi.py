@@ -1,8 +1,5 @@
 from Gaudi.Configuration import *
 
-# MessageSvc
-MessageSvc(OutputLevel=ERROR)
-
 # ApplicationMgr
 from Configurables import ApplicationMgr
 appMgr = ApplicationMgr(
@@ -17,10 +14,11 @@ appMgr = ApplicationMgr(
 from Configurables import MegatGeoSvc as GeoSvc
 from os import environ, path
 detector_path = environ.get("MEGAT_ROOT", "")
-geoSvc = GeoSvc("MegatGeoSvc",
+geoSvc = GeoSvc("GeoSvc",
                 buildType="BUILD_SIMU",
                 detectors=[path.join(detector_path, 'geometry/compact/Megat.xml'),
-                           path.join(detector_path, 'geometry/compact/TPC_readout.xml')],
+                           './tpc_seg_test.xml'
+                           ],
                 OutputLevel = WARNING)
 appMgr.ExtSvc += [geoSvc]
 
@@ -44,9 +42,9 @@ appMgr.ExtSvc += [rdmEngine, rdmSvc]
 ################################# Algorithms ########################################
 
 # Fetch the collection into TES
-from Configurables import PodioLegacyInput
-inputAlg = PodioLegacyInput()
-inputAlg.collections = ["TpcSimHits", "CaloSimHits"]
+from Configurables import PodioInput
+inputAlg = PodioInput()
+inputAlg.collections = ["TpcSimHits"]
 appMgr.TopAlg += [inputAlg]
 
 # 1. Electron drift to anode surface
@@ -109,24 +107,12 @@ pixelSamplingAlg.simHits.Path = "TpcDriftHits"
 pixelSamplingAlg.outHits.Path = "TpcPixelHits"
 appMgr.TopAlg += [pixelSamplingAlg, stripSamplingAlg]
 
-# 5. CZT calo smearing (fixed-with gassian to edep)
-from Configurables import CaloSimpleSmearAlg
-caloSmearAlg = CaloSimpleSmearAlg("CaloSmear")
-caloSmearAlg.inHits.Path = "CaloSimHits"
-caloSmearAlg.outHits.Path = "CaloHits"
-caloSmearAlg.energy_sigma = 60 # keV
-appMgr.TopAlg += [caloSmearAlg]
-
 ################################# Output ########################################
 
 # Select & Write the collections to disk ROOT file
-from Configurables import PodioLegacyOutput
-outAlg = PodioLegacyOutput('outAlg')
-outAlg.filename = 'digi_megat.root'
-outAlg.outputCommands = ['drop *',
-                         'keep TpcPixelHits',
-                         'keep TpcStripHits',
-                         'keep CaloHits'
-                         ]
+from Configurables import PodioOutput
+outAlg = PodioOutput('outAlg')
+outAlg.filename = 'tpcdigi_megat.root'
+outAlg.outputCommands = ['drop *', 'keep TpcPixelHits', 'keep TpcStripHits']
 appMgr.TopAlg += [outAlg]
 

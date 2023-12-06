@@ -7,8 +7,8 @@ datasvc.input = 'tpcseg_megat.root'
 # datasvc.ForceLeaves= True
 
 # Fetch the collection into TES
-from Configurables import PodioLegacyInput
-inp = PodioLegacyInput()
+from Configurables import PodioInput
+inp = PodioInput()
 inp.collections = ["TpcSegPixelHits", "TpcSegStripHits"]
 
 # Add algorithm
@@ -25,8 +25,8 @@ tpcstripsmeared.inHits.Path = "TpcSegStripHits"
 tpcstripsmeared.outHits.Path = "TpcSmearStripHits"
 
 # Select & Write the collections to disk ROOT file
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput()
+from Configurables import PodioOutput
+out = PodioOutput()
 out.filename = 'tpcsmear_megat.root'
 out.outputCommands = ['keep *']
 

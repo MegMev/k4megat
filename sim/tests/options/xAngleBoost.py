@@ -45,8 +45,8 @@ xAngleBoost.OutputLevel = DEBUG
 ApplicationMgr().TopAlg += [xAngleBoost]
 
 
-from Configurables import PodioLegacyOutput
-output = PodioLegacyOutput("output")
+from Configurables import PodioOutput
+output = PodioOutput("output")
 output.filename = "output_xAngleBoost.root"
 output.outputCommands = ["keep *"]
 ApplicationMgr().TopAlg += [output]

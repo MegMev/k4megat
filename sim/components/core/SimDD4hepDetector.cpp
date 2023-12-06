@@ -11,7 +11,7 @@ namespace megat {
   DECLARE_COMPONENT_WITH_ID( SimDD4hepDetector, "SimDD4hepDetector" )
 
   SimDD4hepDetector::SimDD4hepDetector( const std::string& aType, const std::string& aName, const IInterface* aParent )
-      : GaudiTool( aType, aName, aParent ), m_geoSvc( "MegatGeoSvc", aName ) {
+      : GaudiTool( aType, aName, aParent ), m_geoSvc( "GeoSvc", aName ) {
     declareInterface<ISimDetectorConstruction>( this );
     declareProperty( "GeoSvc", m_geoSvc );
   }

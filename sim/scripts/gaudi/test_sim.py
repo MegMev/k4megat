@@ -2,18 +2,18 @@ from Gaudi.Configuration import *
 import GaudiKernel.SystemOfUnits as units
 
 # TES
-from Configurables import k4LegacyDataSvc
-podioevent = k4LegacyDataSvc("EventDataSvc")
+from Configurables import k4DataSvc
+podioevent = k4DataSvc("EventDataSvc")
 
 # geometry service
 ### Configures the detector construction: geometry and sd
 from Configurables import MegatGeoSvc as GeoSvc
 from os import environ, path
 detector_path = environ.get("MEGAT_ROOT", "")
-geoservice = GeoSvc("MegatGeoSvc", detectors=[path.join(detector_path, 'geometry/compact/Megat.xml')],
+geoservice = GeoSvc("GeoSvc", detectors=[path.join(detector_path, 'geometry/compact/Megat.xml')],
                     buildType="BUILD_SIMU",
                     # sensitiveTypes={'tracker':'MegatSimpleTrackerSD','calorimeter':'MegatAggregateCalorimeterSD'},
-                    OutputLevel = WARNING)
+                    OutputLevel = INFO)
 
 # region & limits
 ### definition is in dd4hep compact file
@@ -53,36 +53,36 @@ pgun=SimSingleParticleGeneratorTool('ParticleGun', saveEdm=True,
 
 ##### output collections
 from Configurables import SimSaveCalHits
-saveCalo = SimSaveCalHits('saveCalo',readoutNames = ['CztHits'])
-saveCalo.CaloHits.Path = 'CaloSimHits'
+saveCalo = SimSaveCalHits('saveCalo',readoutName = 'CztHits')
+saveCalo.Hits.Path = 'CaloSimHits'
 
 from Configurables import SimSaveTrackerHits
-saveTpc = SimSaveTrackerHits('saveTpc',readoutNames = ['TpcHits'])
-saveTpc.SimTrackHits.Path = 'TpcSimHits'
+saveTpc = SimSaveTrackerHits('saveTpc',readoutName = 'TpcHits')
+saveTpc.Hits.Path = 'TpcSimHits'
 
-##### save trajectory and history
-# from Configurables import SimSaveTrajectory
-# savetrajectorytool = SimSaveTrajectory("saveTrajectory")
-# savetrajectorytool.TrajectoryPoints.Path = "TrajectoryPoints"
+#### save trajectory and history
+from Configurables import SimSaveTrajectory
+savetrajectorytool = SimSaveTrajectory("saveTrajectory")
+savetrajectorytool.Hits.Path = "TrajectoryPoints"
 
-# from Configurables import SimSaveParticleHistory
-# savehisttool = SimSaveParticleHistory("saveHistory")
-# savehisttool.GenParticles.Path = "SimParticles"
+from Configurables import SimSaveParticleHistory
+savehisttool = SimSaveParticleHistory("saveHistory")
+savehisttool.Hits.Path = "SimParticles"
 
-##### finally the alg itself
+#### finally the alg itself
 from Configurables import SimAlg
 geantsim = SimAlg('SimAlg',
                     outputs= ['SimSaveCalHits/saveCalo',
                               'SimSaveTrackerHits/saveTpc',
-                              # 'SimSaveParticleHistory/saveHistory',
-                              # 'SimSaveTrajectory/saveTrajectory',
+                              'SimSaveParticleHistory/saveHistory',
+                              'SimSaveTrajectory/saveTrajectory',
                               ],
                     eventProvider = pgun,
                     OutputLevel = WARNING)
 
 # output to root file
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput()
+from Configurables import PodioOutput
+out = PodioOutput()
 out.filename = 'megat.gaudi.root'
 out.outputCommands = ['keep *']
 

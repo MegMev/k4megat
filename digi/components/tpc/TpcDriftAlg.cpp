@@ -33,7 +33,7 @@ DECLARE_COMPONENT( TpcDriftAlg )
 static constexpr double max_boundary = std::numeric_limits<double>::max();
 
 TpcDriftAlg::TpcDriftAlg( const std::string& aName, ISvcLocator* aSvcLoc )
-    : GaudiAlgorithm( aName, aSvcLoc ), m_geoSvc( "MegatGeoSvc", aName ) {
+    : GaudiAlgorithm( aName, aSvcLoc ), m_geoSvc( "GeoSvc", aName ) {
   declareProperty( "inHits", m_inHits, "Simulated Hit Collection of Tpc" );
   declareProperty( "outHits", m_outHits, "Drifted Electron Hit Collection" );
 }

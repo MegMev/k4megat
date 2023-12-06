@@ -37,7 +37,7 @@ geantservice = SimSvc("SimSvc", physicslist='SimTestPhysicsList')
 
 from Configurables import SimAlg, SimSaveCalHits, InspectHitsCollectionsTool
 inspecttool = InspectHitsCollectionsTool("inspect", readoutNames=["ECalHits"], OutputLevel = DEBUG)
-savecaltool = SimSaveCalHits("saveECalHits", readoutNames = ["ECalHits"], OutputLevel = DEBUG)
+savecaltool = SimSaveCalHits("saveECalHits", readoutName = ["ECalHits"], OutputLevel = DEBUG)
 savecaltool.positionedCaloHits.Path = "positionedCaloHits"
 savecaltool.caloHits.Path = "caloHits"
 geantsim = SimAlg("SimAlg", outputs= ["SimSaveCalHits/saveECalHits","InspectHitsCollectionsTool/inspect"])
@@ -55,9 +55,9 @@ resegment = RedoSegmentation("ReSegmentation",
 resegment.inhits.Path = "positionedCaloHits"
 resegment.outhits.Path = "newCaloHits"
 
-from Configurables import FCCDataSvc, PodioLegacyOutput
+from Configurables import FCCDataSvc, PodioOutput
 podiosvc = FCCDataSvc("EventDataSvc")
-out = PodioLegacyOutput("out", filename="test_redoSegmentationPhiEta.root")
+out = PodioOutput("out", filename="test_redoSegmentationPhiEta.root")
 out.outputCommands = ["keep *"]
 
 ApplicationMgr(EvtSel='NONE',

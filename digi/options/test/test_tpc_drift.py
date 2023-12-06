@@ -4,7 +4,7 @@ from Gaudi.Configuration import *
 from Configurables import MegatGeoSvc as GeoSvc
 from os import environ, path
 detector_path = environ.get("MEGAT_ROOT", "")
-geoservice = GeoSvc("MegatGeoSvc",
+geoservice = GeoSvc("GeoSvc",
                     buildType="BUILD_SIMU",
                     detectors=[path.join(detector_path, 'geometry/compact/Megat.xml'),
                                ],
@@ -17,8 +17,8 @@ datasvc.input = "megat.gaudi.root"
 # datasvc.ForceLeaves= True
 
 # Fetch the collection into TES
-from Configurables import PodioLegacyInput
-inp = PodioLegacyInput()
+from Configurables import PodioInput
+inp = PodioInput()
 inp.collections = ["TpcSimHits"]
 
 # Add algorithm
@@ -35,8 +35,8 @@ tpcdriftalg.inHits.Path = "TpcSimHits"
 tpcdriftalg.outHits.Path = "TpcDriftHits"
 
 # Select & Write the collections to disk ROOT file
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput()
+from Configurables import PodioOutput
+out = PodioOutput()
 out.filename = 'tpcdrift_megat.root'
 out.outputCommands = ['keep *']
 

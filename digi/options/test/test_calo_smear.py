@@ -7,8 +7,8 @@ datasvc.input = 'megat_tut.root'
 # datasvc.ForceLeaves= True
 
 # Fetch the collection into TES
-from Configurables import PodioLegacyInput
-inp = PodioLegacyInput()
+from Configurables import PodioInput
+inp = PodioInput()
 inp.collections = ["CztHits"]
 
 # Add algorithm
@@ -19,8 +19,8 @@ calosmeared.outHits.Path = "CztSmearedHits"
 calosmeared.energy_sigma = 100 # keV
 
 # Select & Write the collections to disk ROOT file
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput()
+from Configurables import PodioOutput
+out = PodioOutput()
 out.filename = 'calosmear_megat_tut.root'
 out.outputCommands = ['keep *']
 

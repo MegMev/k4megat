@@ -56,11 +56,11 @@ pgun=SimSingleParticleGeneratorTool('ParticleGun', saveEdm=True,
 
 ##### output collections
 from Configurables import SimSaveCalHits
-saveCalo = SimSaveCalHits('saveCalo',readoutNames = ['CztHits'])
+saveCalo = SimSaveCalHits('saveCalo',readoutName = ['CztHits'])
 saveCalo.CaloHits.Path = 'CztHits'
 
 from Configurables import SimSaveTrackerHits
-saveTpc = SimSaveTrackerHits('saveTpc',readoutNames = ['TpcHits'])
+saveTpc = SimSaveTrackerHits('saveTpc',readoutName = ['TpcHits'])
 saveTpc.SimTrackHits.Path = 'TpcHits'
 
 ##### save trajectory and history
@@ -84,8 +84,8 @@ geantsim = SimAlg('SimAlg',
                     OutputLevel = DEBUG)
 
 # output to root file
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput('out')
+from Configurables import PodioOutput
+out = PodioOutput('out')
 out.filename = 'megat.gaudi.root'
 out.outputCommands = ['keep *']
 

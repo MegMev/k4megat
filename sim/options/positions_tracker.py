@@ -15,7 +15,7 @@ from Configurables import SimSvc
 geantservice = SimSvc("SimSvc", detector='SimDD4hepDetector', physicslist="SimFtfpBert", actions="SimFullSimActions")
 
 from Configurables import SimAlg, SimSaveTrackerHits
-savetool = SimSaveTrackerHits("saveHits", readoutNames = ["TrackerBarrelReadout"])
+savetool = SimSaveTrackerHits("saveHits", readoutName = ["TrackerBarrelReadout"])
 savetool.positionedTrackHits.Path = "PositionedHits"
 savetool.trackHits.Path = "Hits"
 savetool.digiTrackHits.Path = "digiHits"
@@ -34,8 +34,8 @@ positions.hits.Path = "Hits"
 positions.positionedHits.Path = "Positions"
 
 # PODIO algorithm
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput("out",
+from Configurables import PodioOutput
+out = PodioOutput("out",
                   OutputLevel=DEBUG)
 out.outputCommands = ["keep *"]
 out.filename = "positions_trackerSim.root"

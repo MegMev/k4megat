@@ -72,8 +72,6 @@ namespace megat {
     ToolHandle<ISimPhysicsList> m_physicsListTool{ "SimFtfpBert", this, true };
     /// Handle for the user action initialization
     ToolHandle<ISimActionTool> m_actionsTool{ "SimFullSimActions", this, true };
-    /// Handle for the magnetic field initialization
-    ToolHandle<ISimMagneticFieldTool> m_magneticFieldTool{ "SimConstantMagneticFieldTool", this, true };
     /// Geant4 commands to be executed before user initialization
     Gaudi::Property<std::vector<std::string>> m_g4PreInitCommands{
         this, "g4PreInitCommands", {}, "Geant4 commands to be executed before user initialization" };

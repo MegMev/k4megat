@@ -15,7 +15,7 @@ geantservice = SimSvc("SimSvc")
 # Translates EDM to G4Event, passes the event to G4, writes out outputs via tools
 # and a tool that saves the calorimeter hits
 from Configurables import SimAlg, SimSaveCalHits
-savecaltool = SimSaveCalHits("saveECalHits", readoutNames = ["EMECPhiEta"])
+savecaltool = SimSaveCalHits("saveECalHits", readoutName = ["EMECPhiEta"])
 savecaltool.positionedCaloHits.Path = "positionedCaloHits"
 savecaltool.caloHits.Path = "caloHits"
 from Configurables import SimSingleParticleGeneratorTool
@@ -38,9 +38,9 @@ rewrite.inhits.Path = "caloHits"
 rewrite.outhits.Path = "caloRecoHits"
 
 # PODIO algorithm
-from Configurables import FCCDataSvc, PodioLegacyOutput
+from Configurables import FCCDataSvc, PodioOutput
 podiosvc = FCCDataSvc("EventDataSvc")
-out = PodioLegacyOutput("out")
+out = PodioOutput("out")
 out.outputCommands = ["keep *"]
 out.filename = "rewrittenBitfield_ecalEndcapSim.root"
 

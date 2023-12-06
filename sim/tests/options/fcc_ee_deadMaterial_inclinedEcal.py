@@ -60,7 +60,7 @@ geantservice.g4PostInitCommands += ["/run/setCut 0.1 mm"]
 # Translates EDM to G4Event, passes the event to G4, writes out outputs via tools
 # and a tool that saves the calorimeter hits
 from Configurables import SimAlg, SimSaveCalHits
-saveecaltool = SimSaveCalHits("saveECalBarrelHits",readoutNames = ["ECalBarrelEta"])
+saveecaltool = SimSaveCalHits("saveECalBarrelHits",readoutName = ["ECalBarrelEta"])
 saveecaltool.CaloHits.Path = "ECalBarrelHits"
 
 from Configurables import SimPrimariesFromEdmTool
@@ -101,9 +101,9 @@ geantsim.AuditExecute = True
 energy_in_layers.AuditExecute = True
 
 import uuid
-from Configurables import PodioLegacyOutput
+from Configurables import PodioOutput
 ### PODIO algorithm
-out = PodioLegacyOutput("out", OutputLevel=DEBUG)
+out = PodioOutput("out", OutputLevel=DEBUG)
 out.outputCommands = ["drop *", "keep energyInLayer", "keep energyInCryo"]
 out.filename = "fccee_energyInCaloLayers_%ideg_%igev_%s.root" % (theta, momentum, uuid.uuid4().hex[0:16])
 

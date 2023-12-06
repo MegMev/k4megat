@@ -64,8 +64,8 @@ THistSvc().AutoFlush=True
 THistSvc().OutputLevel=INFO
 
 # PODIO algorithm
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput("out", filename = "out_fast_simple.root")
+from Configurables import PodioOutput
+out = PodioOutput("out", filename = "out_fast_simple.root")
 out.outputCommands = ["keep *"]
 
 # ApplicationMgr

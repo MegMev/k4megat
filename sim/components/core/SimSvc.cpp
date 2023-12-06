@@ -22,7 +22,6 @@ namespace megat {
     declareProperty( "detector", m_detectorTool, "Handle for the detector construction tool" );
     declareProperty( "physicslist", m_physicsListTool, "Handle for the Geant physics list tool" );
     declareProperty( "actions", m_actionsTool, "Handle for the user action initialization" );
-    declareProperty( "magneticField", m_magneticFieldTool, "Handle for the magnetic field initialization" );
   }
 
   SimSvc::~SimSvc() {}
@@ -53,10 +52,6 @@ namespace megat {
     }
     if ( !m_actionsTool.retrieve() ) {
       error() << "Unable to retrieve list of user actions" << endmsg;
-      return StatusCode::FAILURE;
-    }
-    if ( !m_magneticFieldTool.retrieve() ) {
-      error() << "Unable to retrieve the magnetic field" << endmsg;
       return StatusCode::FAILURE;
     }
 

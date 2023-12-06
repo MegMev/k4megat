@@ -41,7 +41,7 @@ geantservice = SimSvc("SimSvc", physicslist='SimTestPhysicsList')
 
 from Configurables import SimAlg, SimSaveCalHits, InspectHitsCollectionsTool
 inspecttool = InspectHitsCollectionsTool("inspect", readoutNames=["ECalHits"], OutputLevel = DEBUG)
-savecaltool = SimSaveCalHits("saveECalHits", readoutNames = ["ECalHits"], OutputLevel = DEBUG)
+savecaltool = SimSaveCalHits("saveECalHits", readoutName = ["ECalHits"], OutputLevel = DEBUG)
 savecaltool.positionedCaloHits.Path = "CaloHitsPositions"
 savecaltool.caloHits.Path = "CaloHits"
 geantsim = SimAlg("SimAlg", outputs= ["SimSaveCalHits/saveECalHits","InspectHitsCollectionsTool/inspect"])
@@ -60,9 +60,9 @@ merge = MergeCells("mergeCells",
 merge.inhits.Path = "CaloHits"
 merge.outhits.Path = "CaloHitsNew"
 
-from Configurables import FCCDataSvc, PodioLegacyOutput
+from Configurables import FCCDataSvc, PodioOutput
 podiosvc = FCCDataSvc("EventDataSvc")
-out = PodioLegacyOutput("out", filename="output_test_mergeCells.root")
+out = PodioOutput("out", filename="output_test_mergeCells.root")
 out.outputCommands = ["keep *"]
 
 ApplicationMgr(EvtSel='NONE',

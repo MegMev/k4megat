@@ -10,7 +10,7 @@ podioevent = k4LegacyDataSvc("EventDataSvc")
 from Configurables import MegatGeoSvc as GeoSvc
 from os import environ, path
 detector_path = environ.get("MEGAT_ROOT", "")
-geoservice = GeoSvc("MegatGeoSvc", detectors=[path.join(detector_path, 'geometry/compact/Megat.xml')],
+geoservice = GeoSvc("GeoSvc", detectors=[path.join(detector_path, 'geometry/compact/Megat.xml')],
                     buildType="BUILD_SIMU",
                     # sensitiveTypes={'tracker':'MegatSimpleTrackerSD','calorimeter':'MegatAggregateCalorimeterSD'},
                     OutputLevel = WARNING)
@@ -55,11 +55,11 @@ pgun=SimComptonEventGeneratorTool('ParticleGun', saveEdm=True,
 
 ##### output collections
 from Configurables import SimSaveCalHits
-saveCalo = SimSaveCalHits('saveCalo',readoutNames = ['CztHits'])
+saveCalo = SimSaveCalHits('saveCalo',readoutName = ['CztHits'])
 saveCalo.CaloHits.Path = 'CaloSimHits'
 
 from Configurables import SimSaveTrackerHits
-saveTpc = SimSaveTrackerHits('saveTpc',readoutNames = ['TpcHits'])
+saveTpc = SimSaveTrackerHits('saveTpc',readoutName = ['TpcHits'])
 saveTpc.SimTrackHits.Path = 'TpcSimHits'
 
 ##### save trajectory and history
@@ -83,8 +83,8 @@ geantsim = SimAlg('SimAlg',
                     OutputLevel = WARNING)
 
 # output to root file
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput()
+from Configurables import PodioOutput
+out = PodioOutput()
 out.filename = 'me45.root'
 out.outputCommands = ['keep *']
 

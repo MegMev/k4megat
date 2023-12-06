@@ -31,8 +31,8 @@ particle_converter.genParticles.Path = "allGenParticles"
 geantsim = SimAlg("SimAlg",
                     eventProvider=particle_converter)
 
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput("out",
+from Configurables import PodioOutput
+out = PodioOutput("out",
                    OutputLevel=DEBUG)
 out.outputCommands = ["keep *"]
 

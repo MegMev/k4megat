@@ -6,8 +6,8 @@ datasvc = k4LegacyDataSvc("EventDataSvc")
 datasvc.input = 'tpcseg_megat.root'
 
 # Fetch the collection into TES
-from Configurables import PodioLegacyInput
-inp = PodioLegacyInput()
+from Configurables import PodioInput
+inp = PodioInput()
 inp.collections = ["TpcSegStripHits", "TpcDriftHits"]
 
 # Add algorithm
@@ -23,8 +23,8 @@ tpcSamplingAlg.gain = 100
 tpcSamplingAlg.amplitude_offset = 1000
 
 # Select & Write the collections to disk ROOT file
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput()
+from Configurables import PodioOutput
+out = PodioOutput()
 out.filename = 'tpcsample_megat.root'
 out.outputCommands = ['keep *']
 

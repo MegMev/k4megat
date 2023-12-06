@@ -21,7 +21,7 @@ geantservice.g4PostInitCommands += ["/run/setCut 0.1 mm"]
 # Translates EDM to G4Event, passes the event to G4, writes out outputs via tools
 # and a tool that saves the calorimeter hits
 from Configurables import SimAlg, SimSaveCalHits, SimSingleParticleGeneratorTool
-saveecaltool = SimSaveCalHits("saveECalBarrelHits",readoutNames = ["ECalBarrelEta"])
+saveecaltool = SimSaveCalHits("saveECalBarrelHits",readoutName = ["ECalBarrelEta"])
 saveecaltool.positionedCaloHits.Path = "ECalBarrelPositionedHits"
 saveecaltool.caloHits.Path = "ECalBarrelHits"
 from Configurables import SimSingleParticleGeneratorTool

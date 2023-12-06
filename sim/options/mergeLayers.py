@@ -28,7 +28,7 @@ geantservice = SimSvc("SimSvc")
 
 from Configurables import SimAlg, SimSaveCalHits, InspectHitsCollectionsTool, SimPrimariesFromEdmTool
 inspecttool = InspectHitsCollectionsTool("inspect", readoutNames=["ECalHits"], OutputLevel = INFO)
-savecaltool = SimSaveCalHits("saveECalHits", readoutNames = ["ECalHits"], OutputLevel = DEBUG)
+savecaltool = SimSaveCalHits("saveECalHits", readoutName = ["ECalHits"], OutputLevel = DEBUG)
 savecaltool.positionedCaloHits.Path = "positionedCaloHits"
 savecaltool.caloHits.Path = "caloHits"
 particle_converter = SimPrimariesFromEdmTool("EdmConverter")
@@ -50,9 +50,9 @@ merge = MergeLayers("mergeLayers",
 merge.inhits.Path = "caloHits"
 merge.outhits.Path = "newCaloHits"
 
-from Configurables import FCCDataSvc, PodioLegacyOutput
+from Configurables import FCCDataSvc, PodioOutput
 podiosvc = FCCDataSvc("EventDataSvc")
-out = PodioLegacyOutput("out", filename="testMergeLayers.root")
+out = PodioOutput("out", filename="testMergeLayers.root")
 out.outputCommands = ["keep *"]
 
 ApplicationMgr(EvtSel='NONE',

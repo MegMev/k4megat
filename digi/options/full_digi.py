@@ -1,5 +1,8 @@
 from Gaudi.Configuration import *
 
+# MessageSvc
+MessageSvc(OutputLevel=ERROR)
+
 # ApplicationMgr
 from Configurables import ApplicationMgr
 appMgr = ApplicationMgr(
@@ -8,23 +11,22 @@ appMgr = ApplicationMgr(
                 OutputLevel=INFO
                )
 
-################################# Servicec ########################################
+################################# Service ########################################
 
 # Geometry service
 from Configurables import MegatGeoSvc as GeoSvc
 from os import environ, path
 detector_path = environ.get("MEGAT_ROOT", "")
-geoSvc = GeoSvc("MegatGeoSvc",
+geoSvc = GeoSvc("GeoSvc",
                 buildType="BUILD_SIMU",
                 detectors=[path.join(detector_path, 'geometry/compact/Megat.xml'),
-                           './tpc_seg_test.xml'
-                           ],
+                           path.join(detector_path, 'geometry/compact/TPC_readout.xml')],
                 OutputLevel = WARNING)
 appMgr.ExtSvc += [geoSvc]
 
 # Data service
-from Configurables import k4LegacyDataSvc
-dataSvc = k4LegacyDataSvc("EventDataSvc")
+from Configurables import k4DataSvc
+dataSvc = k4DataSvc("EventDataSvc")
 dataSvc.input = "megat.gaudi.root"
 appMgr.ExtSvc += [dataSvc]
 
@@ -42,9 +44,9 @@ appMgr.ExtSvc += [rdmEngine, rdmSvc]
 ################################# Algorithms ########################################
 
 # Fetch the collection into TES
-from Configurables import PodioLegacyInput
-inputAlg = PodioLegacyInput()
-inputAlg.collections = ["TpcSimHits"]
+from Configurables import PodioInput
+inputAlg = PodioInput()
+inputAlg.collections = ["TpcSimHits", "CaloSimHits"]
 appMgr.TopAlg += [inputAlg]
 
 # 1. Electron drift to anode surface
@@ -67,12 +69,13 @@ pixelSegAlg = TpcSegmentAlg("TpcPixelSeg")
 pixelSegAlg.inHits.Path = "TpcDriftHits"
 pixelSegAlg.outHits.Path = "TpcSegPixelHits"
 pixelSegAlg.readoutName = "TpcPixelHits"
+appMgr.TopAlg += [pixelSegAlg]
 
 stripSegAlg = TpcSegmentAlg("TpcStripSeg")
 stripSegAlg.inHits.Path = "TpcDriftHits"
 stripSegAlg.outHits.Path = "TpcSegStripHits"
 stripSegAlg.readoutName = "TpcStripHits"
-appMgr.TopAlg += [pixelSegAlg, stripSegAlg]
+appMgr.TopAlg += [stripSegAlg]
 
 # 3. Simple smear (add a fixed-width Gaussian noise)
 from Configurables import TpcSimpleSmearAlg
@@ -81,13 +84,14 @@ pixelSmearAlg.inHits.Path = "TpcSegPixelHits"
 pixelSmearAlg.outHits.Path = "TpcSmearPixelHits"
 pixelSmearAlg.energy_sigma = 10 # eV
 pixelSmearAlg.time_sigma = 100 # ps
+appMgr.TopAlg += [pixelSmearAlg]
 
 stripSmearAlg = TpcSimpleSmearAlg("TpcStripSmear")
 stripSmearAlg.inHits.Path = "TpcSegStripHits"
 stripSmearAlg.outHits.Path = "TpcSmearStripHits"
 stripSmearAlg.energy_sigma = 10 # eV
 stripSmearAlg.time_sigma = 100 # ps
-appMgr.TopAlg += [pixelSmearAlg, stripSmearAlg]
+appMgr.TopAlg += [stripSmearAlg]
 
 # 4. Signal formation and sampling
 from Configurables import TpcSamplingAlg
@@ -95,24 +99,37 @@ stripSamplingAlg = TpcSamplingAlg("TpcStripSampling")
 stripSamplingAlg.inHits.Path = "TpcSmearStripHits"
 stripSamplingAlg.simHits.Path = "TpcDriftHits"
 stripSamplingAlg.outHits.Path = "TpcStripHits"
-# stripSamplingAlg.sample_interval = 5 # ns
-# stripSamplingAlg.shape_time = 5 # us
-# stripSamplingAlg.nr_points = 512
-# stripSamplingAlg.gain = 1000
-# stripSamplingAlg.amplitude_offset = 100
+stripSamplingAlg.sample_interval = 5 # ns
+stripSamplingAlg.shape_time = 5 # us
+stripSamplingAlg.nr_points = 512
+stripSamplingAlg.gain = 1000
+stripSamplingAlg.amplitude_offset = 100
+appMgr.TopAlg += [stripSamplingAlg]
 
 pixelSamplingAlg = TpcSamplingAlg("TpcPixelSampling")
 pixelSamplingAlg.inHits.Path = "TpcSmearPixelHits"
 pixelSamplingAlg.simHits.Path = "TpcDriftHits"
 pixelSamplingAlg.outHits.Path = "TpcPixelHits"
-appMgr.TopAlg += [pixelSamplingAlg, stripSamplingAlg]
+appMgr.TopAlg += [pixelSamplingAlg]
 
-################################# Output ########################################
+# 5. CZT calo smearing (fixed-with gassian to edep)
+from Configurables import CaloSimpleSmearAlg
+caloSmearAlg = CaloSimpleSmearAlg("CaloSmear")
+caloSmearAlg.inHits.Path = "CaloSimHits"
+caloSmearAlg.outHits.Path = "CaloHits"
+caloSmearAlg.energy_sigma = 60 # keV
+appMgr.TopAlg += [caloSmearAlg]
+
+################################ Output ########################################
 
 # Select & Write the collections to disk ROOT file
-from Configurables import PodioLegacyOutput
-outAlg = PodioLegacyOutput('outAlg')
-outAlg.filename = 'tpcdigi_megat.root'
-outAlg.outputCommands = ['drop *', 'keep TpcPixelHits', 'keep TpcStripHits']
+from Configurables import PodioOutput
+outAlg = PodioOutput()
+outAlg.filename = 'digi_megat.root'
+outAlg.outputCommands = ['drop *',
+                         'keep TpcPixelHits',
+                         'keep TpcStripHits',
+                         'keep CaloHits'
+                         ]
 appMgr.TopAlg += [outAlg]
 

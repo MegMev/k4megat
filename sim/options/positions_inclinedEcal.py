@@ -35,7 +35,7 @@ geantservice = SimSvc("SimSvc", detector='SimDD4hepDetector', physicslist="SimTe
 # Translates EDM to G4Event, passes the event to G4, writes out outputs via tools
 # and a tool that saves the calorimeter hits
 from Configurables import SimAlg, SimSaveCalHits
-savetool = SimSaveCalHits("saveHits",readoutNames = ["ECalBarrelEta"])
+savetool = SimSaveCalHits("saveHits",readoutName = ["ECalBarrelEta"])
 savetool.positionedCaloHits.Path = "PositionedHits"
 savetool.caloHits.Path = "Hits"
 
@@ -49,8 +49,8 @@ positions.hits.Path = "Hits"
 positions.positionedHits.Path = "Positions"
 
 # PODIO algorithm
-from Configurables import PodioLegacyOutput
-out = PodioLegacyOutput("out",
+from Configurables import PodioOutput
+out = PodioOutput("out",
                    OutputLevel=DEBUG)
 out.outputCommands = ["keep *"]
 out.filename = "positions_ecalInclinedSim.root"

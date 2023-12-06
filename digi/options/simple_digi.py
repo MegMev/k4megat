@@ -27,7 +27,7 @@ appMgr = ApplicationMgr(
 from Configurables import MegatGeoSvc as GeoSvc
 from os import environ, path
 detector_path = environ.get("MEGAT_ROOT", "")
-geoSvc = GeoSvc("MegatGeoSvc",
+geoSvc = GeoSvc("GeoSvc",
                 buildType="BUILD_SIMU",
                 detectors=[path.join(detector_path, 'geometry/compact/Megat.xml'),
                            path.join(detector_path, 'geometry/compact/TPC_readout.xml')],
@@ -35,8 +35,8 @@ geoSvc = GeoSvc("MegatGeoSvc",
 appMgr.ExtSvc += [geoSvc]
 
 # Data service
-from Configurables import k4LegacyDataSvc
-dataSvc = k4LegacyDataSvc("EventDataSvc")
+from Configurables import k4DataSvc
+dataSvc = k4DataSvc("EventDataSvc")
 dataSvc.input = "megat.gaudi.root"
 appMgr.ExtSvc += [dataSvc]
 
@@ -54,8 +54,8 @@ appMgr.ExtSvc += [rdmEngine, rdmSvc]
 ################################# Algorithms ########################################
 
 # Fetch the collection into TES
-from Configurables import PodioLegacyInput
-inputAlg = PodioLegacyInput()
+from Configurables import PodioInput
+inputAlg = PodioInput()
 inputAlg.collections = ["GenParticles", "TpcSimHits", "CaloSimHits"]
 appMgr.TopAlg += [inputAlg]
 
@@ -101,8 +101,8 @@ appMgr.TopAlg += [caloSmearAlg]
 ################################# Output ########################################
 
 # Select & Write the collections to disk ROOT file
-from Configurables import PodioLegacyOutput
-outAlg = PodioLegacyOutput('outAlg')
+from Configurables import PodioOutput
+outAlg = PodioOutput('outAlg')
 outAlg.filename = 'simple_digi.root'
 outAlg.outputCommands = ['drop *',
                          'keep GenParticles',
