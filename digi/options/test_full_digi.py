@@ -1,5 +1,8 @@
 from Gaudi.Configuration import *
 
+# MessageSvc
+MessageSvc(OutputLevel=ERROR)
+
 # ApplicationMgr
 from Configurables import ApplicationMgr
 appMgr = ApplicationMgr(
