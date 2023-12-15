@@ -1,6 +1,5 @@
 #pragma once
 
-// from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
 class G4Event;

@@ -120,17 +120,17 @@ namespace megat {
     }
 
     bool IdConverter::isStrip( std::string tpc_name ) {
-      auto it = m_multiseg.find( tpc_name );
-      if ( it != m_multiseg.end() ) return it->second;
+      auto it = m_stripSegs.find( tpc_name );
+      if ( it != m_stripSegs.end() ) return it->second;
 
       auto tpc_sd = m_description->sensitiveDetector( tpc_name );
       auto tpc_ro = tpc_sd.readout();
-      if ( tpc_ro.segmentation().type() == "MultiSegmentation" ) {
-        m_multiseg.emplace( tpc_name, true );
+      if ( tpc_ro.segmentation().type() == "MultiSegmentation" || tpc_ro.segmentation().type() == "DiagonalStrip" ) {
+        m_stripSegs.emplace( tpc_name, true );
       } else {
-        m_multiseg.emplace( tpc_name, false );
+        m_stripSegs.emplace( tpc_name, false );
       }
-      return m_multiseg[tpc_name];
+      return m_stripSegs[tpc_name];
     }
 
     BitFieldCoder* IdConverter::decoder( std::string det_name ) {

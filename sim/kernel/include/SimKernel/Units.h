@@ -1,7 +1,5 @@
 #pragma once
 
-#include "DD4hep/DD4hepUnits.h"
-#include "G4SystemOfUnits.hh"
 #include <CLHEP/Units/SystemOfUnits.h>
 
 /** Conversion between units.
@@ -22,7 +20,7 @@
 namespace megat {
   namespace edmdefault {
     constexpr double length = CLHEP::mm;
-    constexpr double energy = CLHEP::GeV;
+    constexpr double energy = CLHEP::MeV;
     constexpr double time   = CLHEP::ns;
   } // namespace edmdefault
   namespace edm2g4 {
@@ -34,15 +32,15 @@ namespace megat {
     constexpr double length = CLHEP::mm / edmdefault::length;
     constexpr double energy = CLHEP::MeV / edmdefault::energy;
     constexpr double time   = CLHEP::ns / edmdefault::time;
-  } // namespace g42edm
-  namespace dd2edm {
-    constexpr double length = dd4hep::mm / edmdefault::length;
-    constexpr double energy = dd4hep::GeV / edmdefault::energy;
-    constexpr double time   = dd4hep::ns / edmdefault::time;
+  }                  // namespace g42edm
+  namespace dd2edm { // please enable g4 units in DD4hep
+    constexpr double length = CLHEP::mm / edmdefault::length;
+    constexpr double energy = CLHEP::MeV / edmdefault::energy;
+    constexpr double time   = CLHEP::ns / edmdefault::time;
   } // namespace dd2edm
   namespace edm2dd {
     constexpr double length = edmdefault::length / CLHEP::mm;
-    constexpr double energy = edmdefault::energy / CLHEP::GeV;
+    constexpr double energy = edmdefault::energy / CLHEP::MeV;
     constexpr double time   = edmdefault::time / CLHEP::ns;
   } // namespace edm2dd
 } // namespace megat

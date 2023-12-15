@@ -76,7 +76,7 @@ namespace megat {
                                                               const IInterface* parent )
       : GaudiTool( type, nam, parent ) {
     declareInterface<ISimEventProviderTool>( this );
-    declareProperty( "GenParticles", m_genParticlesHandle, "Handle for the genparticles to be written" );
+    declareProperty( "GenParticles", m_genParticlesHandle, "Path name of the primary particle collection" );
   }
 
   SimComptonEventGeneratorTool::~SimComptonEventGeneratorTool() {}

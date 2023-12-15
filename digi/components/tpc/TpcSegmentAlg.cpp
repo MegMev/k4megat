@@ -63,9 +63,15 @@ public:
     }
 
     m_segmentation = lcdd->readout( m_readoutName ).segmentation();
-    if ( m_segmentation.type() == "MultiSegmentation" ) is_stripSeg = true;
-    m_decoder = m_segmentation.decoder();
-    debug() << is_stripSeg << ", " << m_segmentation.type() << ", " << m_segmentation->fieldDescription() << endmsg;
+    m_decoder      = m_segmentation.decoder();
+    if ( m_segmentation.type() == "MultiSegmentation" ) is_multiSeg = true;
+
+    debug() << is_multiSeg << ", " << m_segmentation.type() << ", " << m_segmentation->fieldDescription() << endmsg;
+    if ( m_segmentation.type() == "DiagonalStrip" ) {
+      auto& _fieldCoder = ( *m_decoder )["strip"];
+      debug() << _fieldCoder.name() << ": offset=" << _fieldCoder.offset() << ", width=" << _fieldCoder.width()
+              << ", min=" << _fieldCoder.minValue() << ", max=" << _fieldCoder.maxValue() << endmsg;
+    }
 
     /// update id specification
     MetaDataHandle<std::string> m_cellIDHandle{ m_outHits, edm4hep::CellIDEncoding, Gaudi::DataHandle::Writer };
@@ -96,7 +102,7 @@ public:
       auto gpos  = hit.getPosition();
 
       // [optional todo: key_value from xml?]
-      if ( is_stripSeg ) {
+      if ( is_multiSeg ) {
         if ( sL.size() > 1 ) {
           error() << "Can't segment multi PCBs with strip readout" << endmsg;
           return StatusCode::FAILURE;
@@ -173,7 +179,7 @@ private:
 
   /// edms
   DataHandle<edm4hep::SimTrackerHitCollection> m_inHits{ "TpcDriftHits", Gaudi::DataHandle::Reader, this };
-  DataHandle<edm4hep::TrackerHitCollection>    m_outHits{ "", Gaudi::DataHandle::Writer, this };
+  DataHandle<edm4hep::TrackerHitCollection>    m_outHits{ "TpcSegHits", Gaudi::DataHandle::Writer, this };
 
   /// properties
   Gaudi::Property<std::string> m_newField{
@@ -188,7 +194,7 @@ private:
                                               "The readout name defined in compact xml" };
 
   /// others
-  bool                         is_stripSeg{ false };
+  bool                         is_multiSeg{ false };
   const dd4hep::BitFieldCoder* m_decoder;
   dd4hep::Segmentation         m_segmentation;
 };

@@ -1,7 +1,7 @@
 from Gaudi.Configuration import *
 import GaudiKernel.SystemOfUnits as units
 
-# TES
+# data store service
 from Configurables import k4DataSvc
 podioevent = k4DataSvc("EventDataSvc")
 
@@ -14,6 +14,16 @@ geoservice = GeoSvc("GeoSvc", detectors=[path.join(detector_path, 'geometry/comp
                     buildType="BUILD_SIMU",
                     # sensitiveTypes={'tracker':'MegatSimpleTrackerSD','calorimeter':'MegatAggregateCalorimeterSD'},
                     OutputLevel = INFO)
+
+# Rndm service (use G4 default engine)
+from Configurables import HepRndm__Engine_CLHEP__HepJamesRandom_
+rdmEngine = HepRndm__Engine_CLHEP__HepJamesRandom_("RndmGenSvc.Engine")
+rdmEngine.SetSingleton = True
+rdmEngine.Seeds = [5685]
+
+from Configurables import RndmGenSvc
+rdmSvc = RndmGenSvc("RndmGenSvc")
+rdmSvc.Engine = rdmEngine.name()
 
 # region & limits
 ### definition is in dd4hep compact file
@@ -46,9 +56,9 @@ geantservice.seedValue = 4242
 ##### generator (in g4 unit)
 from Configurables import SimSingleParticleGeneratorTool
 pgun=SimSingleParticleGeneratorTool('ParticleGun', saveEdm=True,
-                                      particleName = "mu-", energyMin = 10000, energyMax = 10000,
-                                      etaMin = -4, etaMax = 4, phiMin = -3.14, phiMax = 3.14,
-#                                      vertexX=500, vertexZ=-500,
+                                      particleName = "mu-", energyMin = 3000, energyMax = 10000,
+                                      thetaMin = 0, thetaMax = 180, phiMin = 0, phiMax = 360,
+                                    #                                      vertexX=500, vertexZ=0, vertexY = 500 // [-v, v]
                                       OutputLevel = INFO)
 
 ##### vertex smearing tool
@@ -97,6 +107,6 @@ from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg = [geantsim, out],
                 EvtSel = 'NONE',
                 EvtMax = 1000,
-                # order is important, as GeoSvc is needed by G4SimSvc
-                ExtSvc = [podioevent, geoservice, geantservice],
+                # order is important, as GeoSvc, RndmSvc are needed by G4SimSvc
+                ExtSvc = [ rdmEngine, rdmSvc, podioevent, geoservice, geantservice],
                 OutputLevel = WARNING)

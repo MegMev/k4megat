@@ -77,7 +77,7 @@ namespace megat {
       const Detector* m_description;
 
     private:
-      std::map<std::string, bool>           m_multiseg;
+      std::map<std::string, bool>           m_stripSegs;
       std::map<std::string, BitFieldCoder*> m_decoders;
     };
   } // namespace utility
