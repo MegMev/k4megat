@@ -79,9 +79,9 @@ namespace megat {
 
     // [caution] TGeo use cm, while DD4hep use mm in k4megat
     auto _box = _de.volume().boundingBox();
-    auto _x   = _box.x() / CLHEP::cm;
-    auto _y   = _box.y() / CLHEP::cm;
-    auto _z   = _box.z() / CLHEP::cm;
+    auto _x   = _box.x();
+    auto _y   = _box.y();
+    auto _z   = _box.z();
 
     m_rndmX.initialize( _rdm_svc, Rndm::Flat( -_x, _x ) ).ignore();
     m_rndmY.initialize( _rdm_svc, Rndm::Flat( -_y, _y ) ).ignore();

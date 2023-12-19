@@ -42,22 +42,20 @@ namespace megat {
     ServiceHandle<ISimSvc> m_geantSvc;
 
     /// Handle to the tools saving the output
-    /// to be replaced with the ToolHandleArray<ISimSaveOutputTool> m_saveTools
-    std::vector<ISimSaveOutputTool*> m_saveTools;
-    /// Names for the saving tools
-    /// to be deleted once the ToolHandleArray<ISimSaveOutputTool> m_saveTools is in place
-    Gaudi::Property<std::vector<std::string>> m_saveToolNames{ this, "outputs", {}, "Names for the saving tools" };
+    ToolHandleArray<ISimSaveOutputTool> m_saveTools{ {}, this, true };
 
     /// Handle for tool that creates the G4Event, default is from edm persistency
-    ToolHandle<ISimEventProviderTool> m_eventTool{ "SimPrimariesFromEdmTool", this };
+    ToolHandle<ISimEventProviderTool> m_eventTool{ "", this, true };
 
     /// Handle for tool that smears the generated vertex from event provider, default it volume-based
-    ToolHandle<ISimVertexSmearTool> m_vxSmearTool{ "SimVertexSmearVolumeTool", this };
+    ToolHandle<ISimVertexSmearTool> m_vxSmearTool{ "", this, true };
     bool                            m_vxSmearFlag{ true };
   };
 
   SimAlg::SimAlg( const std::string& aName, ISvcLocator* aSvcLoc )
       : GaudiAlgorithm( aName, aSvcLoc ), m_geantSvc( "SimSvc", aName ) {
+    declareProperty( "saveTools", m_saveTools,
+                     "List of tools that register the hit collections into event data store" );
     declareProperty( "eventProvider", m_eventTool, "Tool that creates the G4Event" );
     declareProperty( "vertexSmearer", m_vxSmearTool, "Tool that smears the primary vertex" );
   }
@@ -65,32 +63,28 @@ namespace megat {
   StatusCode SimAlg::initialize() {
     if ( GaudiAlgorithm::initialize().isFailure() ) return StatusCode::FAILURE;
 
-    //
+    // 1. get simulation service
     if ( !m_geantSvc ) {
       error() << "Unable to locate Geant Simulation Service" << endmsg;
       return StatusCode::FAILURE;
     }
 
-    //
-    for ( auto& toolname : m_saveToolNames ) {
-      m_saveTools.push_back( tool<ISimSaveOutputTool>( toolname ) );
-      // FIXME: check StatusCode once the m_saveTools is a ToolHandleArray
-      // if (!) {
-      //   error() << "Unable to retrieve the output saving tool." << endmsg;
-      //   return StatusCode::FAILURE;
-      // }
-    }
-
-    //
-    if ( !m_eventTool.retrieve() ) {
+    // 2. get event provider
+    if ( !m_eventTool ) {
       error() << "Unable to retrieve the G4Event provider " << m_eventTool << endmsg;
       return StatusCode::FAILURE;
     }
 
-    //
-    if ( !m_vxSmearTool.retrieve() ) {
+    // 3. get the output tools
+    // [todo] no bool operator in Gaudi::ToolHandleArray, need explicit retrieval
+    if ( !m_saveTools.retrieve() || m_saveTools.size() == 0 ) {
+      warning() << "No output save tool configured. Are you sure about it ?!" << endmsg;
+    }
+
+    // 4. get the vertex smearing tool
+    if ( !m_vxSmearTool ) {
       m_vxSmearFlag = false;
-      debug() << "No vertex smearing performed" << endmsg;
+      warning() << "No vertex smearer configured." << endmsg;
     }
 
     return StatusCode::SUCCESS;
@@ -113,7 +107,7 @@ namespace megat {
     // save the results
     G4Event* constevent;
     m_geantSvc->retrieveEvent( constevent ).ignore();
-    for ( auto& tool : m_saveTools ) { tool->saveOutput( *constevent ).ignore(); }
+    for ( auto tool : m_saveTools ) { tool->saveOutput( *constevent ).ignore(); }
 
     // terminate current event simulation
     m_geantSvc->terminateEvent().ignore();

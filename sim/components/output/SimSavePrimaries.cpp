@@ -14,9 +14,9 @@
 
 namespace megat {
 
-  class SimSavePriamries : public GaudiTool, virtual public ISimSaveOutputTool {
+  class SimSavePrimaries : public GaudiTool, virtual public ISimSaveOutputTool {
   public:
-    explicit SimSavePriamries( const std::string& aType, const std::string& aName, const IInterface* aParent )
+    explicit SimSavePrimaries( const std::string& aType, const std::string& aName, const IInterface* aParent )
         : GaudiTool( aType, aName, aParent ) {
       declareInterface<ISimSaveOutputTool>( this );
       declareProperty( "Particles", m_mcParticles, "Handle to the primary particles" );
@@ -68,5 +68,5 @@ namespace megat {
     DataHandle<edm4hep::MCParticleCollection> m_mcParticles{ "GenParticles", Gaudi::DataHandle::Writer, this };
   };
 
-  DECLARE_COMPONENT_WITH_ID( SimSavePriamries, "SimSavePriamries" )
+  DECLARE_COMPONENT_WITH_ID( SimSavePrimaries, "SimSavePrimaries" )
 } // namespace megat

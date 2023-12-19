@@ -55,18 +55,22 @@ geantservice.seedValue = 4242
 ### Configures event provider (i.e. generator) and output collections via tools
 ##### generator (in g4 unit)
 from Configurables import SimSingleParticleGeneratorTool
-pgun=SimSingleParticleGeneratorTool('ParticleGun', saveEdm=True,
-                                      particleName = "mu-", energyMin = 3000, energyMax = 10000,
-                                      thetaMin = 0, thetaMax = 180, phiMin = 0, phiMax = 360,
-                                    #                                      vertexX=500, vertexZ=0, vertexY = 500 // [-v, v]
-                                      OutputLevel = INFO)
+pgun=SimSingleParticleGeneratorTool('ParticleGun',
+                                    particleName = "mu-", energyMin = 3000, energyMax = 10000,
+                                    thetaMin = 0, thetaMax = 180, phiMin = 0, phiMax = 360,
+                                    vertexX=0, vertexZ=0, vertexY = 0,
+                                    OutputLevel = INFO)
 
 ##### vertex smearing tool
 from Configurables import SimVertexSmearVolumeTool
 vxSmearer = SimVertexSmearVolumeTool('vertexSmear')
-# vxSmearer.volumePath = '/world/TPC/Gas'
+vxSmearer.volumePath = '/world/TPC/Gas'
 
 ##### output collections
+from Configurables import SimSavePrimaries
+savePrimaries = SimSavePrimaries('savePrimaries')
+savePrimaries.Particles.Path = 'PrimaryParticles'
+
 from Configurables import SimSaveCalHits
 saveCalo = SimSaveCalHits('saveCalo',readoutName = 'CztHits')
 saveCalo.Hits.Path = 'CaloSimHits'
@@ -77,24 +81,20 @@ saveTpc.Hits.Path = 'TpcSimHits'
 
 #### save trajectory and history
 from Configurables import SimSaveTrajectory
-savetrajectorytool = SimSaveTrajectory("saveTrajectory")
-savetrajectorytool.Hits.Path = "TrajectoryPoints"
+saveTrajectory = SimSaveTrajectory("saveTrajectory")
+saveTrajectory.Hits.Path = "TrajectoryPoints"
 
-from Configurables import SimSaveParticleHistory
-savehisttool = SimSaveParticleHistory("saveHistory")
-savehisttool.Hits.Path = "SimParticles"
+from Configurables import SimSaveHistory
+saveHistory = SimSaveHistory("saveHistory")
+saveHistory.Hits.Path = "SimParticles"
 
 #### finally the alg itself
 from Configurables import SimAlg
 geantsim = SimAlg('SimAlg',
-                    outputs= ['SimSaveCalHits/saveCalo',
-                              'SimSaveTrackerHits/saveTpc',
-                              'SimSaveParticleHistory/saveHistory',
-                              'SimSaveTrajectory/saveTrajectory',
-                              ],
-                    eventProvider = pgun,
-                    vertexSmearer = vxSmearer,
-                    OutputLevel = WARNING)
+                  saveTools = [savePrimaries, saveCalo, saveTpc, saveTrajectory, saveHistory],
+                  eventProvider = pgun,
+                  vertexSmearer = vxSmearer,
+                  OutputLevel = WARNING)
 
 # output to root file
 from Configurables import PodioOutput

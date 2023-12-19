@@ -38,9 +38,6 @@ namespace megat {
       m_energyGen.initialize( _rdm_svc, Rndm::Flat( m_energyMin, m_energyMax ) ).ignore();
       m_thetaGen.initialize( _rdm_svc, Rndm::Flat( m_thetaMin, m_thetaMax ) ).ignore();
       m_phiGen.initialize( _rdm_svc, Rndm::Flat( m_phiMin, m_phiMax ) ).ignore();
-      m_vxGen.initialize( _rdm_svc, Rndm::Flat( -m_vertexX, m_vertexX ) ).ignore();
-      m_vyGen.initialize( _rdm_svc, Rndm::Flat( -m_vertexY, m_vertexY ) ).ignore();
-      m_vzGen.initialize( _rdm_svc, Rndm::Flat( -m_vertexZ, m_vertexZ ) ).ignore();
 
       if ( !G4ParticleTable::GetParticleTable()->contains( m_particleName.value() ) ) {
         error() << "Particle " << m_particleName << " cannot be found in G4ParticleTable" << endmsg;
@@ -83,7 +80,7 @@ namespace megat {
       double dirZ = std::cos( theta );
 
       G4ThreeVector particleDir      = G4ThreeVector( dirX, dirY, dirZ );
-      G4ThreeVector particlePosition = G4ThreeVector( m_vxGen(), m_vyGen(), m_vzGen() );
+      G4ThreeVector particlePosition = G4ThreeVector( m_vertexX, m_vertexY, m_vertexZ );
 
       G4PrimaryParticle* part = new G4PrimaryParticle( particleDef );
       part->SetMass( mass );
@@ -95,37 +92,7 @@ namespace megat {
       vertex->SetPrimary( part );
       theEvent->AddPrimaryVertex( vertex );
 
-      //
-      if ( m_saveEdm ) { saveToEdm( vertex, part ).ignore(); }
-
       return theEvent;
-    }
-
-  private:
-    /// Saves primary vertex and particle to output collection
-    StatusCode saveToEdm( const G4PrimaryVertex* aVertex, const G4PrimaryParticle* aParticle ) {
-      edm4hep::MCParticleCollection* particles = new edm4hep::MCParticleCollection();
-      auto                           particle  = particles->create();
-
-      particle.setVertex( {
-          aVertex->GetX0() * g42edm::length,
-          aVertex->GetY0() * g42edm::length,
-          aVertex->GetZ0() * g42edm::length,
-      } );
-      particle.setTime( aVertex->GetT0() * Gaudi::Units::c_light * g42edm::length );
-
-      particle.setPDG( aParticle->GetPDGcode() );
-      particle.setCharge( aParticle->GetCharge() );
-      particle.setGeneratorStatus( 1 );
-      particle.setMomentum( {
-          (float)( aParticle->GetPx() * g42edm::energy ),
-          (float)( aParticle->GetPy() * g42edm::energy ),
-          (float)( aParticle->GetPz() * g42edm::energy ),
-      } );
-      particle.setMass( aParticle->GetMass() * g42edm::energy );
-
-      m_genParticlesHandle.put( particles );
-      return StatusCode::SUCCESS;
     }
 
   private:
@@ -133,9 +100,6 @@ namespace megat {
     Rndm::Numbers m_energyGen;
     Rndm::Numbers m_thetaGen;
     Rndm::Numbers m_phiGen;
-    Rndm::Numbers m_vxGen;
-    Rndm::Numbers m_vyGen;
-    Rndm::Numbers m_vzGen;
 
     /// Minimum energy of the particles generated, set with energyMin
     Gaudi::Property<double> m_energyMin{ this, "energyMin", 1, "Minimum energy of generated particles [MeV]" };
@@ -158,8 +122,6 @@ namespace megat {
     Gaudi::Property<double> m_vertexZ{ this, "vertexZ", 0, "Vertex Z [mm]" };
     /// Name of the generated particle, set with particleName
     Gaudi::Property<std::string> m_particleName{ this, "particleName", "geantino", "Name of the generated particles" };
-    /// Flag whether to save primary particle to EDM, set with saveEdm
-    Gaudi::Property<bool> m_saveEdm{ this, "saveEdm", false, "Save to data store" };
 
     /// Handle for the genparticles to be written
     DataHandle<edm4hep::MCParticleCollection> m_genParticlesHandle{ "GenParticles", Gaudi::DataHandle::Writer, this };
