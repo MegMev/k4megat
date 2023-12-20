@@ -78,7 +78,7 @@ from Configurables import TpcSegmentAlg
 tpcSegAlg = TpcSegmentAlg("TpcSegAlg")
 tpcSegAlg.inHits.Path = "TpcDriftHits"
 tpcSegAlg.outHits.Path = "TpcSegHits"
-tpcSegAlg.readoutName = "TpcStripHits"
+tpcSegAlg.readoutName = "TpcDiagonalStripHits"
 appMgr.TopAlg += [tpcSegAlg]
 
 # 3. Simple smear (add a fixed-width Gaussian noise)

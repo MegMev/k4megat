@@ -19,7 +19,7 @@ def get_idspec(tag):
     sd = det.sensitiveDetector('TPC')
     return sd.idSpec()
 
-det1 = loadGeometry(xmlGeom, 'TpcStripHits', 'strip')
+det1 = loadGeometry(xmlGeom, 'TpcDiagonalStripHits', 'strip')
 det1_1 = Detector.getInstance('strip')
 if det1 == det1_1:
     print(det1)

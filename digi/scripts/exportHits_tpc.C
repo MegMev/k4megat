@@ -1,5 +1,5 @@
 void exportHits_tpc( string infile = "../options/simple_digi.root", string outfile = "flat_tpc_hits.root",
-                     string br_name = "TpcHits", string ro_name = "TpcStripHits" ) {
+                     string br_name = "TpcHits", string ro_name = "TpcDiagonalStripHits" ) {
 
   // activate megat library
   LoadMegat();

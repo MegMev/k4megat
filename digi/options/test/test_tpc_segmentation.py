@@ -32,7 +32,7 @@ tpcpixelseg.readoutName = "TpcPixelHits"
 tpcstripseg = TpcSegmentAlg("TpcStripSeg")
 tpcstripseg.inHits.Path = "TpcDriftHits"
 tpcstripseg.outHits.Path = "TpcSegStripHits"
-tpcstripseg.readoutName = "TpcStripHits"
+tpcstripseg.readoutName = "TpcDiagonalStripHits"
 
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioOutput

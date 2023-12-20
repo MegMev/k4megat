@@ -41,7 +41,7 @@ void exportHits( string infile = "../options/simple_digi.root", string outfile =
 
   string xmlGeometryPath = std::getenv( "MEGAT_ROOT" ) + std::string( "/geometry/compact/Megat.xml" );
   string xmlTpc          = std::getenv( "MEGAT_ROOT" ) + std::string( "/geometry/compact/TPC_readout.xml" );
-  string ro_name         = "TpcStripHits";
+  string ro_name         = "TpcDiagonalStripHits";
   loadGeometry( { xmlGeometryPath, xmlTpc }, ro_name );
 
   // get converter

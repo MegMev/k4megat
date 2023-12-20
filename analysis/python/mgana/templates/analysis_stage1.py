@@ -28,7 +28,7 @@ nCPUS       = 4
 
 #Optional: geometry and readout
 geometryFile = ['Megat.xml', 'TPC_readout.xml']
-readoutName = ['TpcStripHits', 'TpcPixelHits']
+readoutName = ['TpcDiagonalStripHits', 'TpcPixelHits']
 
 #Mandatory: RDFanalysis class where the use defines the operations on the TTree
 class RDFanalysis():

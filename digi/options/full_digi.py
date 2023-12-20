@@ -74,7 +74,7 @@ appMgr.TopAlg += [pixelSegAlg]
 stripSegAlg = TpcSegmentAlg("TpcStripSeg")
 stripSegAlg.inHits.Path = "TpcDriftHits"
 stripSegAlg.outHits.Path = "TpcSegStripHits"
-stripSegAlg.readoutName = "TpcStripHits"
+stripSegAlg.readoutName = "TpcDiagonalStripHits"
 appMgr.TopAlg += [stripSegAlg]
 
 # 3. Simple smear (add a fixed-width Gaussian noise)
@@ -98,7 +98,7 @@ from Configurables import TpcSamplingAlg
 stripSamplingAlg = TpcSamplingAlg("TpcStripSampling")
 stripSamplingAlg.inHits.Path = "TpcSmearStripHits"
 stripSamplingAlg.simHits.Path = "TpcDriftHits"
-stripSamplingAlg.outHits.Path = "TpcStripHits"
+stripSamplingAlg.outHits.Path = "TpcDiagonalStripHits"
 stripSamplingAlg.sample_interval = 5 # ns
 stripSamplingAlg.shape_time = 5 # us
 stripSamplingAlg.nr_points = 512
@@ -128,7 +128,7 @@ outAlg = PodioOutput()
 outAlg.filename = 'digi_megat.root'
 outAlg.outputCommands = ['drop *',
                          'keep TpcPixelHits',
-                         'keep TpcStripHits',
+                         'keep TpcDiagonalStripHits',
                          'keep CaloHits'
                          ]
 appMgr.TopAlg += [outAlg]

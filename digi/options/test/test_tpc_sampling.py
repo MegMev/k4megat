@@ -15,7 +15,7 @@ from Configurables import TpcSamplingAlg
 tpcSamplingAlg = TpcSamplingAlg("TpcSampling")
 tpcSamplingAlg.inHits.Path = "TpcSegStripHits"
 tpcSamplingAlg.simHits.Path = "TpcDriftHits"
-tpcSamplingAlg.outHits.Path = "TpcStripHits"
+tpcSamplingAlg.outHits.Path = "TpcDiagonalStripHits"
 tpcSamplingAlg.sample_interval = 5 # ns
 tpcSamplingAlg.shape_time = 5 # us
 tpcSamplingAlg.nr_points = 512
