@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from .detail import *
 
 ## pre-load the default geometry with different readout patterns
+import os
 megat_root = os.environ['MEGAT_ROOT']
 geometry_xml = os.path.join(megat_root, 'geometry/compact/Megat.xml')
 readout_xml = os.path.join(megat_root, 'geometry/compact/TPC_readout.xml')

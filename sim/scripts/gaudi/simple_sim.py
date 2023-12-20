@@ -98,7 +98,7 @@ geantsim = SimAlg('SimAlg',
 # output to root file
 from Configurables import PodioOutput
 out = PodioOutput()
-out.filename = 'megat.gaudi.root'
+out.filename = 'simple_sim.root'
 out.outputCommands = ['keep *']
 
 # ApplicationMgr
