@@ -53,12 +53,12 @@ geantservice.randomNumbersFromGaudi = True
 # g4 algorithm
 ### Configures event generator and output collections via tools
 ##### generator (in g4 unit)
-from Configurables import SimSingleParticleGenerator
-pgun = SimSingleParticleGenerator('particleGun',
-                                  particleName = "mu-", energyMin = 3000, energyMax = 10000,
-                                  thetaMin = 0, thetaMax = 180, phiMin = 0, phiMax = 360,
-                                  # vertexX=0, vertexZ=0, vertexY = 0,
-                                  OutputLevel = WARNING)
+from Configurables import SimComptonSimpleGenerator
+pgun = SimComptonSimpleGenerator('pgun',
+                                 energyMin = 1, energyMax = 10,
+                                 theta = 0, phi = 0,
+                                 OutputLevel = WARNING
+                                 )
 
 ##### vertex smearing tool
 from Configurables import SimVertexSmearVolumeTool
