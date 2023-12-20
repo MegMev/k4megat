@@ -78,7 +78,7 @@ from Configurables import TpcSegmentAlg
 tpcSegAlg = TpcSegmentAlg("TpcSegAlg")
 tpcSegAlg.inHits.Path = "TpcDriftHits"
 tpcSegAlg.outHits.Path = "TpcSegHits"
-tpcSegAlg.readoutName = "TpcCartesianStripHits"
+tpcSegAlg.readoutName = "TpcDiagonalStripHits"
 appMgr.TopAlg += [tpcSegAlg]
 
 # 3. Simple smear (add a fixed-width Gaussian noise)
@@ -98,16 +98,29 @@ caloSmearAlg.outHits.Path = "CaloHits"
 caloSmearAlg.energy_sigma = 60 # keV
 appMgr.TopAlg += [caloSmearAlg]
 
+# 5. TPC waveform generation
+from Configurables import TpcSamplingAlg
+tpcSampleAlg = TpcSamplingAlg("TpcSampleAlg")
+tpcSampleAlg.inHits.Path = "TpcHits"
+tpcSampleAlg.simHits.Path = "TpcDriftHits"
+tpcSampleAlg.outHits.Path = "TpcWaveformHits"
+tpcSampleAlg.sample_interval = 5 # ns
+tpcSampleAlg.shape_time = 5 # us
+tpcSampleAlg.nr_points = 512
+tpcSampleAlg.gain = 1000
+tpcSampleAlg.amplitude_offset = 100
+appMgr.TopAlg += [tpcSampleAlg]
 ################################# Output ########################################
 
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioOutput
 outAlg = PodioOutput('outAlg')
-outAlg.filename = 'simple_digi.root'
+outAlg.filename = 'compton_digi.root'
 outAlg.outputCommands = ['drop *',
                          'keep PrimaryParticles',
                          'keep TpcSimHits',
                          'keep TpcHits',
+                         'keep TpcWaveformHits',
                          'keep CaloHits'
                          ]
 appMgr.TopAlg += [outAlg]

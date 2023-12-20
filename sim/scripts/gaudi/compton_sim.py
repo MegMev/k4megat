@@ -35,8 +35,8 @@ physicslist.fullphysics = "SimFtfpBert"
 # user actions
 from Configurables import SimFullSimActions
 actions = SimFullSimActions()
-actions.enableHistory=True # toggle, default: false and no action is binded
-actions.energyCut= 0.1 # min kinetic energy (MeV) for the generated track to be saved
+# actions.enableHistory=True # toggle, default: false and no action is binded
+# actions.energyCut= 0.1 # min kinetic energy (MeV) for the generated track to be saved
 
 # g4 service
 ### Configures the Geant simulation: detector building, fields, regions, physics, actions
@@ -45,8 +45,8 @@ geantservice = SimSvc("SimSvc")
 geantservice.detector='SimDD4hepDetector'
 geantservice.physicslist=physicslist
 geantservice.actions= actions
-geantservice.g4PostInitCommands += ["/run/setCut 0.1 mm"]
-geantservice.g4PostInitCommands  += ["/tracking/storeTrajectory 1"] # if to store track points
+# geantservice.g4PostInitCommands += ["/run/setCut 0.1 mm"]
+# geantservice.g4PostInitCommands  += ["/tracking/storeTrajectory 1"] # if to store track points
 geantservice.randomNumbersFromGaudi = True
 # geantservice.seedValue = 4242
 
@@ -56,7 +56,7 @@ geantservice.randomNumbersFromGaudi = True
 from Configurables import SimComptonSimpleGenerator
 pgun = SimComptonSimpleGenerator('pgun',
                                  energyMin = 1, energyMax = 10,
-                                 theta = 0, phi = 0,
+                                 theta = 180, phi = 0,
                                  OutputLevel = WARNING
                                  )
 
@@ -79,18 +79,18 @@ saveTpc = SimSaveTrackerHits('saveTpc',readoutName = 'TpcHits')
 saveTpc.Hits.Path = 'TpcSimHits'
 
 #### save trajectory and history
-from Configurables import SimSaveTrajectory
-saveTrajectory = SimSaveTrajectory("saveTrajectory")
-saveTrajectory.Hits.Path = "TrajectoryPoints"
+# from Configurables import SimSaveTrajectory
+# saveTrajectory = SimSaveTrajectory("saveTrajectory")
+# saveTrajectory.Hits.Path = "TrajectoryPoints"
 
-from Configurables import SimSaveHistory
-saveHistory = SimSaveHistory("saveHistory")
-saveHistory.Hits.Path = "SimParticles"
+# from Configurables import SimSaveHistory
+# saveHistory = SimSaveHistory("saveHistory")
+# saveHistory.Hits.Path = "SimParticles"
 
 #### finally the alg itself
 from Configurables import SimAlg
 geantsim = SimAlg('SimAlg',
-                  saveTools = [savePrimaries, saveCalo, saveTpc, saveTrajectory, saveHistory],
+                  saveTools = [savePrimaries, saveCalo, saveTpc],
                   eventProvider = pgun,
                   vertexSmearer = vxSmearer,
                   OutputLevel = WARNING)
@@ -98,7 +98,7 @@ geantsim = SimAlg('SimAlg',
 # output to root file
 from Configurables import PodioOutput
 out = PodioOutput()
-out.filename = 'megat.gaudi.root'
+out.filename = 'compton_sim.root'
 out.outputCommands = ['keep *']
 
 # ApplicationMgr
