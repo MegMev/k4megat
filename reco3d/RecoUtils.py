@@ -36,11 +36,13 @@ class TpcHits:
                  x_hits: np.ndarray, 
                  y_hits: np.ndarray,
                  layers: np.ndarray | None = None, 
-                 raw_hits: np.ndarray | None = None):
+                 raw_hits: np.ndarray | None = None,
+                 raw_times: np.ndarray | None = None,):
         self.x_hits = x_hits
         self.y_hits = y_hits
         self.layers = layers
         self.raw_hits = raw_hits
+        self.raw_times = raw_times
 
 def decodeRawHits(hits) -> TpcHits:
     decoder = getDecoder()
@@ -60,7 +62,7 @@ def decodeRawHits(hits) -> TpcHits:
     x_hits = np.stack((raw_hits[idx, 0], times[idx]), axis=1)
     y_hits = np.stack((raw_hits[~idx, 1], times[~idx]), axis=1)
 
-    return TpcHits(x_hits, y_hits, layers, raw_hits)
+    return TpcHits(x_hits, y_hits, layers, raw_hits, times)
 
 
 _initialized = False
