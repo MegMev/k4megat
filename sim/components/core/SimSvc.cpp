@@ -70,8 +70,13 @@ namespace megat {
       m_visManager = std::make_unique<G4VisExecutive>();
       m_visManager->Initialize();
 
-      m_session = std::make_unique<G4UIterminal>();
+      char* name = "k4megat";
+      m_session  = std::make_unique<G4UIExecutive>( 1, &name );
+
+      for ( auto command : m_g4VisInitCommands ) { UImanager->ApplyCommand( command ); }
       m_session->SessionStart();
+
+      return StatusCode::FAILURE;
     }
 
     // Attach user actions

@@ -15,6 +15,7 @@
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/ToolHandle.h"
 
+#include "G4UIExecutive.hh"
 #include "G4UIsession.hh"
 #include "G4UIterminal.hh"
 #include "G4VisExecutive.hh"
@@ -75,6 +76,9 @@ namespace megat {
     /// Geant4 commands to be executed before user initialization
     Gaudi::Property<std::vector<std::string>> m_g4PreInitCommands{
         this, "g4PreInitCommands", {}, "Geant4 commands to be executed before user initialization" };
+    /// Geant4 commands to be executed for interactive visulization
+    Gaudi::Property<std::vector<std::string>> m_g4VisInitCommands{
+        this, "g4VisInitCommands", {}, "Geant4 commands for visulizaiton engine initialization" };
     /// Geant4 commands to be executed after user initialization
     Gaudi::Property<std::vector<std::string>> m_g4PostInitCommands{
         this, "g4PostInitCommands", {}, "Geant4 commands to be executed after user initialization" };
@@ -97,9 +101,8 @@ namespace megat {
     /// Run Manager
     sim::RunManager m_runManager;
 
-    std::unique_ptr<G4VisManager> m_visManager{ nullptr };
-    // Define UI terminal for interactive mode
-    std::unique_ptr<G4UIsession> m_session{ nullptr };
+    std::unique_ptr<G4VisManager>  m_visManager{ nullptr };
+    std::unique_ptr<G4UIExecutive> m_session{ nullptr };
   };
 
 } // namespace megat
