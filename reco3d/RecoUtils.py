@@ -1,5 +1,7 @@
+from dataclasses import dataclass
 import numpy as np
-import os
+from megat import getTpcDecoder
+
 
 def clusterCenter(X: np.ndarray, labels: np.ndarray) -> np.ndarray:
     """
@@ -31,56 +33,86 @@ def clusterCenter(X: np.ndarray, labels: np.ndarray) -> np.ndarray:
     return centers
 
 
+@dataclass
 class TpcHits:
-    def __init__(self,
-                 x_hits: np.ndarray, 
-                 y_hits: np.ndarray,
-                 layers: np.ndarray | None = None, 
-                 raw_hits: np.ndarray | None = None,
-                 raw_times: np.ndarray | None = None,):
-        self.x_hits = x_hits
-        self.y_hits = y_hits
-        self.layers = layers
-        self.raw_hits = raw_hits
-        self.raw_times = raw_times
+    x_hits: np.ndarray
+    y_hits: np.ndarray
+    times: np.ndarray | None = None
+    edeps: np.ndarray | None = None
+    layers: np.ndarray | None = None
+    raw_hits: np.ndarray | None = None
+
 
 def decodeRawHits(hits) -> TpcHits:
-    decoder = getDecoder()
+    """
+    Converts a collection of tpc hits to numpy::ndarray.
+    Components are retrieved and stored in the data class TpcHits
+
+    Args:
+        hits (cppyy.gbl.edm4hep.TrackerHitCollection): Collection of tpc hits.
+
+    Returns:
+        TpcHits: Data class of each components. The following fields are available:
+            x_hit (np.ndarray): Matrix of observed x hits, columns are {"position", "time", "z"}.
+            y_hit (np.ndarray): Matrix of observed y hits, columns are {"position", "time", "z"}.
+            layers (np.ndarray): Vector of layers w.r.t. original hits.
+            raw_hits (np.ndarray): Matrix of original hit coordinates, columns are {"x", "y", "z"}.
+            times (np.ndarray): Vector of original times.
+    """
+    # Get tpc decoder from megat
+    decoder = getTpcDecoder()
     # Obeserved data: std::vector like
     times = np.array(hits.time())
     cells = np.array(hits.cellID())
+    edeps = np.array(hits.eDep())
     positions = np.array(hits.position())
-    # Converts vector3d to numpy matrix
-    raw_mapper = np.frompyfunc(lambda pos: (pos.x, pos.y, pos.z), 1, 3)
-    # Converts cell id to layer indicator 
+    # Converts cell id to layer indicator
     cell_mapper = np.frompyfunc(lambda id: decoder.get(id, "layer"), 1, 1)
 
-    raw_hits = np.stack(raw_mapper(positions), axis=1)
+    raw_hits = vec3d2mat(positions)
     layers = cell_mapper(cells)
-    idx = (layers == 0)
+    idx = layers != 0
 
-    x_hits = np.stack((raw_hits[idx, 0], times[idx]), axis=1)
-    y_hits = np.stack((raw_hits[~idx, 1], times[~idx]), axis=1)
+    # Prepare for x and y observed hits matrix
+    xy_hits = raw_hits.copy()  # Make a copy of raw hits
+    # Second column will be set to time and y coordinates of y hits are supposed to be observed
+    xy_hits[idx, 0] = xy_hits[idx, 1]
+    xy_hits[:, 1] = times
+    xy_hits = np.concatenate((xy_hits, edeps.reshape((-1, 1))), axis=1)
 
-    return TpcHits(x_hits, y_hits, layers, raw_hits, times)
+    return TpcHits(xy_hits[~idx, :], xy_hits[idx, :], times, edeps, layers, raw_hits)
 
 
-_initialized = False
-_readout_name = "TpcStripHits"
+_raw_mapper = np.frompyfunc(
+    lambda pos: (float(pos.x), float(pos.y), float(pos.z)), 1, 3
+)
 
-def getDecoder():
-    from megat import IdConverter
-    init()
-    id_conv = IdConverter(_readout_name)
-    decoder = id_conv.decoder()
-    return decoder
 
-def init():
-    global _initialized
-    if not _initialized:
-        from megat import loadGeometry
-        detector_path = os.environ.get("MEGAT_ROOT", "")
-        xml_list = [os.path.join(detector_path, "geometry/compact/Megat.xml"),
-                    os.path.join(detector_path, "geometry/compact/TPC_readout.xml")]
-        loadGeometry(xml_list, _readout_name)
-        _initialized = True
+def vec3d2mat(v, dtype="double") -> np.ndarray:
+    """
+    Converts a vector of vector3d to numpy matrix (ndarray).
+    Notice that each row of the matrix corresponds to a vector3d.
+
+    Args:
+        v (cppyy.gbl.std.vector<edm4hep::Vector3d>): Vector of vector3d of length n.
+
+    Returns:
+        np.ndarray: Matrix of $n \\times 3$
+    """
+    return np.stack(_raw_mapper(v), axis=1, dtype=dtype, casting="unsafe")
+
+
+class PairFlater:
+    def __init__(self, drift_velocity=60, z_lower=255) -> None:
+        self.pair_mapper = np.frompyfunc(
+            lambda pair: (
+                pair.x(),
+                pair.y(),
+                z_lower - pair.time() / 1000 * drift_velocity,
+            ),
+            1,
+            3,
+        )
+
+    def toMat(self, pairs):
+        return np.stack(self.pair_mapper(np.array(pairs)), axis=1)
