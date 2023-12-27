@@ -1,0 +1,17 @@
+/gps/particle geantino
+
+# source
+/gps/pos/type Volume
+/gps/pos/shape Cylinder
+/gps/pos/centre 2. 2. 2. cm
+/gps/pos/radius 2.5 cm
+/gps/pos/halfz 4. cm
+
+# angular distribution
+/gps/ang/type iso
+
+# energy distribution
+/gps/ene/type Arb
+/gps/hist/file ./spectrum.dat
+/gps/hist/inter Lin
+

@@ -119,6 +119,7 @@ outAlg.filename = 'compton_digi.root'
 outAlg.outputCommands = ['drop *',
                          'keep PrimaryParticles',
                          'keep TpcSimHits',
+                         'keep TpcDriftHits',
                          'keep TpcHits',
                          'keep TpcWaveformHits',
                          'keep CaloHits'

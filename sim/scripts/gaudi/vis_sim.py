@@ -18,7 +18,7 @@ geoSvc = GeoSvc("GeoSvc", detectors=[path.join(detector_path, 'geometry/compact/
 ### Configures the Geant simulation: detector building, fields, regions, physics, actions
 from Configurables import SimSvc
 simSvc = SimSvc('SimSvc')
-simSvc.g4VisInitCommands += ['/control/execute vis.mac']
+simSvc.g4VisInitCommands += ['/control/execute ./macros/vis.mac']
 simSvc.InteractiveMode = True
 
 # ApplicationMgr

@@ -16,9 +16,6 @@
 #include "GaudiKernel/ToolHandle.h"
 
 #include "G4UIExecutive.hh"
-#include "G4UIsession.hh"
-#include "G4UIterminal.hh"
-#include "G4VisExecutive.hh"
 #include "G4VisManager.hh"
 
 /** @class SimSvc SimComponents/SimComponents/SimSvc.h SimSvc.h

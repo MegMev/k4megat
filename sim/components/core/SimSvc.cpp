@@ -8,11 +8,11 @@
 #include "G4Event.hh"
 #include "G4HadronicProcessStore.hh"
 #include "G4UImanager.hh"
-#include "G4UIsession.hh"
-#include "G4UIterminal.hh"
 #include "G4VModularPhysicsList.hh"
 #include "G4VisExecutive.hh"
 #include "G4VisManager.hh"
+
+#include <thread>
 
 namespace megat {
 
@@ -139,6 +139,8 @@ namespace megat {
 
   StatusCode SimSvc::terminateEvent() {
     m_runManager.terminateEvent().ignore();
+
+    debug() << "thread id: " << std::this_thread::get_id() << endmsg;
     return StatusCode::SUCCESS;
   }
 
