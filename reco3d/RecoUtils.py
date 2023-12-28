@@ -1,5 +1,8 @@
 from dataclasses import dataclass
+from typing import Any
+from typing_extensions import deprecated
 import numpy as np
+from numpy.typing import ArrayLike
 from megat import getTpcDecoder
 
 
@@ -102,6 +105,79 @@ def vec3d2mat(v, dtype="double") -> np.ndarray:
     return np.stack(_raw_mapper(v), axis=1, dtype=dtype, casting="unsafe")
 
 
+class CellIDLayerMapper:
+    def __init__(self, readout: str = "TpcDiagonalStripHits") -> None:
+        """
+        A converter that maps a list of cell ids to tpc layer using megat decoder.
+
+        Args:
+            readout (str, optional): Readout name. Defaults to "TpcDiagonalStripHits".
+
+        Usage:
+            ```
+            layer_mapper = CellIDLayerMapper()
+            layers = alyer_mapper(cells)
+            ```
+        """
+        self._decoder = getTpcDecoder(readout)
+        self._mapper = np.frompyfunc(
+            lambda id: np.int32(self._decoder.get(id, "layer")), 1, 1
+        )
+
+    def __call__(self, cellID: ArrayLike) -> np.ndarray:
+        """
+        Maps a list of cell ids to layer ids.
+
+        Args:
+            cellID (ArrayLike): List of cell ids.
+
+        Returns:
+            np.ndarray: Numpy array of layer ids.
+        """
+        return self._mapper(cellID).astype(dtype=np.int32, copy=False)
+
+
+class TimeZMapper:
+    def __init__(self, drift_velocity: float = 60, time_factor: float = 1000) -> None:
+        """
+        Converts the arrival times and z coordinates time relative to of hits to absolute detector z coordinates.
+
+        The transformation is:
+            $$z_{abs} = z_{rel} - time / factor * velocity$$
+
+        Args:
+            drift_velocity (float, optional): Drift velocity of electrons in mm/ms. Defaults to 60.
+            time_factor (float, optional): Time unit scale factor. The drift time may be delivered in ns, converts to ms by divided by 1000. Defaults to 1000.
+
+        Usage:
+            ```
+            z_poss = poss[:, 2]
+            times = np.array(hits.time())
+            z_mapper = TimeZMapper()
+            z_abs = z_mapper(times, z_poss)
+            ```
+        """
+        self._drift_velocity = drift_velocity
+        self._time_factor = time_factor
+
+    def __call__(self, time: ArrayLike, z_pos: ArrayLike = 255) -> np.ndarray:
+        """
+        Converts arrival times and reference z coordinates to absolute z coordinates.
+
+        Args:
+            time (ArrayLike): Arrival time.
+            z_pos (ArrayLike, optional): Detector z coordinates related to, generally very close to 255. Defaults to 255.
+
+        Returns:
+            np.ndarray: Absolute z coordinates in detector coordinate system.
+        """
+        return (
+            np.asarray(z_pos)
+            - np.asarray(time) / self._time_factor * self._drift_velocity
+        )  # type: ignore
+
+
+@deprecated("Use TimeZMapper instead.")
 class PairFlater:
     def __init__(self, drift_velocity=60, z_lower=255) -> None:
         self.pair_mapper = np.frompyfunc(

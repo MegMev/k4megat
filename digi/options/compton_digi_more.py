@@ -15,38 +15,43 @@ from Gaudi.Configuration import *
 
 # ApplicationMgr
 from Configurables import ApplicationMgr
-appMgr = ApplicationMgr(
-                EvtSel = 'NONE',
-                EvtMax   = -1,
-                OutputLevel=INFO
-               )
+
+appMgr = ApplicationMgr(EvtSel="NONE", EvtMax=-1, OutputLevel=INFO)
 
 ################################# Servicec ########################################
 
 # Geometry service
 from Configurables import MegatGeoSvc as GeoSvc
 from os import environ, path
+
 detector_path = environ.get("MEGAT_ROOT", "")
-geoSvc = GeoSvc("GeoSvc",
-                buildType="BUILD_SIMU",
-                detectors=[path.join(detector_path, 'geometry/compact/Megat.xml'),
-                           path.join(detector_path, 'geometry/compact/TPC_readout.xml')],
-                OutputLevel = WARNING)
+geoSvc = GeoSvc(
+    "GeoSvc",
+    buildType="BUILD_SIMU",
+    detectors=[
+        path.join(detector_path, "geometry/compact/Megat.xml"),
+        path.join(detector_path, "geometry/compact/TPC_readout.xml"),
+    ],
+    OutputLevel=WARNING,
+)
 appMgr.ExtSvc += [geoSvc]
 
 # Data service
 from Configurables import k4DataSvc
+
 dataSvc = k4DataSvc("EventDataSvc")
 dataSvc.input = "compton_sim.root"
 appMgr.ExtSvc += [dataSvc]
 
 # Rndm service (use G4 default engine)
 from Configurables import HepRndm__Engine_CLHEP__HepJamesRandom_
+
 rdmEngine = HepRndm__Engine_CLHEP__HepJamesRandom_("RndmGenSvc.Engine")
 rdmEngine.SetSingleton = True
 rdmEngine.Seeds = [5685]
 
 from Configurables import RndmGenSvc
+
 rdmSvc = RndmGenSvc("RndmGenSvc")
 rdmSvc.Engine = rdmEngine.name()
 appMgr.ExtSvc += [rdmEngine, rdmSvc]
@@ -55,12 +60,14 @@ appMgr.ExtSvc += [rdmEngine, rdmSvc]
 
 # Fetch the collection into TES
 from Configurables import PodioInput
+
 inputAlg = PodioInput()
 inputAlg.collections = ["PrimaryParticles", "TpcSimHits", "CaloSimHits"]
 appMgr.TopAlg += [inputAlg]
 
 # 1. Electron drift to anode surface
 from Configurables import TpcDriftAlg
+
 driftAlg = TpcDriftAlg("TpcDriftAlg")
 driftAlg.inHits.Path = "TpcSimHits"
 driftAlg.outHits.Path = "TpcDriftHits"
@@ -75,6 +82,7 @@ appMgr.TopAlg += [driftAlg]
 
 # 2. Readout segmentation
 from Configurables import TpcSegmentAlg
+
 tpcSegAlg = TpcSegmentAlg("TpcSegAlg")
 tpcSegAlg.inHits.Path = "TpcDriftHits"
 tpcSegAlg.outHits.Path = "TpcSegHits"
@@ -83,29 +91,32 @@ appMgr.TopAlg += [tpcSegAlg]
 
 # 3. Simple smear (add a fixed-width Gaussian noise)
 from Configurables import TpcSimpleSmearAlg
+
 tpcSmearAlg = TpcSimpleSmearAlg("TpcSmearAlg")
 tpcSmearAlg.inHits.Path = "TpcSegHits"
 tpcSmearAlg.outHits.Path = "TpcHits"
-tpcSmearAlg.energy_sigma = 10 # eV
-tpcSmearAlg.time_sigma = 100 # ps
+tpcSmearAlg.energy_sigma = 10  # eV
+tpcSmearAlg.time_sigma = 100  # ps
 appMgr.TopAlg += [tpcSmearAlg]
 
 # 4. CZT calo smearing (fixed-with gassian to edep)
 from Configurables import CaloSimpleSmearAlg
+
 caloSmearAlg = CaloSimpleSmearAlg("CaloSmearAlg")
 caloSmearAlg.inHits.Path = "CaloSimHits"
 caloSmearAlg.outHits.Path = "CaloHits"
-caloSmearAlg.energy_sigma = 60 # keV
+caloSmearAlg.energy_sigma = 60  # keV
 appMgr.TopAlg += [caloSmearAlg]
 
 # 5. TPC waveform generation
 from Configurables import TpcSamplingAlg
+
 tpcSampleAlg = TpcSamplingAlg("TpcSampleAlg")
 tpcSampleAlg.inHits.Path = "TpcHits"
 tpcSampleAlg.simHits.Path = "TpcDriftHits"
 tpcSampleAlg.outHits.Path = "TpcWaveformHits"
-tpcSampleAlg.sample_interval = 5 # ns
-tpcSampleAlg.shape_time = 5 # us
+tpcSampleAlg.sample_interval = 5  # ns
+tpcSampleAlg.shape_time = 5  # us
 tpcSampleAlg.nr_points = 512
 tpcSampleAlg.gain = 1000
 tpcSampleAlg.amplitude_offset = 100
@@ -114,16 +125,17 @@ appMgr.TopAlg += [tpcSampleAlg]
 
 # Select & Write the collections to disk ROOT file
 from Configurables import PodioOutput
-outAlg = PodioOutput('outAlg')
-outAlg.filename = 'compton_digi.root'
-outAlg.outputCommands = ['drop *',
-                         'keep PrimaryParticles',
-                         'keep TpcSimHits',
-                         'kepp TpcDriftHits',
-                         'keep TpcSegHits',
-                         'keep TpcHits',
-                         'keep TpcWaveformHits',
-                         'keep CaloHits'
-                         ]
-appMgr.TopAlg += [outAlg]
 
+outAlg = PodioOutput("outAlg")
+outAlg.filename = "compton_digi.root"
+outAlg.outputCommands = [
+    "drop *",
+    "keep PrimaryParticles",
+    "keep TpcSimHits",
+    "keep TpcDriftHits",
+    "keep TpcSegHits",
+    "keep TpcHits",
+    "keep TpcWaveformHits",
+    "keep CaloHits",
+]
+appMgr.TopAlg += [outAlg]
