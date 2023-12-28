@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal, Optional
 from typing_extensions import deprecated
 import numpy as np
 from numpy.typing import ArrayLike
-from megat import getTpcDecoder
+from pandas import DataFrame
+from megat import getTpcDecoder, getIdConverter
 
 
 def clusterCenter(X: np.ndarray, labels: np.ndarray) -> np.ndarray:
@@ -137,6 +138,37 @@ class CellIDLayerMapper:
         return self._mapper(cellID).astype(dtype=np.int32, copy=False)
 
 
+class CellIDPositionMapper:
+    def __init__(self, readout: str = "TpcDiagonalStripHits") -> None:
+        """
+        A converter that maps a list of cell ids to Tpc coordinate matrix using megat id converter.
+        The resulting matrix is of $n \times 3$ whose columns corresponds to x, y and z.
+
+        Args:
+            readout (str, optional): Readout name. Defaults to "TpcDiagonalStripHits".
+
+        Usage:
+            ```
+            cell2pos = CellIDPositionMapper()
+            poss = cell2pos(cells)
+            ```
+        """
+        self._converter = getIdConverter(readout)
+        self._mapper = np.frompyfunc(lambda id: self._converter.position(id), 1, 1)
+
+    def __call__(self, cellID: ArrayLike) -> np.ndarray:
+        """
+        Maps a list of cell ids to layer ids.
+
+        Args:
+            cellID (ArrayLike): List of cell ids.
+
+        Returns:
+            np.ndarray: Numpy array of layer ids.
+        """
+        return vec3d2mat(self._mapper(cellID))
+
+
 class TimeZMapper:
     def __init__(self, drift_velocity: float = 60, time_factor: float = 1000) -> None:
         """
@@ -175,6 +207,133 @@ class TimeZMapper:
             np.asarray(z_pos)
             - np.asarray(time) / self._time_factor * self._drift_velocity
         )  # type: ignore
+
+
+def tidyHits(
+    hits,
+    type: Literal["SimTrackerHits", "TrackerHits", "RawTimeSeries"] = "TrackerHits",
+    cell2layer: Optional[CellIDLayerMapper] = CellIDLayerMapper(),
+    time2z: Optional[TimeZMapper] = TimeZMapper(),
+    cell2pos: Optional[CellIDPositionMapper] = CellIDPositionMapper(),
+) -> DataFrame:
+    """
+    Converts Tpc hits to tidy dataframe. For valid type, resulting columns are listed below:
+
+    SimTrackerHits:
+        Types for stored simulation points. The folowing columns are available:
+
+            `x`     - x coordinate.
+            `y`     - y coordinate.
+            `raw_z` - z coordiante that arrival time refers to.
+            `z`     - absolute z coordinate, if `cell2z` is provided.
+            `edep`  - energy deposit.
+            `time`  - arrival time.
+            `cell`  - cell id.
+
+    TrackerHits:
+        Types for stored observed points. The folowing columns are available:
+
+            `x`     - x coordinate.
+            `y`     - y coordinate.
+            `raw_z` - z coordiante that arrival time refers to.
+            `z`     - absolute z coordinate, if `cell2z` is provided.
+            `edep`  - energy deposit.
+            `time`  - arrival time.
+            `cell`  - cell id.
+            `layer` - layer id of hits, if `cell2layer` is provided.
+
+    RawTimeSeries:
+        Types for waveform hits. The following columns are available:
+
+            `cell`  - cell id.
+            `time`  - arric=val time.
+            `layer` - layer id, if `cell2layer` is provided.
+            'adc'   - adc counts, int32.
+            `x`     - x coordinate, if `cell2pos` is provided.
+            `y`     - y coordinate, if `cell2pos` is provided.
+            `raw_z` - relative z coordinate, if `cell2pos` is provided.
+            `z`     - z coordinate, if `time2z` is provided along with `cell2pos`.
+
+    Args:
+        hits (edm hit collections): Collection of hits.
+        type (Literal[&quot;SimTrackerHits&quot;, &quot;TrackerHits&quot;, &quot;RawTimeSeries&quot;], optional): Underlying data types. Defaults to "TrackerHits".
+        cell2layer (Optional[CellIDLayerMapper], optional): Mapper. Defaults to CellIDLayerMapper().
+        time2z (Optional[TimeZMapper], optional): Mapper. Defaults to TimeZMapper().
+        cell2pos (Optional[CellIDPositionMapper], optional): Mapper. Defaults to CellIDPositionMapper().
+
+    Returns:
+        pandas.DataFrame: Tidy dataframe.
+    """
+    time = np.asarray(hits.time())
+    cell = np.asarray(hits.cellID())
+    match type:
+        case "SimTrackerHits":
+            pos = vec3d2mat(hits.position())
+            edep = np.asarray(hits.EDep())
+            d = dict(
+                x=pos[:, 0],
+                y=pos[:, 1],
+                raw_z=pos[:, 2],
+                edep=edep,
+                time=time,
+                cell=cell,
+            )
+            if time2z is not None:
+                d["z"] = time2z(time, pos[:, 2])
+        case "TrackerHits":
+            pos = vec3d2mat(hits.position())
+            edep = np.asarray(hits.eDep())
+            d = dict(
+                x=pos[:, 0],
+                y=pos[:, 1],
+                raw_z=pos[:, 2],
+                edep=edep,
+                time=time,
+                cell=cell,
+            )
+            if cell2layer is not None:
+                d["layer"] = cell2layer(cell)
+            if time2z is not None:
+                d["z"] = time2z(time, pos[:, 2])
+        case "RawTimeSeries":
+            charge = hits.charge()
+            interval = hits.interval()
+
+            _n_hits = hits.size()
+            _temp_size = np.zeros(_n_hits, dtype=np.int32)
+            _temp_time = np.zeros(_n_hits, dtype="object")
+            _temp_adc = np.zeros(_n_hits, dtype="object")
+            for i in range(_n_hits):
+                _hit = hits[i]
+                _n_adc = _hit.adcCounts_size()
+                _int = interval[i]
+                _time = time[i]
+                # FIXME: a faster copy
+                _raw_adc = _hit.getAdcCounts()
+                _adc = np.zeros(_n_adc, dtype=np.int32)
+                for j in range(_n_adc):
+                    _adc[j] = _raw_adc[j]
+                _temp_adc[i] = _adc
+                _temp_size[i] = _n_adc
+                _temp_time[i] = _time + _int * np.arange(_n_adc)
+            # for i in rang(_n_hits)
+
+            adc = np.concatenate(_temp_adc)
+            time = np.concatenate(_temp_time)
+            cell = np.repeat(cell, _temp_size)
+            d = dict(adc=adc, time=time, cell=cell)
+            if cell2pos is not None:
+                pos = cell2pos(cell)
+                d["x"] = np.repeat(pos[:, 0], _temp_size)
+                d["y"] = np.repeat(pos[:, 1], _temp_size)
+                d["raw_z"] = np.repeat(pos[:, 2], _temp_size)
+                if time2z is not None:
+                    d["z"] = time2z(time, d["raw_z"])
+            if cell2layer is not None:
+                d["layer"] = np.repeat(cell2layer(cell), _temp_size)
+        # case "RawTimeSeries"
+
+    return DataFrame(d)
 
 
 @deprecated("Use TimeZMapper instead.")
