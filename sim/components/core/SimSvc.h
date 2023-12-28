@@ -17,6 +17,7 @@
 
 #include "G4UIExecutive.hh"
 #include "G4VisManager.hh"
+#include <string>
 
 /** @class SimSvc SimComponents/SimComponents/SimSvc.h SimSvc.h
  *
@@ -93,7 +94,8 @@ namespace megat {
         this, "seedValue", 1234567,
         "Seed to be used in RndmGenSvc engine (randomNumbersFromGaudi must be set to false)" };
 
-    Gaudi::Property<bool> m_interactiveMode{ this, "InteractiveMode", false, "Enter the interactive mode" };
+    Gaudi::Property<bool>        m_interactiveMode{ this, "InteractiveMode", false, "Enter the interactive mode" };
+    Gaudi::Property<std::string> m_appName{ this, "AppName", "k4megat", "Application Name" };
 
     /// Run Manager
     sim::RunManager m_runManager;
