@@ -25,32 +25,27 @@ Dependency
 Installation
 ===
 Currently, daily developments are pushed to _sim-dev_ branch.
+A development environment has been deployed in C1404 server.
+Follow this guide only if you can access this server.
 
-The official installation is based on [cvmfs](https://cernvm.cern.ch/fs) using the software stack of
-key4hep.
-This is the recommended way for average developers to quickly start his own development without worrying issues like package dependencies.
-
-**cvmfs** client is already deployed in USTC server as well as [Key4hep](https://key4hep.github.io/key4hep-doc/).
-The following installation steps are only applicable to the USTC server, which is based on CentOS-7.
-
-Step 1: setup build environment
+Step 0: clone the source
 ---
-After login the USTC servre:
-```shell
-source /cvmfs/sw.hsf.org/key4hep/setup.sh
-```
-
-More details about key4hep software stack, check [key4hep official documentation](https://key4hep.github.io/key4hep-doc/setup-and-getting-started/README.html).
-
-Step 2: download the source
----
+The official repository is: [[https://git.lug.ustc.edu.cn/megat/k4megat]]
+The mirror repository is: [[https://github.com/MegMev/k4megat]]
 
 ```shell
 git clone https://github.com/MegMev/k4megat
 cd k4megat && git checkout -b sim-dev sim-dev
 ```
 
-Step 3: build & install
+Step 1: setup build environment
+---
+After login the USTC servre:
+```shell
+source /opt/bin/megatEnv
+```
+
+Step 2: build & install
 ---
 ```shell
 mkdir build && cd build
@@ -58,24 +53,25 @@ cmake -DCMAKE_INSTALL_PREFIX=${your_install_dir} ..
 make -j10 install
 ```
 
-Step 4: setup running environment
+Step 3: setup running environment
 ---
 ```shell
-source ${your_install_dir}/bin/thismegat_only.sh
+source ${your_install_dir}/bin/thismegat.sh
 ```
 
-NOTE:
-In case of fresh login after installation, both [Step 1](#Step-1) and [Step 4](#Step-4) need to be repeated to configure the running environment. The two scripts can be put into your shell's login script for convenience.
-
-Step 5: run a test scripts to confirm the installation
+Step 4: run a test scripts to confirm the installation
 ---
 ```shell
-cd ../sim/scripts/gaudi
-k4run test_sim.py
-```
-There will be no _ERROR_ message and a ROOT file named "megat.gaudi.root" will be created if the installation is successful.
+# simulation
+cd ${your_src_dir}/sim/scripts/gaudi
+k4run simple_sim.py
 
-The event number can be configured with parameter `EvtMax` in the script. The default value is `1`.
+# digitization
+cd ${your_src_dir}/digi/options
+ln -s ../../sim/scripts/gaudi/simple_sim.root
+k4run simple_digi.py
+```
+'simple_digi.root' is generated after these two steps.
 
 Development
 ===
