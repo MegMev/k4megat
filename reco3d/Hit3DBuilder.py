@@ -91,8 +91,8 @@ def buildHitPairs(
     Args:
         x_hits (np.ndarray): Hits in the x plane.
         y_hits (np.ndarray): Hits in the y plane.
-        tolerance (float, optional): Torlerance of matching hits, the unit is us. Defaults to 20.
-        col_spec (dict, optional): Specifying the colunms of x and y hits, by not giving a "z" term to supppress z information. Defaults to {"position": 0, "time": 1, "z": 2, "edep": 3}.
+        tolerance (float, optional): Tolerance of matching hits, the unit is us. Defaults to 20.
+        col_spec (dict, optional): Specifying the columns of x and y hits, by not giving a "z" term to suppress z information. Defaults to {"position": 0, "time": 1, "z": 2, "edep": 3}.
 
     Returns:
         DataFrame: Dataframe of matching result. Following columns are available:

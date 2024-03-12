@@ -324,13 +324,13 @@ def tidyHits(
             d = dict(adc=adc, time=time, cell=cell)
             if cell2pos is not None:
                 pos = cell2pos(cell)
-                d["x"] = np.repeat(pos[:, 0], _temp_size)
-                d["y"] = np.repeat(pos[:, 1], _temp_size)
-                d["raw_z"] = np.repeat(pos[:, 2], _temp_size)
+                d["x"] = pos[:, 0]
+                d["y"] = pos[:, 1]
+                d["raw_z"] = pos[:, 2]
                 if time2z is not None:
                     d["z"] = time2z(time, d["raw_z"])
             if cell2layer is not None:
-                d["layer"] = np.repeat(cell2layer(cell), _temp_size)
+                d["layer"] = cell2layer(cell)
         # case "RawTimeSeries"
 
     return DataFrame(d)
