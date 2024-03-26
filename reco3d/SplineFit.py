@@ -78,6 +78,12 @@ class SplineFit:
             criteria (_type_, optional): Clustering retry criteria. Ratio represents the difference in PCA singular value of clusters. If the ratio approaches 1, the cluster has no preferred local direction, and radius should be increased. Defaults to lambda s:0.9*s[0]>s[-1].
             r_step (_type_, optional): Function for increasing clustering radius. Defaults to lambda x:x*1.5.
             metric (Callable[[np.ndarray, np.ndarray], float], optional): Distance metric. Defaults to _euclidean.
+
+
+        Usage:
+            fit = SplineFit(points, weights, radius)
+            fit.build_clusters(0)
+            fit.order()
         """
         self.pts = points
         self.ws = weights
@@ -95,6 +101,20 @@ class SplineFit:
     def build_clusters(
         self, init_point_idx: int | Callable[[], int] = 0
     ) -> list[_PCACluster]:
+        """
+        Build clusters of given points.
+
+        Args:
+            init_point_idx (int | Callable[[], int], optional): Index of initial point. Defaults to 0.
+
+        Raises:
+            RuntimeError: If failed to cluster
+            RuntimeError: _description_
+            RuntimeError: _description_
+
+        Returns:
+            list[_PCACluster]: List of clusters, in the order that the last cluster at the first, and the local main direction goes from the last cluster to the first cluster (the last one in the returned list).
+        """
         if init_point_idx is Callable:
             init_point_idx = init_point_idx()
         first_cluster = self.cal_cluster(self.pts[init_point_idx,], self.radius)
@@ -172,7 +192,7 @@ class SplineFit:
             return
         # Centralize interior points
         cpt = self.pts[idx,]
-        centroid = np.mean(cpt, axis=0)
+        centroid = np.average(cpt, axis=0, weights=self.weights[idx])
         lpt = cpt - centroid
         # Now, we perform svd on points' local coordinates
         _, s, v = np.linalg.svd(lpt)
@@ -202,6 +222,11 @@ class SplineFit:
         return prev_t[pi] if pd[pi] < nd[ni] else next_t[ni]
 
     def order(self):
+        """
+        Order points based on clustering results.
+        Only points within clusters are ordered.
+        Orders are determined by their principal components.
+        """
         centroids = np.zeros([self.n_clusters, self.dim])
         for i in range(self.n_clusters):
             centroids[i,] = self.clusters[i].centroid
@@ -234,3 +259,18 @@ class SplineFit:
         self.oc = oc
         self.projections = projections
         pass
+
+    def end_points(self) -> np.ndarray:
+        """
+        Returns estimated end points of the fitting spline.
+        End points are estimated to be the next centers of the first and last clusters.
+
+        Returns:
+            np.ndarray: A matrix of 2 times ndim, each row corresponds to one end point
+        """
+        return np.stack(
+            [
+                self.clusters[self.n_clusters - 1].next_center(),
+                self.clusters[0].next_center(True),
+            ]
+        )

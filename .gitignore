@@ -16,3 +16,5 @@ Debug
 .cache
 
 **/.ipynb_checkpoints/
+*.ipynb
+data/
