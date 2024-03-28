@@ -192,7 +192,7 @@ class SplineFit:
             return
         # Centralize interior points
         cpt = self.pts[idx,]
-        centroid = np.average(cpt, axis=0, weights=self.weights[idx])
+        centroid = np.average(cpt, axis=0, weights=self.ws[idx])
         lpt = cpt - centroid
         # Now, we perform svd on points' local coordinates
         _, s, v = np.linalg.svd(lpt)
