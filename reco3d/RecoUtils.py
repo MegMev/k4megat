@@ -282,7 +282,7 @@ def tidyHits(
                 d["z"] = time2z(time, pos[:, 2])
         case "TrackerHits":
             pos = vec3d2mat(hits.position())
-            edep = np.asarray(hits.eDep())
+            edep = np.asarray(hits.EDep())
             d = dict(
                 x=pos[:, 0],
                 y=pos[:, 1],
