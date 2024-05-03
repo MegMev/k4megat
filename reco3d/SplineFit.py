@@ -42,11 +42,11 @@ class _PCACluster:
 
     def correct_with(self, dir: np.ndarray) -> None:
         if np.dot(self.main_local_direction(), dir) < 0:
-            self.rotation[0,] = -self.rotation[0,]
+            self.rotation[0, :] = -self.rotation[0, :]
         pass
 
     def main_local_direction(self, reverse: bool = False) -> np.ndarray:
-        return self.rotation[0,] if not reverse else -self.rotation[0,]
+        return self.rotation[0, :] if not reverse else -self.rotation[0, :]
 
     def next_center(self, reverse: bool = False, extension: float = 1) -> np.ndarray:
         return self.centroid + extension * self.radius * self.main_local_direction(
@@ -58,6 +58,9 @@ class _PCACluster:
 
     def supersets(self, other: _PCACluster):
         return np.all(np.isin(other.indices, self.indices))
+
+    def first_singular_value(self):
+        return self.singular_value[0]
 
 
 class SplineFit:
@@ -133,7 +136,7 @@ class SplineFit:
         else:
             if init_point_idx is Callable:
                 init_point_idx = init_point_idx(self.npt)
-            first_cluster = self._cal_cluster(self.pts[init_point_idx,], self.radius)
+            first_cluster = self._cal_cluster(self.pts[init_point_idx, :], self.radius)
 
         if first_cluster is None:
             raise RuntimeError(
@@ -216,7 +219,7 @@ class SplineFit:
         idx = []
         # -TODO: replace with quad-tree or BSP (k-d) tree
         for r in range(self.npt):
-            if self.dist(center, self.pts[r,]) < radius:
+            if self.dist(center, self.pts[r, :]) < radius:
                 idx.append(r)
 
         if len(idx) == self.npt:
@@ -234,7 +237,7 @@ class SplineFit:
             return self._cal_cluster(center, self.step(radius))
 
         # Centralize interior points
-        cpt = self.pts[idx,]
+        cpt = self.pts[idx, :]
         centroid = (
             np.average(cpt, axis=0, weights=self.ws[idx])
             if self.ws is not None
@@ -272,8 +275,8 @@ class SplineFit:
         pd = np.zeros(n_samples)
         nd = np.zeros(n_samples)
         for i in range(n_samples):
-            pd[i] = self.dist(point, prev_samples[i,])
-            nd[i] = self.dist(point, next_samples[i,])
+            pd[i] = self.dist(point, prev_samples[i, :])
+            nd[i] = self.dist(point, next_samples[i, :])
         pi = np.argmin(pd)
         ni = np.argmin(nd)
         return prev_t[pi] if pd[pi] < nd[ni] else next_t[ni]
@@ -332,6 +335,21 @@ class SplineFit:
             ]
         )
 
+    def singular_end_points(self) -> np.ndarray:
+        head = self.clusters[self.n_clusters - 1]
+        tail = self.clusters[0]
+        return np.stack(
+            [
+                head.next_center(False, head.first_singular_value()),
+                tail.next_center(True, tail.first_singular_value()),
+            ]
+        )
+
+    def end_directions(self) -> np.ndarray:
+        head = self.clusters[self.n_clusters - 1].main_local_direction(True)
+        tail = self.clusters[0].main_local_direction()
+        return np.arctan2([head[1], tail[1]], [head[0], tail[0]])
+
     def centroids(self) -> np.ndarray:
         """
         Returns the centroids of this fit.
@@ -347,7 +365,7 @@ class SplineFit:
         if centroids is None:
             centroids = np.zeros([self.n_clusters, self.dim])
             for i in range(self.n_clusters):
-                centroids[i,] = self.clusters[i].centroid
+                centroids[i, :] = self.clusters[i].centroid
             self._centroids = centroids
         return centroids
 
@@ -449,6 +467,7 @@ class ContSplineFit:
 
         self.fits = [first_fit]
         self.ep_idx = [0, 1]
+        self.n_tried = 0
         self.clusters = first_fit.clusters
         self.centroids = first_fit.centroids()
         eps = first_fit.end_points(self.extend_factor)
@@ -481,41 +500,46 @@ class ContSplineFit:
             if (prev_fit.npt - n_managed) < self.threshold:
                 break
 
-            if self.verbose >= 4:
+            if self.verbose >= 3:
                 print(
                     "[build_continuously] ========== Fitting continuous spline =========="
                 )
 
             # ----- Second, determine which side to go ----- #
             # Records remaining points and weights
-            points = points[~managed,]
+            points = points[~managed, :]
             weights = weights[~managed] if weights is not None else None
 
-            nr_head = np.sum(_dist(eps[0,], points) < self.search_range)
-            nr_tail = np.sum(_dist(eps[1,], points) < self.search_range)
+            nr_head = np.sum(_dist(eps[0, :], points) < self.search_range)
+            nr_tail = np.sum(_dist(eps[1, :], points) < self.search_range)
+
+            if self.verbose >= 2:
+                print(
+                    f"[build_continuously] Search for remaining points: {nr_head}/{nr_tail} (head/tail) within range {self.search_range}."
+                )
 
             # ----- Third, fit new spline ----- #
 
             if nr_head >= nr_tail and nr_head >= self.min_pts:
                 if self.verbose >= 3:
                     print("[build_continuously] Fitting new spline forward.")
-                prev_fit = self._update_spline(points, weights, eps[0,])
-                eps[0,], idx = self._update_end_points(
-                    eps[0,], prev_fit.end_points(self.extend_factor)
+                prev_fit = self._update_spline(points, weights, eps[0, :])
+                eps[0, :], idx = self._update_end_points(
+                    eps[0, :], prev_fit.end_points(self.extend_factor)
                 )
                 self.ep_idx[0] = idx
             elif nr_tail > nr_head and nr_tail >= self.min_pts:
                 if self.verbose >= 3:
                     print("[build_continuously] Fitting new spline backward.")
-                prev_fit = self._update_spline(points, weights, eps[1,], False)
-                eps[1,], idx = self._update_end_points(
-                    eps[1,], prev_fit.end_points(self.extend_factor)
+                prev_fit = self._update_spline(points, weights, eps[1, :], False)
+                eps[1, :], idx = self._update_end_points(
+                    eps[1, :], prev_fit.end_points(self.extend_factor)
                 )
                 self.ep_idx[1] = idx
             else:
                 # Neither side satisfied, choose a more likely one
                 if self.n_tried >= self.max_try:
-                    if self.verbose >= 3:
+                    if self.verbose >= 1:
                         print(
                             f"[build_continuously] Fitting tries exceeded limit {self.max_try}, abort."
                         )
@@ -524,29 +548,53 @@ class ContSplineFit:
                 if nr_head >= nr_tail:
                     if self.verbose >= 3:
                         print("[build_continuously] Trying to fit new spline forward.")
-                    prev_fit = self._update_spline(points, weights, eps[0,])
-                    eps[0,], idx = self._update_end_points(
-                        eps[0,], prev_fit.end_points(self.extend_factor)
+                    prev_fit = self._update_spline(points, weights, eps[0, :])
+                    eps[0, :], idx = self._update_end_points(
+                        eps[0, :], prev_fit.end_points(self.extend_factor)
                     )
                     self.ep_idx[0] = idx
                 else:
                     if self.verbose >= 3:
                         print("[build_continuously] Trying to fit new spline backward.")
-                    prev_fit = self._update_spline(points, weights, eps[1,], False)
-                    eps[1,], idx = self._update_end_points(
-                        eps[1,], prev_fit.end_points(self.extend_factor)
+                    prev_fit = self._update_spline(points, weights, eps[1, :], False)
+                    eps[1, :], idx = self._update_end_points(
+                        eps[1, :], prev_fit.end_points(self.extend_factor)
                     )
                     self.ep_idx[1] = idx
+
+            if self.verbose >= 2:
+                print(
+                    f"[build_continuously] Updated end points: {eps[0, ]}, {eps[1, ]}"
+                )
 
         pass  # !while
 
     pass  # !build_continuously
 
     def end_points(self, extend_factor=1):
+        n = len(self.fits) - 1
         return np.stack(
             [
-                self.fits[1].end_points(extend_factor)[self.ep_idx[0],],
-                self.fits[0].end_points(extend_factor)[self.ep_idx[1],],
+                self.fits[n].end_points(extend_factor)[self.ep_idx[0], :],
+                self.fits[0].end_points(extend_factor)[self.ep_idx[1], :],
+            ]
+        )
+
+    def singular_end_points(self) -> np.ndarray:
+        n = len(self.fits) - 1
+        return np.stack(
+            [
+                self.fits[n].singular_end_points()[self.ep_idx[0], :],
+                self.fits[0].singular_end_points()[self.ep_idx[1], :],
+            ]
+        )
+
+    def end_directions(self) -> np.ndarray:
+        n = len(self.fits) - 1
+        return np.array(
+            [
+                self.fits[n].end_directions[self.ep_idx[0], :],
+                self.fits[0].end_directions[self.ep_idx[1], :],
             ]
         )
 
@@ -574,11 +622,11 @@ class ContSplineFit:
     def _update_end_points(self, ep, new_eps):
         d = _dist(ep, new_eps)
         if d[0] >= d[1]:
-            res = new_eps[0,]
+            res = new_eps[0, :]
             idx = 0
             d = d[1]
         else:
-            res = new_eps[1,]
+            res = new_eps[1, :]
             d = d[0]
             idx = 1
         # Reject can be based on clusters' local radius
@@ -586,3 +634,42 @@ class ContSplineFit:
         # if d > self.merge_range:
         # raise RuntimeError("Failed to merge spline. End points too far.")
         return res, idx
+
+
+class ContSplineFitConfig:
+
+    def __init__(
+        self,
+        radius: float = 10.0,
+        threshold: float = 0.1,
+        max_try: int = 5,
+        search_factor: float = 3,
+        extend_factor: float = 1.5,
+        min_pts: int = 5,
+        verbose: int = 0,
+        verbose_f: int = 0,
+    ) -> None:
+        self.radius = radius
+        self.threshold = threshold
+        self.max_try = max_try
+        self.search_factor = search_factor
+        self.extend_factor = extend_factor
+        self.min_pts = min_pts
+        self.verbose = verbose
+        self.verbose_f = verbose_f
+
+    def make_fit(
+        self, points: np.ndarray, weights: Optional[np.ndarray] = None
+    ) -> ContSplineFit:
+        return ContSplineFit(
+            points,
+            weights,
+            radius=self.radius,
+            threshold=self.threshold,
+            max_try=self.max_try,
+            search_factor=self.search_factor,
+            extend_factor=self.extend_factor,
+            min_pts=self.min_pts,
+            verbose=self.verbose,
+            verbose_f=self.verbose_f,
+        )
