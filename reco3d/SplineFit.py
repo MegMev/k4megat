@@ -1,6 +1,4 @@
 from __future__ import annotations
-from distutils.dep_util import newer_pairwise
-from fileinput import nextfile
 import numpy as np
 from typing import Callable, Optional, Literal
 from BezierSpline import BSpline
