@@ -220,38 +220,58 @@ def tidyHits(
     Converts Tpc hits to tidy dataframe. For valid type, resulting columns are listed below:
 
     SimTrackerHits:
-        Types for stored simulation points. The folowing columns are available:
+        Types for stored simulation points. The following columns are available:
 
             `x`     - x coordinate.
+
             `y`     - y coordinate.
-            `raw_z` - z coordiante that arrival time refers to.
+
+            `raw_z` - z coordinate that arrival time refers to.
+
             `z`     - absolute z coordinate, if `cell2z` is provided.
+
             `edep`  - energy deposit.
+
             `time`  - arrival time.
+
             `cell`  - cell id.
 
     TrackerHits:
-        Types for stored observed points. The folowing columns are available:
+        Types for stored observed points. The following columns are available:
 
             `x`     - x coordinate.
+
             `y`     - y coordinate.
-            `raw_z` - z coordiante that arrival time refers to.
+
+            `raw_z` - z coordinate that arrival time refers to.
+
             `z`     - absolute z coordinate, if `cell2z` is provided.
+
             `edep`  - energy deposit.
+
             `time`  - arrival time.
+
             `cell`  - cell id.
+
             `layer` - layer id of hits, if `cell2layer` is provided.
 
     RawTimeSeries:
         Types for waveform hits. The following columns are available:
 
             `cell`  - cell id.
-            `time`  - arric=val time.
+
+            `time`  - arrival time.
+
             `layer` - layer id, if `cell2layer` is provided.
-            'adc'   - adc counts, int32.
+
+            `adc`   - adc counts, int32.
+
             `x`     - x coordinate, if `cell2pos` is provided.
+
             `y`     - y coordinate, if `cell2pos` is provided.
+
             `raw_z` - relative z coordinate, if `cell2pos` is provided.
+
             `z`     - z coordinate, if `time2z` is provided along with `cell2pos`.
 
     Args:
