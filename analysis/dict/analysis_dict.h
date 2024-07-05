@@ -1,3 +1,4 @@
+#include "Analysis/EdmUtils.h"
 #include "Analysis/GeoUtils.h"
 #include "Analysis/IdConverter.h"
 #include "Analysis/MCParticle.h"

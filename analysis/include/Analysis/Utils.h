@@ -38,9 +38,9 @@ namespace megat {
     // common accessors
     GET_ITEM_FUNC_TEMPLATE( get_cellid, cellID )
 
-    GET_ITEM_FUNC_TEMPLATE( get_x, position.x )
-    GET_ITEM_FUNC_TEMPLATE( get_y, position.y )
-    GET_ITEM_FUNC_TEMPLATE( get_z, position.z )
+    GET_ITEM_FUNC_TEMPLATE( get_position_x, position.x )
+    GET_ITEM_FUNC_TEMPLATE( get_position_y, position.y )
+    GET_ITEM_FUNC_TEMPLATE( get_position_z, position.z )
 
     GET_ITEM_FUNC_TEMPLATE( get_mom_x, momentum.x )
     GET_ITEM_FUNC_TEMPLATE( get_mom_y, momentum.y )
@@ -59,12 +59,17 @@ namespace megat {
     GET_ITEM_FUNC_TEMPLATE( get_vertex_y, vertex.y )
     GET_ITEM_FUNC_TEMPLATE( get_vertex_z, vertex.z )
 
+    // general [x,y,z] accessor
+    GET_ITEM_FUNC_TEMPLATE( get_x, x )
+    GET_ITEM_FUNC_TEMPLATE( get_y, y )
+    GET_ITEM_FUNC_TEMPLATE( get_z, z )
+
     // vector accessors
     GET_RVEC_FUNC_TEMPLATE( get_pos, position )
     GET_RVEC_FUNC_TEMPLATE( get_mom, momentum )
 
     GET_RVEC_FUNC_TEMPLATE( get_vertex, vertex )
 
-  }; // namespace utility
+  } // namespace utility
 } // namespace megat
 #endif

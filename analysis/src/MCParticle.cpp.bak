@@ -357,7 +357,7 @@ namespace megat {
       return result;
     }
 
-    ROOT::VecOps::RVec<float> get_y( ROOT::VecOps::RVec<edm4hep::MCParticleData> in ) {
+    ROOT::VecOps::RVec<float> get_position_y( ROOT::VecOps::RVec<edm4hep::MCParticleData> in ) {
       ROOT::VecOps::RVec<float> result;
       for ( auto& p : in ) {
         TLorentzVector tlv;

@@ -11,9 +11,9 @@ void demo_fillx() {
   // method 1
   gInterpreter->Declare( " using namespace megat::utility;" );
 
-  auto df1 = df.Define( "x", "get_x<edm4hep::SimCalorimeterHitData>(CztHits)" )
+  auto df1 = df.Define( "x", "get_position_x<edm4hep::SimCalorimeterHitData>(CztHits)" )
                  .Define( "y", "get_y<edm4hep::SimCalorimeterHitData>(CztHits)" )
-                 .Define( "z", "get_z<edm4hep::SimCalorimeterHitData>(CztHits)" )
+                 .Define( "z", "get_position_z<edm4hep::SimCalorimeterHitData>(CztHits)" )
                  .Define( "e", "get_energy<edm4hep::SimCalorimeterHitData>(CztHits)" );
 
   // method 2

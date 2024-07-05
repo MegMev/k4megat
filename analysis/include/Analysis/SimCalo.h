@@ -9,9 +9,9 @@
 namespace megat {
   // explicit template instantiate of utilities is dispatched here (personal preference)
   namespace utility {
-    INST_GET_FUNC( get_x, edm4hep::SimCalorimeterHitData );
-    INST_GET_FUNC( get_y, edm4hep::SimCalorimeterHitData );
-    INST_GET_FUNC( get_z, edm4hep::SimCalorimeterHitData );
+    INST_GET_FUNC( get_position_x, edm4hep::SimCalorimeterHitData );
+    INST_GET_FUNC( get_position_y, edm4hep::SimCalorimeterHitData );
+    INST_GET_FUNC( get_position_z, edm4hep::SimCalorimeterHitData );
 
     INST_GET_FUNC( get_energy, edm4hep::SimCalorimeterHitData );
     INST_GET_FUNC( get_cellid, edm4hep::SimCalorimeterHitData );
@@ -23,9 +23,9 @@ namespace megat {
     using VecImp = ROOT::VecOps::RVec<T>;
 
     // some useful aliases to utility
-    RENAME_GET_FUNC_NS( megat::utility, get_x, hit_x, edm4hep::SimCalorimeterHitData );
-    RENAME_GET_FUNC_NS( megat::utility, get_y, hit_y, edm4hep::SimCalorimeterHitData );
-    RENAME_GET_FUNC_NS( megat::utility, get_z, hit_z, edm4hep::SimCalorimeterHitData );
+    RENAME_GET_FUNC_NS( megat::utility, get_position_x, hit_x, edm4hep::SimCalorimeterHitData );
+    RENAME_GET_FUNC_NS( megat::utility, get_position_y, hit_y, edm4hep::SimCalorimeterHitData );
+    RENAME_GET_FUNC_NS( megat::utility, get_position_z, hit_z, edm4hep::SimCalorimeterHitData );
 
     RENAME_GET_FUNC_NS( megat::utility, get_energy, hit_e, edm4hep::SimCalorimeterHitData );
     RENAME_GET_FUNC_NS( megat::utility, get_cellid, hit_id, edm4hep::SimCalorimeterHitData );
