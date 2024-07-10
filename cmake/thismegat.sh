@@ -77,6 +77,9 @@ megat_add_path ROOT_INCLUDE_PATH @Gaudi_INCLUDE_DIR@;
 megat_add_path CMAKE_PREFIX_PATH $(cd @Gaudi_LIBRARY_DIR@/.. > /dev/null;pwd);
 #-----------------------------------------------------------------------------
 
+### AIDA
+export AIDA_ROOT_DIR=$(cd @AIDA_INCLUDE_DIRS@/../.. > /dev/null;pwd)
+
 ### megat specific
 #----PATH---------------------------------------------------------------------
 megat_add_path PATH       ${THISMEGAT}/@CMAKE_INSTALL_BINDIR@;
